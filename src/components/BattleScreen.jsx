@@ -26,7 +26,7 @@ const clone = (fighter) => ({ ...fighter, moves: fighter.moves.map(move => ({ ..
  * Pantalla de combate
  * opponent = entrenador de la historia { trainer, pokemonId, level }; si no viene, sale un Pokémon salvaje
  */
-export default function BattleScreen({ team: initialTeam, balls, opponent, onFinish }) {
+export default function BattleScreen({ team: initialTeam, balls, opponent, wildId, onFinish }) {
   const [team, setTeam] = useState(() => initialTeam.map(clone));
   const [enemy, setEnemy] = useState(null);
   const [activeIndex, setActiveIndex] = useState(() => initialTeam.findIndex(p => p.hp > 0));
@@ -51,7 +51,7 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, onFin
     const averageLevel = Math.round(initialTeam.reduce((sum, p) => sum + p.level, 0) / initialTeam.length);
     const wildLevel = Math.max(2, averageLevel + Math.floor(Math.random() * 3) - 1);
 
-    (opponent ? loadSpecies(opponent.pokemonId) : loadRandomWild())
+    (opponent ? loadSpecies(opponent.pokemonId) : wildId ? loadSpecies(wildId) : loadRandomWild())
       .then(species => {
         const rival = createFighter(species, opponent ? opponent.level : wildLevel);
         setEnemy(rival);
@@ -66,7 +66,7 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, onFin
         console.error('Error cargando el rival:', err);
         setError('No se pudo cargar el combate. Revisa tu conexión a internet.');
       });
-  }, [initialTeam, opponent]);
+  }, [initialTeam, opponent, wildId]);
 
   // Cómo se nombra al rival según el modo
   const foeLabel = (name) => (opponent ? `El ${name} de ${opponent.trainer}` : `El ${name} salvaje`);

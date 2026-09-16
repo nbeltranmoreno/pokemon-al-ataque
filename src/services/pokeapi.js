@@ -113,3 +113,21 @@ export const loadSpecies = async (id) => {
 export const loadStarters = () => Promise.all(STARTER_IDS.map(loadSpecies));
 
 export const loadRandomWild = () => loadSpecies(1 + Math.floor(Math.random() * WILD_MAX_ID));
+
+export const spriteUrl = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+
+// Lista ligera para elegir rival: solo id, nombre y sprite (una única petición)
+export const loadPokedex = async () => {
+  const cached = readCache('pokedex');
+  if (cached) return cached;
+
+  const data = await fetchJson(`${API}/pokemon?limit=${WILD_MAX_ID}`);
+  const list = data.results.map((entry, index) => ({
+    id: index + 1,
+    name: entry.name.charAt(0).toUpperCase() + entry.name.slice(1),
+    sprite: spriteUrl(index + 1)
+  }));
+
+  writeCache('pokedex', list);
+  return list;
+};

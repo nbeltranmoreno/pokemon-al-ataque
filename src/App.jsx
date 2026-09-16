@@ -6,6 +6,7 @@ import TeamSelect from './components/TeamSelect';
 import BattleScreen from './components/BattleScreen';
 import TeamScreen from './components/TeamScreen';
 import StoryScreen from './components/StoryScreen';
+import PracticeSelect from './components/PracticeSelect';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import PixelEgg from './components/PixelEgg';
@@ -16,6 +17,7 @@ export default function App() {
   const { save, startWithTeam, finishBattle, healTeam, swapWithBox, markTutorialSeen, resetGame } = useGame();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
+  const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
   const [showTutorial, setShowTutorial] = useState(false);
   const [showReset, setShowReset] = useState(false);
 
@@ -42,10 +44,12 @@ export default function App() {
         team={save.team}
         balls={save.balls}
         opponent={opponent}
+        wildId={wildId}
         onFinish={outcome => {
           finishBattle({ ...outcome, story: Boolean(opponent) });
-          setScreen(opponent ? 'story' : 'menu');
+          setScreen(opponent ? 'story' : 'practice');
           setOpponent(null);
+          setWildId(null);
         }}
       />
     );
@@ -58,6 +62,24 @@ export default function App() {
         canFight={save.team.some(pokemon => pokemon.hp > 0)}
         onFight={step => {
           setOpponent(step);
+          setScreen('battle');
+        }}
+        onBack={() => setScreen('menu')}
+      />
+    );
+  }
+
+  if (screen === 'practice') {
+    return (
+      <PracticeSelect
+        onChoose={id => {
+          setOpponent(null);
+          setWildId(id);
+          setScreen('battle');
+        }}
+        onRandom={() => {
+          setOpponent(null);
+          setWildId(null);
           setScreen('battle');
         }}
         onBack={() => setScreen('menu')}
@@ -122,10 +144,7 @@ export default function App() {
           </button>
 
           <button
-            onClick={() => {
-              setOpponent(null);
-              setScreen('battle');
-            }}
+            onClick={() => setScreen('practice')}
             disabled={!canFight}
             className={`${menuButton} bg-yellow-400 text-yellow-900 border-yellow-900`}
           >
