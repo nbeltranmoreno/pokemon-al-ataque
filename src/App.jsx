@@ -91,7 +91,7 @@ export default function App() {
   }
 
   if (screen === 'online') {
-    return <OnlineScreen onBack={() => setScreen('menu')} />;
+    return <OnlineScreen team={save.team} onBack={() => setScreen('menu')} />;
   }
 
   if (screen === 'shop') {
