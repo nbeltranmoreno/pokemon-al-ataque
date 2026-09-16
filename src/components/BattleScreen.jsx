@@ -44,6 +44,8 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
   const loadedRef = useRef(false);
 
   const active = team[activeIndex];
+  // En Práctica tu Pokémon nunca se debilita: aguanta siempre con 1 PS
+  const practice = !opponent;
 
   // Buscar rival al empezar: el Pokémon del entrenador, o uno salvaje en Práctica
   useEffect(() => {
@@ -149,9 +151,15 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
         foeHp = await attack(meNow(), foeNow(), playerMove, 'enemy');
         setEnemy(foeNow());
       } else {
+        const remaining = await attack(foeNow(), meNow(), enemyMove, 'player');
         // myHp es una copia del número de PS, no el estado: el estado se actualiza abajo con un objeto nuevo
         // oxlint-disable-next-line react/immutability
-        myHp = await attack(foeNow(), meNow(), enemyMove, 'player');
+        myHp = practice ? Math.max(1, remaining) : remaining;
+
+        if (practice && remaining <= 0) {
+          addLog(`¡Tu ${active.name} aguanta con 1 PS! En Práctica no se debilita.`, 'info');
+        }
+
         setTeam(prev => prev.map((p, i) => (i === activeIndex ? meNow() : p)));
       }
     }
@@ -235,7 +243,8 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
     // El rival aprovecha el turno para atacar
     const enemyMove = chooseEnemyMove(enemy, active);
     const remaining = await attack(enemy, active, enemyMove, 'player');
-    const me = { ...active, hp: remaining };
+    // La Poké Ball solo existe en Práctica, así que aquí tu Pokémon tampoco se debilita
+    const me = { ...active, hp: Math.max(1, remaining) };
     const updatedTeam = team.map((p, i) => (i === activeIndex ? me : p));
     setTeam(updatedTeam);
 
