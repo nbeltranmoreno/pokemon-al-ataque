@@ -165,9 +165,9 @@ export default function App() {
 
           <button
             onClick={() => setShowReset(true)}
-            className="w-full text-white/70 hover:text-white font-bold py-2 flex items-center justify-center gap-2 text-[10px] transition"
+            className={`${menuButton} bg-red-900 text-white border-red-300`}
           >
-            <PixelEgg className="w-4 h-5" />
+            <PixelEgg className="w-5 h-6" />
             Empezar de cero
           </button>
         </div>
