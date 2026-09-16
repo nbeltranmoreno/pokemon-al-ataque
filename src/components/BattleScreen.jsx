@@ -123,6 +123,12 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
     const playerFirst = speedOf(active) >= speedOf(enemy);
     const order = playerFirst ? ['player', 'enemy'] : ['enemy', 'player'];
 
+    // Si el salvaje es más rápido pega antes que tú: se avisa para que se entienda
+    if (!playerFirst) {
+      addLog(`¡El ${enemy.name} salvaje es más rápido y ataca primero!`, 'foe');
+      await delay(800);
+    }
+
     for (const side of order) {
       if (myHp <= 0 || foeHp <= 0) break;
 
@@ -292,7 +298,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
               } ${enemy.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
             />
             {popup?.side === 'enemy' && (
-              <span className="absolute inset-x-0 top-0 text-center text-3xl font-black text-red-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <span className="absolute inset-x-0 top-0 text-center text-lg font-black text-red-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 -{popup.amount}
               </span>
             )}
@@ -310,7 +316,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
               } ${active.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
             />
             {popup?.side === 'player' && (
-              <span className="absolute inset-x-0 top-0 text-center text-3xl font-black text-red-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <span className="absolute inset-x-0 top-0 text-center text-lg font-black text-red-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 -{popup.amount}
               </span>
             )}
@@ -338,7 +344,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
           {log.map((line, i) => (
             <p
               key={i}
-              className={`font-medium text-sm leading-relaxed ${
+              className={`font-medium text-[10px] leading-relaxed ${
                 line.side === 'me' ? 'text-green-300' : line.side === 'foe' ? 'text-red-300' : 'text-white'
               }`}
             >
@@ -351,7 +357,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
         <div className="mt-3">
           {result ? (
             <div className="bg-white/15 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
-              <p className="text-white font-black text-xl mb-3">
+              <p className="text-white font-black text-xs mb-3 leading-relaxed">
                 {result === 'win' && '¡Ganaste el combate! 🎉'}
                 {result === 'caught' && `¡${caught?.name} es tuyo! 🎊`}
                 {result === 'lose' && 'Te quedaste sin Pokémon... 😵'}
@@ -373,7 +379,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
                   disabled={busy || move.ppLeft <= 0}
                   className="bg-white/90 rounded-2xl p-3 text-left shadow-xl hover:scale-[1.02] active:scale-95 transition disabled:opacity-40"
                 >
-                  <p className="font-black text-gray-800 text-sm truncate">{move.name}</p>
+                  <p className="font-black text-gray-800 text-[10px] truncate">{move.name}</p>
                   <div className="flex items-center justify-between mt-1">
                     <TypeBadge type={move.type} small />
                     <span className="text-gray-600 text-xs font-bold">

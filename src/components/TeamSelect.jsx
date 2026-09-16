@@ -51,8 +51,8 @@ export default function TeamSelect({ onReady }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4">
       <div className="max-w-3xl mx-auto pb-28">
         <header className="text-center py-6">
-          <h1 className="text-4xl font-black text-white drop-shadow-lg">Elige tu equipo</h1>
-          <p className="text-white/80 font-medium mt-2">
+          <h1 className="text-xl font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose">Elige tu equipo</h1>
+          <p className="text-white/80 font-medium mt-3 text-[10px] leading-loose">
             Escoge {TEAM_SIZE} Pokémon para empezar tu aventura
           </p>
         </header>
@@ -87,12 +87,12 @@ export default function TeamSelect({ onReady }) {
                   </div>
                 )}
                 <img
-                  src={pokemon.sprites.artwork}
+                  src={pokemon.sprites.front}
                   alt={pokemon.name}
-                  className="w-24 h-24 mx-auto object-contain drop-shadow-xl"
+                  className="w-20 h-20 mx-auto object-contain drop-shadow-xl"
                   loading="lazy"
                 />
-                <p className="text-white font-black text-center mt-1">{pokemon.name}</p>
+                <p className="text-white font-black text-center mt-1 text-[10px] truncate">{pokemon.name}</p>
                 <div className="flex justify-center gap-1 mt-2 flex-wrap">
                   {pokemon.types.map(type => (
                     <TypeBadge key={type} type={type} small />

@@ -26,7 +26,7 @@ export default function TeamScreen({ save, onHeal, onSwap, onBack }) {
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="text-3xl font-black text-white">Mi equipo</h1>
+          <h1 className="text-base font-black text-white">Mi equipo</h1>
         </div>
 
         <button
@@ -86,7 +86,7 @@ export default function TeamScreen({ save, onHeal, onSwap, onBack }) {
 
         {save.box.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-white font-black text-xl mb-1">Pokémon guardados</h2>
+            <h2 className="text-white font-black text-xs mb-2">Pokémon guardados</h2>
             <p className="text-white/70 text-sm mb-3">
               {swapping ? 'Toca uno para intercambiarlo' : 'Pulsa 🔁 en un Pokémon del equipo para intercambiarlo'}
             </p>

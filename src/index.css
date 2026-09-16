@@ -1,9 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Estética 8 bits */
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Nada redondeado: todo con esquinas cuadradas */
+* {
+  border-radius: 0 !important;
+}
+
+/* Sprites con los píxeles marcados, sin suavizar */
+img {
+  image-rendering: pixelated;
+}
+
+/* La tipografía de píxeles es muy ancha, así que el texto sin tamaño propio va pequeño */
+button,
+input,
+p,
+span {
+  line-height: 1.7;
+}
+
+button,
+input {
+  font-size: 0.7rem;
 }
