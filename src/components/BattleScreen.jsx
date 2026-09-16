@@ -399,6 +399,11 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
                 {result === 'lose' && 'Te quedaste sin Pokémon... 😵'}
                 {result === 'fled' && 'Escapaste del combate 💨'}
               </p>
+              {practice && (
+                <p className="text-green-300 text-[9px] leading-loose mb-3">
+                  Tu equipo sale curado: en Práctica no queda daño
+                </p>
+              )}
               <button
                 onClick={() => onFinish({ team, result, caught, ballsUsed })}
                 className="bg-yellow-400 text-yellow-900 font-black px-8 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition"

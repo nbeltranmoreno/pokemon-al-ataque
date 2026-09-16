@@ -55,7 +55,8 @@ export const useGame = () => {
       const won = result === 'win' || result === 'caught';
       const next = {
         ...prev,
-        team,
+        // En Práctica el equipo sale del combate como entró: sin daño y con los PP llenos
+        team: story ? team : team.map(healFighter),
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
@@ -72,11 +73,12 @@ export const useGame = () => {
         next.storyStage = prev.storyStage + 1;
       }
 
+      // El Pokémon capturado se une curado
       if (caught) {
         if (next.team.length < MAX_TEAM) {
-          next.team = [...next.team, caught];
+          next.team = [...next.team, healFighter(caught)];
         } else {
-          next.box = [...next.box, caught];
+          next.box = [...next.box, healFighter(caught)];
         }
       }
 
