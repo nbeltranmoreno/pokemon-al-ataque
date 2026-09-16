@@ -3,6 +3,7 @@ import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle, ShoppingCart, Lo
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import UsernameSetup from './components/UsernameSetup';
+import StartScreen from './components/StartScreen';
 import { useGame } from './hooks/useGame';
 import { xpToNextLevel } from './game/battle';
 import { STORY } from './data/story';
@@ -27,19 +28,32 @@ export default function App() {
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
   const [showTutorial, setShowTutorial] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [started, setStarted] = useState(false);
 
-  // Sin equipo todavía: elegir los Pokémon iniciales
-  if (save.team.length === 0) {
-    return <TeamSelect onReady={team => startWithTeam(team)} />;
+  // Portada: un botón para entrar
+  if (!started) {
+    return (
+      <StartScreen
+        user={user}
+        username={save.username}
+        hasGame={save.team.length > 0}
+        onStart={() => setStarted(true)}
+      />
+    );
   }
 
-  // Después del equipo: cuenta y nombre de entrenador
+  // Cuenta y nombre de entrenador
   if (!user) {
     return <Login />;
   }
 
   if (!save.username) {
     return <UsernameSetup onSave={setUsername} />;
+  }
+
+  // Solo quien empieza de nuevo elige equipo
+  if (save.team.length === 0) {
+    return <TeamSelect onReady={team => startWithTeam(team)} />;
   }
 
   // Tutorial: la primera vez sale solo, y también desde el menú
@@ -232,7 +246,10 @@ export default function App() {
           </button>
 
           <button
-            onClick={logout}
+            onClick={async () => {
+              await logout();
+              setStarted(false);
+            }}
             className={`${menuButton} bg-white/10 text-white border-white/30`}
           >
             <LogOut className="w-5 h-5" />
