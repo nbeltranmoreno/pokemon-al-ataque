@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { healFighter, levelUpFighter } from '../game/battle';
+import { healFighter, levelUpFighter, gainXp } from '../game/battle';
 import { getItem } from '../data/items';
 
 const SAVE_KEY = 'pokemonAlAtaque_partida_v1';
@@ -61,27 +61,29 @@ export const useGame = () => {
   const setTrainer = (username, gender) => update({ username, gender });
 
   // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
-  const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false, advance = false, rematch = false }) => {
+  const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false, xpAward = 0 }) => {
     update(prev => {
       const won = result === 'win' || result === 'caught';
       const next = {
         ...prev,
-        // En Práctica el equipo sale del combate como entró: sin daño y con los PP llenos
-        team: story ? team : team.map(healFighter),
+        // En la Historia peleas con un Pokémon prestado, así que tu equipo no cambia;
+        // en Práctica sale del combate como entró: sin daño y con los PP llenos
+        team: story ? prev.team : team.map(healFighter),
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
-        // Monedas solo en la Historia; menos en las revanchas y nada en Práctica
-        coins: prev.coins + (story ? (won ? (rematch ? 25 : 60) : 5) : 0)
+        // Monedas solo en la Historia
+        coins: prev.coins + (story ? (won ? 60 : 5) : 0)
       };
 
       if (won) {
         next.balls = Math.min(MAX_BALLS, next.balls + 1);
       }
 
-      // Solo se avanza al ganar al entrenador que toca, no en las revanchas
-      if (advance && result === 'win') {
+      // Ganar en la Historia avanza el cuento y da experiencia a todo tu equipo
+      if (story && result === 'win') {
         next.storyStage = prev.storyStage + 1;
+        next.team = prev.team.map(pokemon => gainXp(pokemon, xpAward).fighter);
       }
 
       // El Pokémon capturado se une curado
@@ -160,6 +162,9 @@ export const useGame = () => {
     });
   };
 
+  // Pasar a la siguiente escena del cuento
+  const advanceStory = () => update(prev => ({ ...prev, storyStage: prev.storyStage + 1 }));
+
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
   const resetGame = () =>
@@ -174,6 +179,7 @@ export const useGame = () => {
     swapWithBox,
     buyItem,
     useItem,
+    advanceStory,
     markTutorialSeen,
     resetGame
   };

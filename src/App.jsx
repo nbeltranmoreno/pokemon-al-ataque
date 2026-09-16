@@ -6,7 +6,7 @@ import UsernameSetup from './components/UsernameSetup';
 import StartScreen from './components/StartScreen';
 import { useGame } from './hooks/useGame';
 import { xpToNextLevel } from './game/battle';
-import { STORY } from './data/story';
+import { STORY, MEDALS, medalsWon } from './data/story';
 import TeamSelect from './components/TeamSelect';
 import BattleScreen from './components/BattleScreen';
 import TeamScreen from './components/TeamScreen';
@@ -22,7 +22,7 @@ import { VERSION } from './version';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, markTutorialSeen, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, markTutorialSeen, resetGame } = useGame();
   const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
@@ -76,13 +76,13 @@ export default function App() {
         balls={save.balls}
         opponent={opponent}
         wildId={wildId}
+        storyFighter={opponent ? { pokemonId: opponent.myPokemonId, level: opponent.myLevel } : null}
         gender={save.gender}
         onFinish={outcome => {
           finishBattle({
             ...outcome,
             story: Boolean(opponent),
-            advance: Boolean(opponent) && !opponent.rematch,
-            rematch: Boolean(opponent?.rematch)
+            xpAward: opponent ? 20 + opponent.level * 12 : 0
           });
           setScreen(opponent ? 'story' : 'practice');
           setOpponent(null);
@@ -95,10 +95,10 @@ export default function App() {
   if (screen === 'story') {
     return (
       <StoryScreen
-        stage={save.storyStage}
-        canFight={save.team.some(pokemon => pokemon.hp > 0)}
-        onFight={(step, rematch) => {
-          setOpponent({ ...step, rematch });
+        stage={Math.min(save.storyStage, STORY.length)}
+        onAdvance={advanceStory}
+        onFight={step => {
+          setOpponent(step);
           setScreen('battle');
         }}
         onBack={() => setScreen('menu')}
@@ -182,7 +182,7 @@ export default function App() {
           </div>
           <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
-            Historia: {save.storyStage} de {STORY.length} entrenadores
+            Historia: {medalsWon(save.storyStage)} de {MEDALS.length} medallas
           </p>
         </header>
 

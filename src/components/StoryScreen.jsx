@@ -1,88 +1,134 @@
-import { ArrowLeft, Lock, Check, Swords } from 'lucide-react';
-import { STORY } from '../data/story';
+import { ArrowLeft, Swords, Play } from 'lucide-react';
+import { STORY, MEDALS, medalsWon } from '../data/story';
+import { spriteUrl } from '../services/pokeapi';
+
+const BACKGROUNDS = {
+  pueblo: 'from-sky-400 via-sky-600 to-green-700',
+  ruta: 'from-amber-300 via-lime-600 to-green-800',
+  bosque: 'from-green-500 via-green-800 to-emerald-950',
+  cueva: 'from-slate-500 via-slate-700 to-slate-950',
+  mar: 'from-cyan-300 via-blue-600 to-blue-950',
+  volcan: 'from-orange-400 via-red-700 to-rose-950',
+  torre: 'from-fuchsia-500 via-purple-800 to-indigo-950',
+  liga: 'from-yellow-300 via-amber-600 to-orange-900'
+};
 
 /**
- * Modo historia: lista de entrenadores, se desbloquean uno a uno
+ * Historia en forma de cuento: escenas con dibujo y texto que se van pasando,
+ * y de vez en cuando un combate con el Pokémon que presta la historia
  */
-export default function StoryScreen({ stage, canFight, onFight, onBack }) {
-  const finished = stage >= STORY.length;
+export default function StoryScreen({ stage, onAdvance, onFight, onBack }) {
+  const step = STORY[stage];
+  const won = medalsWon(stage);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-700 via-orange-800 to-red-900 p-4">
-      <div className="max-w-md mx-auto pb-10">
-        <div className="flex items-center gap-3 mb-6">
+  // Final de la historia
+  if (!step) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-yellow-300 via-amber-600 to-orange-900 p-4 flex items-center justify-center">
+        <div className="max-w-md w-full text-center">
+          <p className="text-5xl mb-4 animate-float">👑</p>
+          <h1 className="text-lg font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose mb-3">
+            ¡Eres el Campeón!
+          </h1>
+          <p className="text-white/90 text-[10px] leading-loose mb-5">
+            Has terminado la historia con las {MEDALS.length} medallas.
+          </p>
+          <div className="flex justify-center gap-2 flex-wrap mb-6">
+            {MEDALS.map(medal => (
+              <span key={medal} className="w-10 h-10 bg-white/20 border-4 border-yellow-300 flex items-center justify-center text-lg">
+                {medal}
+              </span>
+            ))}
+          </div>
           <button
             onClick={onBack}
-            className="w-12 h-12 bg-white/20 flex items-center justify-center border-4 border-white/40 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition flex-shrink-0"
+            className="bg-white text-amber-800 font-black px-6 py-3 border-4 border-amber-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
           >
-            <ArrowLeft className="w-6 h-6 text-white" />
+            Volver al menú
           </button>
-          <h1 className="text-base font-black text-white">📖 Historia</h1>
+        </div>
+      </div>
+    );
+  }
+
+  const background = BACKGROUNDS[step.bg] || BACKGROUNDS.ruta;
+
+  return (
+    <div className={`min-h-screen bg-gradient-to-b ${background} p-4 flex flex-col`}>
+      {/* Barra de arriba: volver y medallas */}
+      <div className="max-w-2xl w-full mx-auto flex items-center gap-3">
+        <button
+          onClick={onBack}
+          className="w-10 h-10 bg-black/30 flex items-center justify-center border-4 border-white/40 active:translate-y-1 transition flex-shrink-0"
+        >
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </button>
+        <div className="flex gap-1 flex-wrap">
+          {MEDALS.map((medal, index) => (
+            <span
+              key={medal}
+              className={`w-7 h-7 flex items-center justify-center border-2 text-xs ${
+                index < won ? 'bg-yellow-300/40 border-yellow-200' : 'bg-black/30 border-white/20 opacity-50'
+              }`}
+            >
+              {medal}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Escena */}
+      <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col justify-center py-6">
+        <div className="flex items-end justify-center gap-3 min-h-[9rem] mb-4">
+          {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index) => (
+            <img
+              key={`${id}-${index}`}
+              src={spriteUrl(id)}
+              alt=""
+              className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-2xl animate-float"
+              style={{ animationDelay: `${index * 0.4}s` }}
+            />
+          ))}
         </div>
 
-        {finished && (
-          <div className="bg-yellow-400 text-yellow-900 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.5)] p-4 text-center mb-6">
-            <p className="text-sm font-black leading-loose">👑 ¡Eres el Campeón!</p>
-            <p className="text-[10px] mt-2 leading-loose">Has vencido a todos los entrenadores</p>
+        {/* Cuadro de texto */}
+        <div className="bg-black/70 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] p-4">
+          {step.type === 'battle' && (
+            <p className="text-red-300 font-black text-[10px] leading-loose mb-2">⚔️ {step.trainer}</p>
+          )}
+          <p className="text-white text-[10px] leading-loose">{step.text}</p>
+        </div>
+
+        {/* Botón para seguir o para pelear */}
+        {step.type === 'battle' ? (
+          <div className="mt-4">
+            <div className="bg-white/15 border-4 border-white/30 p-3 flex items-center gap-3 mb-3">
+              <img src={spriteUrl(step.myPokemonId)} alt="" className="w-14 h-14 object-contain flex-shrink-0" />
+              <p className="text-white text-[9px] leading-loose">
+                Peleas con el Pokémon que te presta la historia, nivel {step.myLevel}. Tu equipo se queda descansando.
+              </p>
+            </div>
+            <button
+              onClick={() => onFight(step)}
+              className="w-full bg-red-500 text-white font-black py-4 border-4 border-red-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
+            >
+              <Swords className="w-5 h-5" />
+              ¡Luchar!
+            </button>
           </div>
+        ) : (
+          <button
+            onClick={onAdvance}
+            className="w-full mt-4 bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
+          >
+            <Play className="w-5 h-5" />
+            Continuar
+          </button>
         )}
 
-        <div className="space-y-3">
-          {STORY.map((step, index) => {
-            const done = index < stage;
-            const current = index === stage;
-            const locked = index > stage;
-
-            return (
-              <div
-                key={step.id}
-                className={`border-4 p-3 flex items-center gap-3 ${
-                  current
-                    ? 'bg-white/25 border-yellow-300 shadow-[6px_6px_0_rgba(0,0,0,0.4)]'
-                    : done
-                      ? 'bg-white/10 border-green-400/60'
-                      : 'bg-black/20 border-white/20 opacity-60'
-                }`}
-              >
-                <span className="text-2xl flex-shrink-0">{step.medal}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-black text-[10px] truncate leading-loose">{step.trainer}</p>
-                  <p className="text-white/70 text-[10px]">Nivel {step.level}</p>
-                </div>
-
-                {done && (
-                  <>
-                    <Check className="w-5 h-5 text-green-300 flex-shrink-0" strokeWidth={4} />
-                    <button
-                      onClick={() => onFight(step, true)}
-                      disabled={!canFight}
-                      className="bg-white/20 text-white font-black px-3 py-2 border-4 border-white/40 shadow-[3px_3px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition disabled:opacity-40 flex-shrink-0 text-[9px]"
-                      title="Volver a luchar para ganar experiencia"
-                    >
-                      Revancha
-                    </button>
-                  </>
-                )}
-                {locked && <Lock className="w-5 h-5 text-white/50 flex-shrink-0" />}
-                {current && (
-                  <button
-                    onClick={() => onFight(step, false)}
-                    disabled={!canFight}
-                    className="bg-yellow-400 text-yellow-900 font-black px-4 py-3 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition disabled:opacity-40 flex items-center gap-2 flex-shrink-0"
-                  >
-                    <Swords className="w-4 h-4" /> Luchar
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {!canFight && (
-          <p className="text-white bg-black/40 border-4 border-white/20 p-3 text-center text-[10px] leading-loose mt-6">
-            Tu equipo está debilitado. Cúralo en &quot;Mi equipo&quot;.
-          </p>
-        )}
+        <p className="text-white/60 text-[9px] text-center mt-3">
+          Escena {stage + 1} de {STORY.length}
+        </p>
       </div>
     </div>
   );
