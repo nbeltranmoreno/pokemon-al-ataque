@@ -16,6 +16,7 @@ export default function App() {
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showReset, setShowReset] = useState(false);
 
   // Sin equipo todavía: elegir los Pokémon iniciales
   if (save.team.length === 0) {
@@ -162,18 +163,51 @@ export default function App() {
           </button>
 
           <button
-            onClick={() => {
-              if (window.confirm('¿Seguro que quieres empezar de cero? Perderás tu equipo, tus capturas y la historia.')) {
-                resetGame();
-              }
-            }}
+            onClick={() => setShowReset(true)}
             className="w-full text-white/70 hover:text-white font-bold py-2 flex items-center justify-center gap-2 text-[10px] transition"
           >
-            <RotateCcw className="w-4 h-4" />
+            <span className="text-base">🥚</span>
             Empezar de cero
           </button>
         </div>
       </div>
+
+      {/* Aviso antes de borrar la partida */}
+      {showReset && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="max-w-sm w-full bg-red-700 border-4 border-yellow-300 shadow-[8px_8px_0_rgba(0,0,0,0.6)] p-5 text-center">
+            <p className="text-5xl mb-3 animate-pulse">⚠️</p>
+            <h2 className="text-yellow-300 font-black text-sm leading-loose mb-3">¡CUIDADO!</h2>
+            <p className="text-white text-[10px] leading-loose mb-2">
+              Esto va a reiniciar el juego.
+            </p>
+            <p className="text-white/80 text-[10px] leading-loose mb-5">
+              Perderás tu equipo 🥚, tus Pokémon capturados y las {STORY.length} medallas de la historia. No se puede
+              deshacer.
+            </p>
+
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  resetGame();
+                  setShowReset(false);
+                  setScreen('menu');
+                }}
+                className="w-full bg-yellow-300 text-red-900 font-black py-3 border-4 border-yellow-100 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Sí, reiniciar
+              </button>
+              <button
+                onClick={() => setShowReset(false)}
+                className="w-full bg-white/20 text-white font-black py-3 border-4 border-white/40 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition"
+              >
+                No, volver
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
