@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Swords, Repeat, LogOut } from 'lucide-react';
-import { loadRandomWild } from '../services/pokeapi';
+import { loadRandomWild, loadSpecies } from '../services/pokeapi';
 import {
   createFighter,
   resolveAttack,
@@ -23,9 +23,10 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const clone = (fighter) => ({ ...fighter, moves: fighter.moves.map(move => ({ ...move })) });
 
 /**
- * Pantalla de combate contra un Pokémon salvaje
+ * Pantalla de combate
+ * opponent = entrenador de la historia { trainer, pokemonId, level }; si no viene, sale un Pokémon salvaje
  */
-export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
+export default function BattleScreen({ team: initialTeam, balls, opponent, onFinish }) {
   const [team, setTeam] = useState(() => initialTeam.map(clone));
   const [enemy, setEnemy] = useState(null);
   const [activeIndex, setActiveIndex] = useState(() => initialTeam.findIndex(p => p.hp > 0));
@@ -42,25 +43,33 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
 
   const active = team[activeIndex];
 
-  // Buscar un Pokémon salvaje al empezar
+  // Buscar rival al empezar: el Pokémon del entrenador, o uno salvaje en Práctica
   useEffect(() => {
     if (loadedRef.current) return;
     loadedRef.current = true;
 
     const averageLevel = Math.round(initialTeam.reduce((sum, p) => sum + p.level, 0) / initialTeam.length);
-    const level = Math.max(2, averageLevel + Math.floor(Math.random() * 3) - 1);
+    const wildLevel = Math.max(2, averageLevel + Math.floor(Math.random() * 3) - 1);
 
-    loadRandomWild()
+    (opponent ? loadSpecies(opponent.pokemonId) : loadRandomWild())
       .then(species => {
-        const wild = createFighter(species, level);
-        setEnemy(wild);
-        setLog([{ text: `¡Un ${wild.name} salvaje apareció!`, side: 'info' }]);
+        const rival = createFighter(species, opponent ? opponent.level : wildLevel);
+        setEnemy(rival);
+        setLog([{
+          text: opponent
+            ? `¡${opponent.trainer} te reta con ${rival.name}!`
+            : `¡Un ${rival.name} salvaje apareció!`,
+          side: 'info'
+        }]);
       })
       .catch(err => {
         console.error('Error cargando el rival:', err);
         setError('No se pudo cargar el combate. Revisa tu conexión a internet.');
       });
-  }, [initialTeam]);
+  }, [initialTeam, opponent]);
+
+  // Cómo se nombra al rival según el modo
+  const foeLabel = (name) => (opponent ? `El ${name} de ${opponent.trainer}` : `El ${name} salvaje`);
 
   // side: 'me' (lo hace tu Pokémon), 'foe' (lo hace el salvaje) o 'info'
   const addLog = (message, side = 'info') => setLog(prev => [...prev.slice(-5), { text: message, side }]);
@@ -70,8 +79,8 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
   const attack = async (attacker, defender, move, targetSide) => {
     const mine = targetSide === 'enemy'; // si el golpe va al rival, quien ataca eres tú
     const side = mine ? 'me' : 'foe';
-    const attackerLabel = mine ? `Tu ${attacker.name}` : `El ${attacker.name} salvaje`;
-    const defenderLabel = mine ? `El ${defender.name} salvaje` : `Tu ${defender.name}`;
+    const attackerLabel = mine ? `Tu ${attacker.name}` : foeLabel(attacker.name);
+    const defenderLabel = mine ? foeLabel(defender.name) : `Tu ${defender.name}`;
 
     addLog(`¡${attackerLabel} usó ${move.name}!`, side);
     await delay(700);
@@ -125,7 +134,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
 
     // Si el salvaje es más rápido pega antes que tú: se avisa para que se entienda
     if (!playerFirst) {
-      addLog(`¡El ${enemy.name} salvaje es más rápido y ataca primero!`, 'foe');
+      addLog(`¡${foeLabel(enemy.name)} es más rápido y ataca primero!`, 'foe');
       await delay(800);
     }
 
@@ -192,6 +201,12 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
   };
 
   const throwBall = async () => {
+    // A los Pokémon de otro entrenador no se les puede lanzar una Poké Ball
+    if (opponent) {
+      addLog('¡No puedes capturar el Pokémon de otro entrenador!');
+      return;
+    }
+
     if (balls - ballsUsed <= 0) {
       addLog('¡No te quedan Poké Balls!');
       return;
@@ -275,8 +290,8 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
           <div className="bg-black/30 backdrop-blur rounded-2xl p-3 border-2 border-white/20 flex-1 max-w-[55%]">
-            <span className="inline-block bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">
-              RIVAL SALVAJE
+            <span className="inline-block bg-red-500 text-white text-[10px] font-black px-2 py-0.5 mb-1 truncate max-w-full">
+              {opponent ? opponent.trainer.toUpperCase() : 'RIVAL SALVAJE'}
             </span>
             <div className="flex items-center justify-between gap-2">
               <p className="text-white font-black truncate">{enemy.name}</p>
@@ -441,7 +456,7 @@ export default function BattleScreen({ team: initialTeam, balls, onFinish }) {
               </button>
               <button
                 onClick={throwBall}
-                disabled={busy || ballsLeft <= 0}
+                disabled={busy || ballsLeft <= 0 || Boolean(opponent)}
                 className="bg-white text-red-600 font-black py-4 rounded-2xl shadow-xl border-2 border-white hover:scale-[1.02] active:scale-95 transition disabled:opacity-50"
               >
                 ⚪ Poké Ball ({ballsLeft})

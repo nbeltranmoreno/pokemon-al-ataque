@@ -10,7 +10,9 @@ const emptySave = {
   box: [],
   wins: 0,
   losses: 0,
-  balls: 10
+  balls: 10,
+  storyStage: 0,
+  tutorialSeen: false
 };
 
 const readSave = () => {
@@ -23,7 +25,7 @@ const readSave = () => {
 };
 
 /**
- * Estado de la partida (equipo, capturados, victorias y Poké Balls)
+ * Estado de la partida (equipo, capturados, victorias, Poké Balls y progreso de la historia)
  * Se guarda en el navegador, así que la partida sigue al volver
  */
 export const useGame = () => {
@@ -41,21 +43,28 @@ export const useGame = () => {
     });
   };
 
-  const startWithTeam = (team) => update({ ...emptySave, team });
+  // Al elegir equipo se conserva si ya vio el tutorial
+  const startWithTeam = (team) => update(prev => ({ ...emptySave, tutorialSeen: prev.tutorialSeen, team }));
 
-  // Guardar el resultado de un combate: equipo (vida y experiencia), capturas y marcador
-  const finishBattle = ({ team, result, caught, ballsUsed = 0 }) => {
+  // Guardar el resultado de un combate: equipo (vida y experiencia), capturas, marcador e historia
+  const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false }) => {
     update(prev => {
+      const won = result === 'win' || result === 'caught';
       const next = {
         ...prev,
         team,
         balls: Math.max(0, prev.balls - ballsUsed),
-        wins: prev.wins + (result === 'win' || result === 'caught' ? 1 : 0),
+        wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0)
       };
 
-      if (result === 'win' || result === 'caught') {
+      if (won) {
         next.balls = Math.min(MAX_BALLS, next.balls + 1);
+      }
+
+      // En la historia solo se avanza al ganar el combate del entrenador
+      if (story && result === 'win') {
+        next.storyStage = prev.storyStage + 1;
       }
 
       if (caught) {
@@ -87,7 +96,9 @@ export const useGame = () => {
     });
   };
 
-  const resetGame = () => update(emptySave);
+  const markTutorialSeen = () => update({ tutorialSeen: true });
 
-  return { save, startWithTeam, finishBattle, healTeam, swapWithBox, resetGame };
+  const resetGame = () => update({ ...emptySave, tutorialSeen: true });
+
+  return { save, startWithTeam, finishBattle, healTeam, swapWithBox, markTutorialSeen, resetGame };
 };
