@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { healFighter } from '../game/battle';
+import { healFighter, levelUpFighter } from '../game/battle';
+import { getItem } from '../data/items';
 
 const SAVE_KEY = 'pokemonAlAtaque_partida_v1';
 const MAX_TEAM = 6;
@@ -11,6 +12,8 @@ const emptySave = {
   wins: 0,
   losses: 0,
   balls: 10,
+  coins: 50,
+  inventory: {},
   storyStage: 0,
   tutorialSeen: false
 };
@@ -25,7 +28,7 @@ const readSave = () => {
 };
 
 /**
- * Estado de la partida (equipo, capturados, victorias, Poké Balls y progreso de la historia)
+ * Estado de la partida: equipo, capturados, monedas, inventario y progreso
  * Se guarda en el navegador, así que la partida sigue al volver
  */
 export const useGame = () => {
@@ -46,7 +49,7 @@ export const useGame = () => {
   // Al elegir equipo se conserva si ya vio el tutorial
   const startWithTeam = (team) => update(prev => ({ ...emptySave, tutorialSeen: prev.tutorialSeen, team }));
 
-  // Guardar el resultado de un combate: equipo (vida y experiencia), capturas, marcador e historia
+  // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
   const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false }) => {
     update(prev => {
       const won = result === 'win' || result === 'caught';
@@ -55,7 +58,9 @@ export const useGame = () => {
         team,
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
-        losses: prev.losses + (result === 'lose' ? 1 : 0)
+        losses: prev.losses + (result === 'lose' ? 1 : 0),
+        // Monedas para la tienda: más si es un entrenador de la historia
+        coins: prev.coins + (won ? (story ? 60 : 25) : 5)
       };
 
       if (won) {
@@ -96,9 +101,65 @@ export const useGame = () => {
     });
   };
 
+  // Comprar en la tienda: las Poké Balls van al contador, lo demás al inventario
+  const buyItem = (itemId) => {
+    update(prev => {
+      const item = getItem(itemId);
+      if (!item || prev.coins < item.price) return prev;
+
+      const next = { ...prev, coins: prev.coins - item.price };
+
+      if (item.effect === 'balls') {
+        next.balls = Math.min(MAX_BALLS, prev.balls + item.amount);
+      } else {
+        next.inventory = { ...prev.inventory, [itemId]: (prev.inventory[itemId] || 0) + 1 };
+      }
+
+      return next;
+    });
+  };
+
+  // Usar un objeto del inventario sobre un Pokémon del equipo
+  const useItem = (itemId, uid) => {
+    update(prev => {
+      const item = getItem(itemId);
+      const pokemon = prev.team.find(p => p.uid === uid);
+      if (!item || !pokemon || !(prev.inventory[itemId] > 0)) return prev;
+
+      let updated = null;
+
+      if (item.effect === 'heal' && pokemon.hp > 0 && pokemon.hp < pokemon.maxHp) {
+        updated = { ...pokemon, hp: Math.min(pokemon.maxHp, pokemon.hp + item.amount) };
+      } else if (item.effect === 'revive' && pokemon.hp <= 0) {
+        updated = { ...pokemon, hp: Math.ceil(pokemon.maxHp / 2) };
+      } else if (item.effect === 'levelup') {
+        updated = levelUpFighter(pokemon);
+      }
+
+      // Si el objeto no servía para ese Pokémon, no se gasta
+      if (!updated) return prev;
+
+      return {
+        ...prev,
+        team: prev.team.map(p => (p.uid === uid ? updated : p)),
+        inventory: { ...prev.inventory, [itemId]: prev.inventory[itemId] - 1 }
+      };
+    });
+  };
+
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
   const resetGame = () => update({ ...emptySave, tutorialSeen: true });
 
-  return { save, startWithTeam, finishBattle, healTeam, swapWithBox, markTutorialSeen, resetGame };
+  return {
+    save,
+    startWithTeam,
+    finishBattle,
+    healTeam,
+    swapWithBox,
+    buyItem,
+    useItem,
+    markTutorialSeen,
+    resetGame
+  };
 };

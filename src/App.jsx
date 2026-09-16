@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle } from 'lucide-react';
+import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle, ShoppingCart } from 'lucide-react';
 import { useGame } from './hooks/useGame';
 import { STORY } from './data/story';
 import TeamSelect from './components/TeamSelect';
@@ -7,6 +7,7 @@ import BattleScreen from './components/BattleScreen';
 import TeamScreen from './components/TeamScreen';
 import StoryScreen from './components/StoryScreen';
 import PracticeSelect from './components/PracticeSelect';
+import ShopScreen from './components/ShopScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import PixelEgg from './components/PixelEgg';
@@ -14,7 +15,7 @@ import PixelEgg from './components/PixelEgg';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, finishBattle, healTeam, swapWithBox, markTutorialSeen, resetGame } = useGame();
+  const { save, startWithTeam, finishBattle, healTeam, swapWithBox, buyItem, useItem, markTutorialSeen, resetGame } = useGame();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
@@ -91,12 +92,25 @@ export default function App() {
     return <OnlineScreen onBack={() => setScreen('menu')} />;
   }
 
+  if (screen === 'shop') {
+    return (
+      <ShopScreen
+        coins={save.coins}
+        balls={save.balls}
+        inventory={save.inventory}
+        onBuy={buyItem}
+        onBack={() => setScreen('menu')}
+      />
+    );
+  }
+
   if (screen === 'team') {
     return (
       <TeamScreen
         save={save}
         onHeal={healTeam}
         onSwap={swapWithBox}
+        onUseItem={useItem}
         onBack={() => setScreen('menu')}
       />
     );
@@ -114,7 +128,10 @@ export default function App() {
             <span className="text-yellow-300">Al Ataque</span>
           </h1>
           <p className="text-white/80 font-medium mt-4 text-[10px] leading-loose">
-            {save.wins} victorias · {save.losses} derrotas · {save.balls} Poké Balls
+            {save.wins} victorias · {save.losses} derrotas
+          </p>
+          <p className="text-white/80 font-medium text-[10px] leading-loose">
+            🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
           </p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             Historia: {save.storyStage} de {STORY.length} entrenadores
@@ -165,6 +182,14 @@ export default function App() {
               Tu equipo está debilitado. Cúralo en &quot;Mi equipo&quot;.
             </p>
           )}
+
+          <button
+            onClick={() => setScreen('shop')}
+            className={`${menuButton} bg-fuchsia-500 text-white border-fuchsia-900`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            Tienda
+          </button>
 
           <button
             onClick={() => setScreen('team')}

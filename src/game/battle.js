@@ -110,6 +110,10 @@ export const gainXp = (fighter, amount) => {
   return { fighter: result, levelsGained };
 };
 
+// Subir un nivel de golpe (Caramelo Raro)
+export const levelUpFighter = (fighter) =>
+  gainXp(fighter, Math.max(1, xpToNextLevel(fighter.level) - fighter.xp)).fighter;
+
 // Cuanto más debilitado esté el rival, más fácil es capturarlo
 export const catchChance = (target) => {
   const missingHp = 1 - target.hp / target.maxHp;
