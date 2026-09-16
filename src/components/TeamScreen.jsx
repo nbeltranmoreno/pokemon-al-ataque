@@ -123,9 +123,20 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
                       {pokemon.types.map(type => (
                         <TypeBadge key={type} type={type} small />
                       ))}
-                      <span className="text-white/70 text-[9px] font-bold">
-                        EXP {pokemon.xp}/{xpToNextLevel(pokemon.level)}
-                      </span>
+                    </div>
+
+                    {/* Barra de experiencia */}
+                    <div className="mt-2">
+                      <div className="h-2 w-full bg-black/40 border-2 border-white/30">
+                        <div
+                          className="h-full bg-cyan-400 transition-all duration-500"
+                          style={{ width: `${Math.min(100, (pokemon.xp / xpToNextLevel(pokemon.level)) * 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-cyan-200 text-[9px] font-bold mt-1 leading-loose">
+                        EXP {pokemon.xp}/{xpToNextLevel(pokemon.level)} · faltan{' '}
+                        {Math.max(0, xpToNextLevel(pokemon.level) - pokemon.xp)} para el nivel {pokemon.level + 1}
+                      </p>
                     </div>
                   </div>
                   {save.box.length > 0 && !chosen && (

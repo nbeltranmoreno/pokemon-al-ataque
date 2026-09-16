@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle, ShoppingCart } from 'lucide-react';
 import { useGame } from './hooks/useGame';
+import { xpToNextLevel } from './game/battle';
 import { STORY } from './data/story';
 import TeamSelect from './components/TeamSelect';
 import BattleScreen from './components/BattleScreen';
@@ -149,6 +150,13 @@ export default function App() {
             >
               <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 object-contain" />
               <p className="text-white text-[9px] font-bold text-center">Nv. {pokemon.level}</p>
+              {/* Experiencia hacia el siguiente nivel */}
+              <div className="h-1.5 w-full bg-black/40 border border-white/30">
+                <div
+                  className="h-full bg-cyan-400"
+                  style={{ width: `${Math.min(100, (pokemon.xp / xpToNextLevel(pokemon.level)) * 100)}%` }}
+                />
+              </div>
             </div>
           ))}
         </div>
