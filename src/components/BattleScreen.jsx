@@ -15,6 +15,7 @@ import {
   STRUGGLE
 } from '../game/battle';
 import { effectivenessText } from '../data/types';
+import { VERSION } from '../version';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
 
@@ -38,6 +39,7 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
   const [ballsUsed, setBallsUsed] = useState(0);
   const [shake, setShake] = useState(null); // 'player' | 'enemy'
   const [popup, setPopup] = useState(null); // daño flotante: { side, amount }
+  const [attacker, setAttacker] = useState(null); // quién está embistiendo: 'player' | 'enemy'
   const [error, setError] = useState('');
   const loadedRef = useRef(false);
 
@@ -83,6 +85,8 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
     const defenderLabel = mine ? foeLabel(defender.name) : `Tu ${defender.name}`;
 
     addLog(`¡${attackerLabel} usó ${move.name}!`, side);
+    setAttacker(mine ? 'player' : 'enemy');
+    setTimeout(() => setAttacker(null), 600);
     await delay(700);
 
     const hit = resolveAttack(attacker, defender, move);
@@ -308,8 +312,8 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
             <img
               src={enemy.sprites.front}
               alt={enemy.name}
-              className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl animate-float ${
-                shake === 'enemy' ? 'animate-hit' : ''
+              className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
+                shake === 'enemy' ? 'animate-hit' : attacker === 'enemy' ? 'animate-lungeBack' : 'animate-float'
               } ${enemy.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
             />
             {popup?.side === 'enemy' && (
@@ -317,6 +321,9 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
                 -{popup.amount}
               </span>
             )}
+            {/* Plataforma roja: este es el rival */}
+            <div className="w-24 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
+            <p className="text-center text-[9px] font-black text-red-300 mt-1">RIVAL</p>
           </div>
         </div>
 
@@ -327,7 +334,7 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
               src={active.sprites.back}
               alt={active.name}
               className={`w-36 h-36 sm:w-44 sm:h-44 object-contain drop-shadow-2xl ${
-                shake === 'player' ? 'animate-hit' : ''
+                shake === 'player' ? 'animate-hit' : attacker === 'player' ? 'animate-lunge' : ''
               } ${active.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
             />
             {popup?.side === 'player' && (
@@ -335,6 +342,9 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
                 -{popup.amount}
               </span>
             )}
+            {/* Plataforma verde: este es el tuyo */}
+            <div className="w-28 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
+            <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
           </div>
           <div className="bg-black/30 backdrop-blur rounded-2xl p-3 border-2 border-white/20 flex-1 max-w-[55%]">
             <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">
@@ -354,8 +364,10 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
           </div>
         </div>
 
+        <p className="text-white/40 text-[8px] text-right mt-1">{VERSION}</p>
+
         {/* Mensajes */}
-        <div className="bg-black/40 backdrop-blur rounded-2xl p-3 border-2 border-white/20 mt-3 h-28 overflow-y-auto">
+        <div className="bg-black/40 backdrop-blur rounded-2xl p-3 border-2 border-white/20 mt-1 h-28 overflow-y-auto">
           {log.map((line, i) => (
             <p
               key={i}

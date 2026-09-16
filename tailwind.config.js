@@ -38,6 +38,9 @@ export default {
         float: 'float 3s ease-in-out infinite',
         attack: 'attack 2s ease-in-out infinite',
         counter: 'counter 2s ease-in-out infinite 1s',
+        // Embestida de una sola vez, para el combate
+        lunge: 'attack 0.6s ease-in-out',
+        lungeBack: 'counter 0.6s ease-in-out',
         ball: 'ball 2.2s ease-in-out infinite',
         fill: 'fill 2.5s ease-in-out infinite'
       }

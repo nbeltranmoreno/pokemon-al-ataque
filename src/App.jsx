@@ -11,6 +11,7 @@ import ShopScreen from './components/ShopScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import PixelEgg from './components/PixelEgg';
+import { VERSION } from './version';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
@@ -133,6 +134,7 @@ export default function App() {
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
           </p>
+          <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             Historia: {save.storyStage} de {STORY.length} entrenadores
           </p>
