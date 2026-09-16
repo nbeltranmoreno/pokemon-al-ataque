@@ -49,7 +49,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'Con poca vida, la Poké Ball lo atrapa mucho más fácil.',
+    caption: 'En Práctica eliges rival y lanzas Poké Balls: con poca vida cae más fácil.',
     scene: (
       <div className="relative w-full h-40 flex items-center justify-between px-6">
         <span className="text-3xl animate-ball">⚪</span>
@@ -64,7 +64,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'Al ganar subes de nivel: más vida y más fuerza.',
+    caption: 'Ganar en la Historia da experiencia: subes de nivel y pegas más.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <img src={front(6)} alt="" className="w-24 h-24 animate-float" />

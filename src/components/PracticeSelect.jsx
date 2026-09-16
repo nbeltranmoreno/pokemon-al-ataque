@@ -42,7 +42,7 @@ export default function PracticeSelect({ onChoose, onRandom, onBack }) {
           <div className="min-w-0">
             <h1 className="text-base font-black text-white leading-loose">⚔️ Práctica</h1>
             <p className="text-white/80 text-[10px] leading-loose">
-              Elige contra quién pelear. Aquí no se debilitan y salen curados
+              Entrenamiento libre: no se debilitan, salen curados y no ganan experiencia ni monedas
             </p>
           </div>
         </div>

@@ -169,6 +169,14 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
       addLog(`¡${enemy.name} se debilitó!`);
       await delay(600);
 
+      // La Práctica es entrenamiento libre: no da experiencia ni monedas
+      if (practice) {
+        addLog('En Práctica no se gana experiencia ni monedas.', 'info');
+        endBattle(team.map((p, i) => (i === activeIndex ? meNow() : p)), 'win');
+        setBusy(false);
+        return;
+      }
+
       const xp = xpReward(enemy);
       const { fighter, levelsGained } = gainXp(meNow(), xp);
       addLog(`${fighter.name} ganó ${xp} puntos de experiencia.`);
@@ -401,7 +409,7 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
               </p>
               {practice && (
                 <p className="text-green-300 text-[9px] leading-loose mb-3">
-                  Tu equipo sale curado: en Práctica no queda daño
+                  Entrenamiento: sales curado, sin experiencia ni monedas
                 </p>
               )}
               <button
