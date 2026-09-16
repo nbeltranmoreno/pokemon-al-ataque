@@ -8,6 +8,7 @@ import TeamScreen from './components/TeamScreen';
 import StoryScreen from './components/StoryScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
+import PixelEgg from './components/PixelEgg';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
@@ -166,7 +167,7 @@ export default function App() {
             onClick={() => setShowReset(true)}
             className="w-full text-white/70 hover:text-white font-bold py-2 flex items-center justify-center gap-2 text-[10px] transition"
           >
-            <span className="text-base">🥚</span>
+            <PixelEgg className="w-4 h-5" />
             Empezar de cero
           </button>
         </div>
@@ -176,13 +177,16 @@ export default function App() {
       {showReset && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="max-w-sm w-full bg-red-700 border-4 border-yellow-300 shadow-[8px_8px_0_rgba(0,0,0,0.6)] p-5 text-center">
-            <p className="text-5xl mb-3 animate-pulse">⚠️</p>
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <span className="text-4xl animate-pulse">⚠️</span>
+              <PixelEgg className="w-10 h-12 animate-float" />
+            </div>
             <h2 className="text-yellow-300 font-black text-sm leading-loose mb-3">¡CUIDADO!</h2>
             <p className="text-white text-[10px] leading-loose mb-2">
               Esto va a reiniciar el juego.
             </p>
             <p className="text-white/80 text-[10px] leading-loose mb-5">
-              Perderás tu equipo 🥚, tus Pokémon capturados y las {STORY.length} medallas de la historia. No se puede
+              Perderás tu equipo, tus Pokémon capturados y las {STORY.length} medallas de la historia. No se puede
               deshacer.
             </p>
 
