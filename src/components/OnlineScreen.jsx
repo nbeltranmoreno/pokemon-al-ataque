@@ -13,7 +13,7 @@ const makeCode = () => Array.from({ length: 5 }, () => LETTERS[Math.floor(Math.r
  * Modo online: los dos navegadores se conectan directamente entre sí (WebRTC)
  * Uno crea la sala y dice el código, el otro lo escribe
  */
-export default function OnlineScreen({ team, onBack }) {
+export default function OnlineScreen({ team, username, onBack }) {
   const [mode, setMode] = useState(null); // 'host' | 'guest'
   const [code, setCode] = useState('');
   const [input, setInput] = useState('');
@@ -21,6 +21,7 @@ export default function OnlineScreen({ team, onBack }) {
   const [error, setError] = useState('');
   const [conn, setConn] = useState(null);
   const [foe, setFoe] = useState(null);
+  const [foeTrainer, setFoeTrainer] = useState('');
   const peerRef = useRef(null);
 
   // Tu luchador: el primero con vida, curado para que el combate sea justo
@@ -33,7 +34,7 @@ export default function OnlineScreen({ team, onBack }) {
 
   // Intercambiar Pokémon en cuanto haya conexión
   const setupConnection = (connection) => {
-    const sayHello = () => connection.send({ type: 'hello', fighter: me });
+    const sayHello = () => connection.send({ type: 'hello', fighter: me, trainer: username });
 
     if (connection.open) {
       sayHello();
@@ -44,6 +45,7 @@ export default function OnlineScreen({ team, onBack }) {
     connection.on('data', (data) => {
       if (data?.type === 'hello') {
         setFoe(data.fighter);
+        setFoeTrainer(data.trainer || 'Rival');
         setConn(connection);
         setStatus('');
       }
@@ -110,7 +112,16 @@ export default function OnlineScreen({ team, onBack }) {
 
   // Ya conectados: a pelear
   if (conn && foe && me) {
-    return <OnlineBattle conn={conn} isHost={mode === 'host'} me={me} foe={foe} onExit={backToLobby} />;
+    return (
+      <OnlineBattle
+        conn={conn}
+        isHost={mode === 'host'}
+        me={me}
+        foe={foe}
+        foeTrainer={foeTrainer}
+        onExit={backToLobby}
+      />
+    );
   }
 
   return (

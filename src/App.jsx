@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle, ShoppingCart } from 'lucide-react';
+import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut } from 'lucide-react';
+import { useAuth } from './contexts/AuthContext';
+import Login from './components/Login';
+import UsernameSetup from './components/UsernameSetup';
 import { useGame } from './hooks/useGame';
 import { xpToNextLevel } from './game/battle';
 import { STORY } from './data/story';
@@ -17,7 +20,8 @@ import { VERSION } from './version';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, finishBattle, healTeam, swapWithBox, buyItem, useItem, markTutorialSeen, resetGame } = useGame();
+  const { save, startWithTeam, setUsername, finishBattle, healTeam, swapWithBox, buyItem, useItem, markTutorialSeen, resetGame } = useGame();
+  const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
@@ -27,6 +31,15 @@ export default function App() {
   // Sin equipo todavía: elegir los Pokémon iniciales
   if (save.team.length === 0) {
     return <TeamSelect onReady={team => startWithTeam(team)} />;
+  }
+
+  // Después del equipo: cuenta y nombre de entrenador
+  if (!user) {
+    return <Login />;
+  }
+
+  if (!save.username) {
+    return <UsernameSetup onSave={setUsername} />;
   }
 
   // Tutorial: la primera vez sale solo, y también desde el menú
@@ -91,7 +104,7 @@ export default function App() {
   }
 
   if (screen === 'online') {
-    return <OnlineScreen team={save.team} onBack={() => setScreen('menu')} />;
+    return <OnlineScreen team={save.team} username={save.username} onBack={() => setScreen('menu')} />;
   }
 
   if (screen === 'shop') {
@@ -135,6 +148,7 @@ export default function App() {
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
           </p>
+          <p className="text-yellow-300 font-black text-[10px] mt-2 leading-loose">🎮 {save.username}</p>
           <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             Historia: {save.storyStage} de {STORY.length} entrenadores
@@ -215,6 +229,14 @@ export default function App() {
           >
             <HelpCircle className="w-5 h-5" />
             Cómo se juega
+          </button>
+
+          <button
+            onClick={logout}
+            className={`${menuButton} bg-white/10 text-white border-white/30`}
+          >
+            <LogOut className="w-5 h-5" />
+            Cerrar sesión
           </button>
 
           <button

@@ -15,7 +15,8 @@ const emptySave = {
   coins: 50,
   inventory: {},
   storyStage: 0,
-  tutorialSeen: false
+  tutorialSeen: false,
+  username: ''
 };
 
 const readSave = () => {
@@ -46,8 +47,11 @@ export const useGame = () => {
     });
   };
 
-  // Al elegir equipo se conserva si ya vio el tutorial
-  const startWithTeam = (team) => update(prev => ({ ...emptySave, tutorialSeen: prev.tutorialSeen, team }));
+  // Al elegir equipo se conservan el tutorial visto y el nombre de usuario
+  const startWithTeam = (team) =>
+    update(prev => ({ ...emptySave, tutorialSeen: prev.tutorialSeen, username: prev.username, team }));
+
+  const setUsername = (username) => update({ username });
 
   // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
   const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false }) => {
@@ -151,11 +155,12 @@ export const useGame = () => {
 
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
-  const resetGame = () => update({ ...emptySave, tutorialSeen: true });
+  const resetGame = () => update(prev => ({ ...emptySave, tutorialSeen: true, username: prev.username }));
 
   return {
     save,
     startWithTeam,
+    setUsername,
     finishBattle,
     healTeam,
     swapWithBox,

@@ -10,7 +10,7 @@ import TypeBadge from './TypeBadge';
  * El que crea la sala (anfitrión) es quien calcula el daño y manda el resultado,
  * así los dos ven exactamente lo mismo
  */
-export default function OnlineBattle({ conn, isHost, me: myStart, foe: foeStart, onExit }) {
+export default function OnlineBattle({ conn, isHost, me: myStart, foe: foeStart, foeTrainer, onExit }) {
   const [me, setMe] = useState(myStart);
   const [foe, setFoe] = useState(foeStart);
   const [log, setLog] = useState([{ text: '¡Empieza el combate!', side: 'info' }]);
@@ -152,7 +152,9 @@ export default function OnlineBattle({ conn, isHost, me: myStart, foe: foeStart,
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
           <div className="bg-black/30 border-4 border-white/20 p-3 flex-1 max-w-[55%]">
-            <span className="inline-block bg-red-500 text-white text-[9px] font-black px-2 py-0.5 mb-1">RIVAL</span>
+            <span className="inline-block bg-red-500 text-white text-[9px] font-black px-2 py-0.5 mb-1 truncate max-w-full">
+              🎮 {foeTrainer || 'RIVAL'}
+            </span>
             <div className="flex items-center justify-between gap-2">
               <p className="text-white font-black text-[10px] truncate">{foe.name}</p>
               <span className="text-white/90 text-[9px] font-bold whitespace-nowrap">Nv. {foe.level}</span>
