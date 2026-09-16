@@ -5,7 +5,7 @@ import { createFighter } from '../game/battle';
 import TypeBadge from './TypeBadge';
 
 const TEAM_SIZE = 3;
-const START_LEVEL = 5;
+const START_LEVEL = 1;
 
 /**
  * Pantalla para elegir los Pokémon iniciales

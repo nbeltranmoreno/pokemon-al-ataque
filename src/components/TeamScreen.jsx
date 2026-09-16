@@ -4,6 +4,7 @@ import { xpToNextLevel } from '../game/battle';
 import { getItem, ITEMS } from '../data/items';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
+import PixelTrainer from './PixelTrainer';
 
 /**
  * Pantalla del equipo: ver Pokémon, curarlos, usar el inventario e intercambiar con los guardados
@@ -48,7 +49,11 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="text-base font-black text-white">Mi equipo</h1>
+          <PixelTrainer gender={save.gender} className="w-8 h-10 flex-shrink-0" />
+          <div className="min-w-0">
+            <h1 className="text-base font-black text-white leading-loose">Mi equipo</h1>
+            {save.username && <p className="text-white/70 text-[9px] truncate">{save.username}</p>}
+          </div>
         </div>
 
         <button

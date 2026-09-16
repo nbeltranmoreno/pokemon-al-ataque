@@ -16,7 +16,8 @@ const emptySave = {
   inventory: {},
   storyStage: 0,
   tutorialSeen: false,
-  username: ''
+  username: '',
+  gender: 'boy'
 };
 
 const readSave = () => {
@@ -47,14 +48,20 @@ export const useGame = () => {
     });
   };
 
-  // Al elegir equipo se conservan el tutorial visto y el nombre de usuario
+  // Al elegir equipo se conservan el tutorial visto y el entrenador
   const startWithTeam = (team) =>
-    update(prev => ({ ...emptySave, tutorialSeen: prev.tutorialSeen, username: prev.username, team }));
+    update(prev => ({
+      ...emptySave,
+      tutorialSeen: prev.tutorialSeen,
+      username: prev.username,
+      gender: prev.gender,
+      team
+    }));
 
-  const setUsername = (username) => update({ username });
+  const setTrainer = (username, gender) => update({ username, gender });
 
   // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
-  const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false }) => {
+  const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false, advance = false, rematch = false }) => {
     update(prev => {
       const won = result === 'win' || result === 'caught';
       const next = {
@@ -64,16 +71,16 @@ export const useGame = () => {
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
-        // Monedas solo en la Historia; la Práctica no da dinero
-        coins: prev.coins + (story ? (won ? 60 : 5) : 0)
+        // Monedas solo en la Historia; menos en las revanchas y nada en Práctica
+        coins: prev.coins + (story ? (won ? (rematch ? 25 : 60) : 5) : 0)
       };
 
       if (won) {
         next.balls = Math.min(MAX_BALLS, next.balls + 1);
       }
 
-      // En la historia solo se avanza al ganar el combate del entrenador
-      if (story && result === 'win') {
+      // Solo se avanza al ganar al entrenador que toca, no en las revanchas
+      if (advance && result === 'win') {
         next.storyStage = prev.storyStage + 1;
       }
 
@@ -155,12 +162,13 @@ export const useGame = () => {
 
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
-  const resetGame = () => update(prev => ({ ...emptySave, tutorialSeen: true, username: prev.username }));
+  const resetGame = () =>
+    update(prev => ({ ...emptySave, tutorialSeen: true, username: prev.username, gender: prev.gender }));
 
   return {
     save,
     startWithTeam,
-    setUsername,
+    setTrainer,
     finishBattle,
     healTeam,
     swapWithBox,

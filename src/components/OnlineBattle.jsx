@@ -4,13 +4,23 @@ import { resolveAttack, speedOf, STRUGGLE } from '../game/battle';
 import { effectivenessText } from '../data/types';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
+import PixelTrainer from './PixelTrainer';
 
 /**
  * Combate en línea contra otra persona
  * El que crea la sala (anfitrión) es quien calcula el daño y manda el resultado,
  * así los dos ven exactamente lo mismo
  */
-export default function OnlineBattle({ conn, isHost, me: myStart, foe: foeStart, foeTrainer, onExit }) {
+export default function OnlineBattle({
+  conn,
+  isHost,
+  me: myStart,
+  foe: foeStart,
+  gender = 'boy',
+  foeTrainer,
+  foeGender = 'boy',
+  onExit
+}) {
   const [me, setMe] = useState(myStart);
   const [foe, setFoe] = useState(foeStart);
   const [log, setLog] = useState([{ text: '¡Empieza el combate!', side: 'info' }]);
@@ -166,26 +176,34 @@ export default function OnlineBattle({ conn, isHost, me: myStart, foe: foeStart,
               ))}
             </div>
           </div>
-          <div className="flex-shrink-0">
-            <img
-              src={foe.sprites.front}
-              alt={foe.name}
-              className={`w-28 h-28 sm:w-36 sm:h-36 object-contain animate-float ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
-            />
-            <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
+          <div className="flex items-start gap-1 flex-shrink-0">
+            <div>
+              <img
+                src={foe.sprites.front}
+                alt={foe.name}
+                className={`w-24 h-24 sm:w-32 sm:h-32 object-contain animate-float ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+              />
+              <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
+            </div>
+            {/* El entrenador rival, tal como se ha puesto él */}
+            <PixelTrainer gender={foeGender} className="w-9 h-11 mt-2" />
           </div>
         </div>
 
         {/* Tú */}
         <div className="flex items-end justify-between gap-4 mt-2">
-          <div className="flex-shrink-0">
-            <img
-              src={me.sprites.back}
-              alt={me.name}
-              className={`w-32 h-32 sm:w-40 sm:h-40 object-contain ${me.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
-            />
-            <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
-            <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
+          <div className="flex items-end gap-1 flex-shrink-0">
+            {/* Tu entrenador: señala cuando ya has elegido ataque */}
+            <PixelTrainer gender={gender} pointing={Boolean(chosen)} className="w-10 h-12 mb-6" />
+            <div>
+              <img
+                src={me.sprites.back}
+                alt={me.name}
+                className={`w-28 h-28 sm:w-36 sm:h-36 object-contain ${me.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+              />
+              <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
+              <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
+            </div>
           </div>
           <div className="bg-black/30 border-4 border-white/20 p-3 flex-1 max-w-[55%]">
             <span className="inline-block bg-green-500 text-white text-[9px] font-black px-2 py-0.5 mb-1">TU POKÉMON</span>

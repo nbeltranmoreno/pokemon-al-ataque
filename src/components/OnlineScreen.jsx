@@ -3,6 +3,7 @@ import { ArrowLeft, Copy, Users, Swords } from 'lucide-react';
 import Peer from 'peerjs';
 import { healFighter } from '../game/battle';
 import OnlineBattle from './OnlineBattle';
+import PixelTrainer from './PixelTrainer';
 
 // Prefijo para que los códigos no choquen con los de otras webs que usan PeerJS
 const PREFIX = 'pokealataque-';
@@ -13,7 +14,7 @@ const makeCode = () => Array.from({ length: 5 }, () => LETTERS[Math.floor(Math.r
  * Modo online: los dos navegadores se conectan directamente entre sí (WebRTC)
  * Uno crea la sala y dice el código, el otro lo escribe
  */
-export default function OnlineScreen({ team, username, onBack }) {
+export default function OnlineScreen({ team, username, gender = 'boy', onBack }) {
   const [mode, setMode] = useState(null); // 'host' | 'guest'
   const [code, setCode] = useState('');
   const [input, setInput] = useState('');
@@ -22,6 +23,7 @@ export default function OnlineScreen({ team, username, onBack }) {
   const [conn, setConn] = useState(null);
   const [foe, setFoe] = useState(null);
   const [foeTrainer, setFoeTrainer] = useState('');
+  const [foeGender, setFoeGender] = useState('boy');
   const peerRef = useRef(null);
 
   // Tu luchador: el primero con vida, curado para que el combate sea justo
@@ -34,7 +36,7 @@ export default function OnlineScreen({ team, username, onBack }) {
 
   // Intercambiar Pokémon en cuanto haya conexión
   const setupConnection = (connection) => {
-    const sayHello = () => connection.send({ type: 'hello', fighter: me, trainer: username });
+    const sayHello = () => connection.send({ type: 'hello', fighter: me, trainer: username, gender });
 
     if (connection.open) {
       sayHello();
@@ -46,6 +48,7 @@ export default function OnlineScreen({ team, username, onBack }) {
       if (data?.type === 'hello') {
         setFoe(data.fighter);
         setFoeTrainer(data.trainer || 'Rival');
+        setFoeGender(data.gender === 'girl' ? 'girl' : 'boy');
         setConn(connection);
         setStatus('');
       }
@@ -118,7 +121,9 @@ export default function OnlineScreen({ team, username, onBack }) {
         isHost={mode === 'host'}
         me={me}
         foe={foe}
+        gender={gender}
         foeTrainer={foeTrainer}
+        foeGender={foeGender}
         onExit={backToLobby}
       />
     );
@@ -146,6 +151,7 @@ export default function OnlineScreen({ team, username, onBack }) {
         {/* Con qué Pokémon peleas */}
         {me && (
           <div className="bg-white/10 border-4 border-white/30 p-3 flex items-center gap-3 mb-5">
+            <PixelTrainer gender={gender} className="w-9 h-11 flex-shrink-0" />
             <img src={me.sprites.front} alt={me.name} className="w-16 h-16 object-contain flex-shrink-0" />
             <div className="min-w-0">
               <p className="text-white/70 text-[9px] leading-loose">Peleas con</p>

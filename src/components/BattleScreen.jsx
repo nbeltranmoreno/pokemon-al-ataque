@@ -18,6 +18,7 @@ import { effectivenessText } from '../data/types';
 import { VERSION } from '../version';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
+import PixelTrainer from './PixelTrainer';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -27,7 +28,7 @@ const clone = (fighter) => ({ ...fighter, moves: fighter.moves.map(move => ({ ..
  * Pantalla de combate
  * opponent = entrenador de la historia { trainer, pokemonId, level }; si no viene, sale un Pokémon salvaje
  */
-export default function BattleScreen({ team: initialTeam, balls, opponent, wildId, onFinish }) {
+export default function BattleScreen({ team: initialTeam, balls, opponent, wildId, gender = 'boy', onFinish }) {
   const [team, setTeam] = useState(() => initialTeam.map(clone));
   const [enemy, setEnemy] = useState(null);
   const [activeIndex, setActiveIndex] = useState(() => initialTeam.findIndex(p => p.hp > 0));
@@ -346,22 +347,31 @@ export default function BattleScreen({ team: initialTeam, balls, opponent, wildI
 
         {/* Jugador */}
         <div className="flex items-end justify-between gap-4 mt-2">
-          <div className="relative flex-shrink-0">
-            <img
-              src={active.sprites.back}
-              alt={active.name}
-              className={`w-36 h-36 sm:w-44 sm:h-44 object-contain drop-shadow-2xl ${
-                shake === 'player' ? 'animate-hit' : attacker === 'player' ? 'animate-lunge' : ''
-              } ${active.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+          <div className="flex items-end gap-1 flex-shrink-0">
+            {/* Tu entrenador: señala al Pokémon cuando le mandas atacar */}
+            <PixelTrainer
+              gender={gender}
+              pointing={attacker === 'player'}
+              className="w-10 h-12 sm:w-12 sm:h-14 mb-6"
             />
-            {popup?.side === 'player' && (
-              <span className="absolute inset-x-0 top-0 text-center text-lg font-black text-red-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                -{popup.amount}
-              </span>
-            )}
-            {/* Plataforma verde: este es el tuyo */}
-            <div className="w-28 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
-            <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
+
+            <div className="relative">
+              <img
+                src={active.sprites.back}
+                alt={active.name}
+                className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
+                  shake === 'player' ? 'animate-hit' : attacker === 'player' ? 'animate-lunge' : ''
+                } ${active.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+              />
+              {popup?.side === 'player' && (
+                <span className="absolute inset-x-0 top-0 text-center text-lg font-black text-red-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  -{popup.amount}
+                </span>
+              )}
+              {/* Plataforma verde: este es el tuyo */}
+              <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
+              <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
+            </div>
           </div>
           <div className="bg-black/30 backdrop-blur rounded-2xl p-3 border-2 border-white/20 flex-1 max-w-[55%]">
             <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">

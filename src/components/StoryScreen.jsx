@@ -50,11 +50,23 @@ export default function StoryScreen({ stage, canFight, onFight, onBack }) {
                   <p className="text-white/70 text-[10px]">Nivel {step.level}</p>
                 </div>
 
-                {done && <Check className="w-6 h-6 text-green-300 flex-shrink-0" strokeWidth={4} />}
+                {done && (
+                  <>
+                    <Check className="w-5 h-5 text-green-300 flex-shrink-0" strokeWidth={4} />
+                    <button
+                      onClick={() => onFight(step, true)}
+                      disabled={!canFight}
+                      className="bg-white/20 text-white font-black px-3 py-2 border-4 border-white/40 shadow-[3px_3px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition disabled:opacity-40 flex-shrink-0 text-[9px]"
+                      title="Volver a luchar para ganar experiencia"
+                    >
+                      Revancha
+                    </button>
+                  </>
+                )}
                 {locked && <Lock className="w-5 h-5 text-white/50 flex-shrink-0" />}
                 {current && (
                   <button
-                    onClick={() => onFight(step)}
+                    onClick={() => onFight(step, false)}
                     disabled={!canFight}
                     className="bg-yellow-400 text-yellow-900 font-black px-4 py-3 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition disabled:opacity-40 flex items-center gap-2 flex-shrink-0"
                   >

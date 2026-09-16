@@ -16,12 +16,13 @@ import ShopScreen from './components/ShopScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import PixelEgg from './components/PixelEgg';
+import PixelTrainer from './components/PixelTrainer';
 import { VERSION } from './version';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setUsername, finishBattle, healTeam, swapWithBox, buyItem, useItem, markTutorialSeen, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, markTutorialSeen, resetGame } = useGame();
   const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
@@ -48,7 +49,7 @@ export default function App() {
   }
 
   if (!save.username) {
-    return <UsernameSetup onSave={setUsername} />;
+    return <UsernameSetup onSave={setTrainer} />;
   }
 
   // Solo quien empieza de nuevo elige equipo
@@ -75,8 +76,14 @@ export default function App() {
         balls={save.balls}
         opponent={opponent}
         wildId={wildId}
+        gender={save.gender}
         onFinish={outcome => {
-          finishBattle({ ...outcome, story: Boolean(opponent) });
+          finishBattle({
+            ...outcome,
+            story: Boolean(opponent),
+            advance: Boolean(opponent) && !opponent.rematch,
+            rematch: Boolean(opponent?.rematch)
+          });
           setScreen(opponent ? 'story' : 'practice');
           setOpponent(null);
           setWildId(null);
@@ -90,8 +97,8 @@ export default function App() {
       <StoryScreen
         stage={save.storyStage}
         canFight={save.team.some(pokemon => pokemon.hp > 0)}
-        onFight={step => {
-          setOpponent(step);
+        onFight={(step, rematch) => {
+          setOpponent({ ...step, rematch });
           setScreen('battle');
         }}
         onBack={() => setScreen('menu')}
@@ -118,7 +125,14 @@ export default function App() {
   }
 
   if (screen === 'online') {
-    return <OnlineScreen team={save.team} username={save.username} onBack={() => setScreen('menu')} />;
+    return (
+      <OnlineScreen
+        team={save.team}
+        username={save.username}
+        gender={save.gender}
+        onBack={() => setScreen('menu')}
+      />
+    );
   }
 
   if (screen === 'shop') {
@@ -162,7 +176,10 @@ export default function App() {
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
           </p>
-          <p className="text-yellow-300 font-black text-[10px] mt-2 leading-loose">🎮 {save.username}</p>
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <PixelTrainer gender={save.gender} className="w-7 h-9" />
+            <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
+          </div>
           <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             Historia: {save.storyStage} de {STORY.length} entrenadores
