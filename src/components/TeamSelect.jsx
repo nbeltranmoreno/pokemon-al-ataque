@@ -89,7 +89,7 @@ export default function TeamSelect({ onReady }) {
                 <img
                   src={pokemon.sprites.front}
                   alt={pokemon.name}
-                  className="w-20 h-20 mx-auto object-contain drop-shadow-xl"
+                  className="w-32 h-32 sm:w-36 sm:h-36 mx-auto object-contain drop-shadow-xl"
                   loading="lazy"
                 />
                 <p className="text-white font-black text-center mt-1 text-[10px] truncate">{pokemon.name}</p>
