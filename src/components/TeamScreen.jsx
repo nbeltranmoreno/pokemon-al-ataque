@@ -5,6 +5,7 @@ import { getItem, ITEMS } from '../data/items';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
+import PixelItem from './PixelItem';
 
 /**
  * Pantalla del equipo: ver Pokémon, curarlos, usar el inventario e intercambiar con los guardados
@@ -87,7 +88,7 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
                         : 'bg-white/10 border-white/20 hover:bg-white/20'
                     }`}
                   >
-                    <span className="text-2xl block text-center">{item.emoji}</span>
+                    <PixelItem id={item.id} className="w-8 h-8 mx-auto" />
                     <p className="text-white text-[9px] font-black text-center truncate leading-loose">{item.name}</p>
                     <p className="text-white/60 text-[9px] text-center">x{save.inventory[item.id]}</p>
                   </button>

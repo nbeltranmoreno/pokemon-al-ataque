@@ -1,4 +1,5 @@
 import { VERSION } from '../version';
+import PixelBackground from './PixelBackground';
 
 /**
  * Portada del juego: un solo botón
@@ -8,8 +9,11 @@ export default function StartScreen({ user, username, hasGame, onStart }) {
   const ball = `${import.meta.env.BASE_URL}favicon.svg`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-purple-900 to-slate-900 p-4 flex items-center justify-center">
-      <div className="max-w-md w-full text-center">
+    <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
+      <PixelBackground />
+      <div className="absolute inset-0 bg-slate-900/55" />
+
+      <div className="relative max-w-md w-full text-center">
         <img src={ball} alt="" className="w-24 h-24 mx-auto mb-6 animate-float" />
 
         <h1 className="text-2xl font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.7)] leading-loose mb-2">

@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { ITEMS } from '../data/items';
+import PixelItem from './PixelItem';
 
 /**
  * Tienda: se compra con las monedas que se ganan al combatir
@@ -30,7 +31,7 @@ export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
 
             return (
               <div key={item.id} className="bg-white/15 border-4 border-white/30 p-3 flex items-center gap-3">
-                <span className="text-3xl flex-shrink-0">{item.emoji}</span>
+                <PixelItem id={item.id} className="w-10 h-10 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-black text-[10px] leading-loose truncate">{item.name}</p>
                   <p className="text-white/70 text-[9px] leading-loose">{item.description}</p>

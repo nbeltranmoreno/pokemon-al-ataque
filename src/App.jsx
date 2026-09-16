@@ -17,6 +17,7 @@ import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import PixelEgg from './components/PixelEgg';
 import PixelTrainer from './components/PixelTrainer';
+import PixelBackground from './components/PixelBackground';
 import { VERSION } from './version';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
@@ -162,8 +163,11 @@ export default function App() {
   const canFight = save.team.some(pokemon => pokemon.hp > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-rose-700 to-red-900 p-4 flex items-center justify-center">
-      <div className="max-w-md w-full py-6">
+    <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
+      <PixelBackground />
+      <div className="absolute inset-0 bg-red-950/70" />
+
+      <div className="relative max-w-md w-full py-6">
         <header className="text-center mb-6">
           <h1 className="text-2xl font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose">
             Pokémon
