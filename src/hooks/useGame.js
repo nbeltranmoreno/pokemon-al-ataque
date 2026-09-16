@@ -59,8 +59,8 @@ export const useGame = () => {
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
-        // Monedas para la tienda: más si es un entrenador de la historia
-        coins: prev.coins + (won ? (story ? 60 : 25) : 5)
+        // Monedas solo en la Historia; la Práctica no da dinero
+        coins: prev.coins + (story ? (won ? 60 : 5) : 0)
       };
 
       if (won) {

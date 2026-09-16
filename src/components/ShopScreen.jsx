@@ -20,7 +20,7 @@ export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
 
         <div className="bg-yellow-400 text-yellow-900 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] p-3 text-center mb-5">
           <p className="font-black text-xs leading-loose">🪙 {coins} monedas</p>
-          <p className="text-[9px] leading-loose">Ganas monedas al combatir: 25 en Práctica y 60 en la Historia</p>
+          <p className="text-[9px] leading-loose">Ganas 60 monedas por cada entrenador de la Historia. La Práctica no da monedas</p>
         </div>
 
         <div className="space-y-3">
