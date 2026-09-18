@@ -1,68 +1,91 @@
-import TypeBadge from './TypeBadge';
+import { TYPE_HEX, TYPE_NAMES } from '../data/types';
 import PixelTrainer from './PixelTrainer';
 
+// Chispas que suben alrededor, como el aura de energía
+const SPARKS = [8, 18, 26, 38, 52, 62, 72, 84, 92];
+
 /**
- * Corte de ataque estilo anime: fondo de color con líneas de velocidad,
- * el Pokémon en grande con su entrenador y el nombre del ataque
+ * Corte de ataque épico: fondo oscuro, aura de energía del color del tipo,
+ * rayos girando, el Pokémon iluminado por detrás y el cartel con el ataque
  */
 export default function AttackCutIn({ side, sprite, name, move, gender = 'boy', outfit = 'clasico' }) {
   const mine = side === 'player';
+  const color = TYPE_HEX[move.type] || '#38bdf8';
 
   return (
-    <div className="absolute inset-0 z-50 overflow-hidden">
-      {/* Fondo de color: azul si atacas tú, rojo si ataca el rival */}
-      <div className={`absolute inset-0 ${mine ? 'bg-sky-900' : 'bg-red-900'}`} />
-
-      {/* Líneas de velocidad en movimiento */}
-      <div
-        className="absolute inset-0 animate-speed"
-        style={{
-          backgroundImage: mine
-            ? 'repeating-linear-gradient(105deg, rgba(186,230,253,0.35) 0 6px, transparent 6px 24px)'
-            : 'repeating-linear-gradient(75deg, rgba(254,202,202,0.35) 0 6px, transparent 6px 24px)'
-        }}
-      />
-      <div
-        className="absolute inset-0 animate-speedSlow"
-        style={{
-          backgroundImage: mine
-            ? 'repeating-linear-gradient(105deg, rgba(255,255,255,0.18) 0 3px, transparent 3px 40px)'
-            : 'repeating-linear-gradient(75deg, rgba(255,255,255,0.18) 0 3px, transparent 3px 40px)'
-        }}
-      />
-
-      {/* Destello del centro */}
+    <div className="absolute inset-0 z-50 overflow-hidden bg-slate-950">
+      {/* Aura de energía */}
       <div
         className="absolute inset-0"
+        style={{ background: `radial-gradient(circle at 50% 55%, ${color}cc 0%, ${color}55 28%, transparent 62%)` }}
+      />
+
+      {/* Rayos girando detrás */}
+      <div
+        className="absolute inset-0 animate-burst opacity-60"
         style={{
-          background: mine
-            ? 'radial-gradient(circle at 45% 50%, rgba(224,242,254,0.45) 0%, transparent 60%)'
-            : 'radial-gradient(circle at 55% 50%, rgba(254,226,226,0.45) 0%, transparent 60%)'
+          background: `repeating-conic-gradient(from 0deg at 50% 55%, ${color}00 0deg 8deg, ${color}99 8deg 10deg)`
         }}
       />
 
-      <div className="relative h-full flex flex-col items-center justify-center gap-2 px-4">
-        <div className={`flex items-end gap-2 ${mine ? '' : 'flex-row-reverse'}`}>
+      {/* Líneas de velocidad */}
+      <div
+        className="absolute inset-0 animate-speed opacity-70"
+        style={{
+          backgroundImage: mine
+            ? `repeating-linear-gradient(105deg, ${color}66 0 5px, transparent 5px 26px)`
+            : `repeating-linear-gradient(75deg, ${color}66 0 5px, transparent 5px 26px)`
+        }}
+      />
+
+      {/* Chispas subiendo */}
+      {SPARKS.map((left, index) => (
+        <span
+          key={left}
+          className="absolute bottom-0 w-1 h-3 animate-rise"
+          style={{
+            left: `${left}%`,
+            background: color,
+            animationDelay: `${index * 0.18}s`,
+            boxShadow: `0 0 6px ${color}`
+          }}
+        />
+      ))}
+
+      {/* Destello de entrada */}
+      <div className="absolute inset-0 bg-white animate-flash" />
+
+      {/* Oscuro arriba y abajo, como un plano de cine */}
+      <div className="absolute inset-x-0 top-0 h-6 bg-slate-950" />
+      <div className="absolute inset-x-0 bottom-0 h-6 bg-slate-950" />
+
+      <div className="relative h-full flex flex-col items-center justify-center gap-3 px-4">
+        <div className={`flex items-end gap-2 animate-shakeHard ${mine ? '' : 'flex-row-reverse'}`}>
           <PixelTrainer
             gender={gender}
             outfit={outfit}
             pointing
-            className="w-16 h-[5.5rem] sm:w-20 sm:h-28 animate-zoomIn"
+            className="w-14 h-20 sm:w-16 sm:h-[5.5rem] animate-zoomIn"
+
           />
           <img
             src={sprite}
             alt=""
-            className="w-40 h-40 sm:w-52 sm:h-52 object-contain drop-shadow-[0_6px_0_rgba(0,0,0,0.5)] animate-zoomIn"
-            style={{ animationDelay: '0.1s' }}
+            className="w-40 h-40 sm:w-56 sm:h-56 object-contain animate-zoomIn"
+            style={{ filter: `drop-shadow(0 0 6px ${color}) drop-shadow(0 0 18px ${color}) drop-shadow(0 4px 0 rgba(0,0,0,0.6))` }}
           />
         </div>
 
-        <div className="bg-black/80 border-4 border-white/70 shadow-[6px_6px_0_rgba(0,0,0,0.6)] px-4 py-3 text-center">
-          <p className="text-white font-black text-[10px] leading-loose mb-2">
-            {mine ? `¡${name}, usa` : `${name} usa`} <span className="text-yellow-300">{move.name}</span>!
-          </p>
-          <div className="flex justify-center">
-            <TypeBadge type={move.type} small />
+        {/* Cartel con el nombre, con barra de color al lado */}
+        <div className="flex items-stretch shadow-[6px_6px_0_rgba(0,0,0,0.7)]">
+          <div className="w-2" style={{ background: color }} />
+          <div className="bg-slate-950/90 border-y-4 border-r-4 border-white/70 px-4 py-3 text-center">
+            <p className="text-white/70 text-[8px] leading-loose">{mine ? 'TU POKÉMON' : 'RIVAL'}</p>
+            <p className="text-white font-black text-[11px] leading-loose">{name}</p>
+            <p className="font-black text-sm leading-loose" style={{ color }}>
+              {move.name}
+            </p>
+            <p className="text-white/60 text-[8px] leading-loose">{TYPE_NAMES[move.type] || move.type}</p>
           </div>
         </div>
       </div>

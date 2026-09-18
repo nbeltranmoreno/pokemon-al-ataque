@@ -42,6 +42,15 @@ export const TYPE_COLORS = {
   fairy: 'bg-pink-400'
 };
 
+// El mismo color de cada tipo pero en hexadecimal, para los efectos de los ataques
+export const TYPE_HEX = {
+  normal: '#a8a29e', fire: '#f97316', water: '#3b82f6', electric: '#facc15',
+  grass: '#22c55e', ice: '#22d3ee', fighting: '#b91c1c', poison: '#a855f7',
+  ground: '#d97706', flying: '#818cf8', psychic: '#ec4899', bug: '#84cc16',
+  rock: '#a16207', ghost: '#6d28d9', dragon: '#4f46e5', dark: '#404040',
+  steel: '#94a3b8', fairy: '#f472b6'
+};
+
 // TYPE_CHART[tipoDelAtaque][tipoDelDefensor] = multiplicador (los que faltan valen 1)
 const TYPE_CHART = {
   normal: { rock: 0.5, ghost: 0, steel: 0.5 },

@@ -62,6 +62,25 @@ export default {
           '60%': { transform: 'scale(1.08)', opacity: '1' },
           '100%': { transform: 'scale(1)', opacity: '1' }
         },
+        rise: {
+          '0%': { transform: 'translateY(0) scaleY(1)', opacity: '0' },
+          '20%': { opacity: '1' },
+          '100%': { transform: 'translateY(-140px) scaleY(2)', opacity: '0' }
+        },
+        burst: {
+          '0%': { transform: 'rotate(0deg) scale(1.6)' },
+          '100%': { transform: 'rotate(360deg) scale(1.6)' }
+        },
+        flash: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' }
+        },
+        shakeHard: {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '25%': { transform: 'translate(-4px, 2px)' },
+          '50%': { transform: 'translate(3px, -3px)' },
+          '75%': { transform: 'translate(-2px, 3px)' }
+        },
         camera: {
           '0%, 100%': { transform: 'scale(1.06) translate(0px, 0px)' },
           '50%': { transform: 'scale(1.12) translate(-6px, -3px)' }
@@ -86,6 +105,10 @@ export default {
         twinkle: 'twinkle 2.5s ease-in-out infinite',
         shimmer: 'shimmer 2.2s ease-in-out infinite',
         smoke: 'smoke 4s ease-in-out infinite',
+        burst: 'burst 3.5s linear infinite',
+        rise: 'rise 1.1s ease-out infinite',
+        flash: 'flash 0.45s ease-out',
+        shakeHard: 'shakeHard 0.4s ease-in-out infinite',
         speed: 'speed 0.5s linear infinite',
         speedSlow: 'speed 1.1s linear infinite',
         zoomIn: 'zoomIn 0.45s ease-out',
