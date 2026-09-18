@@ -80,6 +80,7 @@ export default function App() {
         storyFighter={opponent ? { pokemonId: opponent.myPokemonId, level: opponent.myLevel } : null}
         scene={opponent?.bg}
         gender={save.gender}
+        outfit={save.outfit}
         onFinish={outcome => {
           finishBattle({
             ...outcome,
@@ -133,6 +134,7 @@ export default function App() {
         team={save.team}
         username={save.username}
         gender={save.gender}
+        outfit={save.outfit}
         onBack={() => setScreen('menu')}
       />
     );
@@ -183,7 +185,7 @@ export default function App() {
             🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
-            <PixelTrainer gender={save.gender} className="w-7 h-9" />
+            <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-7 h-9" />
             <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
           </div>
           <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>

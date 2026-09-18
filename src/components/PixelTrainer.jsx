@@ -4,6 +4,8 @@
 // c = gorra, C = gorra en sombra, h = pelo, H = pelo en sombra
 // j = ropa, J = ropa en sombra, k = mochila o cinturón, p = pantalón o falda, P = sombra, b = botas
 
+import { getOutfit } from '../data/outfits';
+
 // Centra cada fila para que todas midan 16 píxeles
 const row = (pixels) => {
   const left = Math.floor((16 - pixels.length) / 2);
@@ -123,11 +125,18 @@ const SPRITES = {
   girl: { front: GIRL_FRONT, back: GIRL_BACK }
 };
 
-export default function PixelTrainer({ gender = 'boy', view = 'front', pointing = false, className = 'w-10 h-12' }) {
+export default function PixelTrainer({
+  gender = 'boy',
+  outfit = 'clasico',
+  view = 'front',
+  pointing = false,
+  className = 'w-10 h-12'
+}) {
   const set = SPRITES[gender === 'girl' ? 'girl' : 'boy'];
   const base = view === 'back' ? set.back : set.front;
   const rows = pointing ? point(base) : base;
-  const palette = COLORS[gender === 'girl' ? 'girl' : 'boy'];
+  // La ropa elegida pinta encima de los colores base
+  const palette = { ...COLORS[gender === 'girl' ? 'girl' : 'boy'], ...getOutfit(outfit).colors };
 
   return (
     <svg viewBox="0 0 16 20" className={className} shapeRendering="crispEdges" aria-hidden="true">

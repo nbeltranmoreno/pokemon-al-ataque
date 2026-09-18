@@ -17,7 +17,8 @@ const emptySave = {
   storyStage: 0,
   tutorialSeen: false,
   username: '',
-  gender: 'boy'
+  gender: 'boy',
+  outfit: 'clasico'
 };
 
 const readSave = () => {
@@ -55,10 +56,11 @@ export const useGame = () => {
       tutorialSeen: prev.tutorialSeen,
       username: prev.username,
       gender: prev.gender,
+      outfit: prev.outfit,
       team
     }));
 
-  const setTrainer = (username, gender) => update({ username, gender });
+  const setTrainer = (username, gender, outfit) => update({ username, gender, outfit });
 
   // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
   const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false, xpAward = 0 }) => {
@@ -181,7 +183,7 @@ export const useGame = () => {
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
   const resetGame = () =>
-    update(prev => ({ ...emptySave, tutorialSeen: true, username: prev.username, gender: prev.gender }));
+    update(prev => ({ ...emptySave, tutorialSeen: true, username: prev.username, gender: prev.gender, outfit: prev.outfit }));
 
   return {
     save,

@@ -47,6 +47,7 @@ export default function BattleScreen({
   storyFighter,
   scene,
   gender = 'boy',
+  outfit = 'clasico',
   onFinish
 }) {
   const [team, setTeam] = useState(() => initialTeam.map(clone));
@@ -390,6 +391,7 @@ export default function BattleScreen({
             {/* Tu entrenador: señala al Pokémon cuando le mandas atacar */}
             <PixelTrainer
               gender={gender}
+              outfit={outfit}
               view="back"
               pointing={attacker === 'player'}
               className="w-14 h-16 sm:w-16 sm:h-20 mb-5"

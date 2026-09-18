@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { OUTFITS } from '../data/outfits';
 import PixelTrainer from './PixelTrainer';
+import PixelBackground from './PixelBackground';
 
 const PATTERN = /^[a-zA-Z0-9_]{3,16}$/;
 
 /**
- * Nombre de entrenador y si eres chico o chica
- * El muñeco elegido sale en los combates y tu rival lo ve en Online
+ * Crear tu entrenador: chico o chica, conjunto de ropa y nombre
+ * El muñeco elegido sale en los combates y lo ve tu rival en Online
  */
 export default function UsernameSetup({ onSave }) {
   const { user, logout } = useAuth();
   const [name, setName] = useState(user?.displayName?.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 16) || '');
   const [gender, setGender] = useState('boy');
+  const [outfit, setOutfit] = useState('clasico');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -20,29 +23,31 @@ export default function UsernameSetup({ onSave }) {
       setError('De 3 a 16 caracteres: letras sin acentos, números o _');
       return;
     }
-    onSave(name, gender);
+    onSave(name, gender, outfit);
   };
 
-  const option = (value, label) => (
-    <button
-      type="button"
-      onClick={() => setGender(value)}
-      className={`flex-1 border-4 p-3 transition ${
-        gender === value ? 'bg-yellow-300/25 border-yellow-300' : 'bg-white/10 border-white/20 hover:bg-white/20'
-      }`}
-    >
-      <PixelTrainer gender={value} className="w-14 h-16 mx-auto" />
-      <p className="text-white font-black text-[10px] mt-2 leading-loose">{label}</p>
-    </button>
-  );
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-800 via-purple-900 to-slate-900 p-4 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white/10 border-4 border-white/40 shadow-[8px_8px_0_rgba(0,0,0,0.5)] p-5">
-        <h2 className="text-white font-black text-sm text-center leading-loose mb-2">Tu entrenador</h2>
-        <p className="text-white/80 text-[10px] leading-loose text-center mb-5">
+    <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
+      <PixelBackground name="pueblo" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/70 to-slate-900/90" />
+
+      <div className="relative max-w-md w-full bg-white/10 border-4 border-white/40 shadow-[8px_8px_0_rgba(0,0,0,0.5)] p-5">
+        <h2 className="text-white font-black text-sm text-center leading-loose mb-1">Tu entrenador</h2>
+        <p className="text-white/80 text-[10px] leading-loose text-center mb-4">
           Así te verá tu rival en los combates Online
         </p>
+
+        {/* Cómo va quedando */}
+        <div className="flex justify-center gap-6 bg-black/30 border-4 border-white/20 p-3 mb-4">
+          <div className="text-center">
+            <PixelTrainer gender={gender} outfit={outfit} className="w-16 h-20 mx-auto" />
+            <p className="text-white/60 text-[9px] mt-1">de frente</p>
+          </div>
+          <div className="text-center">
+            <PixelTrainer gender={gender} outfit={outfit} view="back" className="w-16 h-20 mx-auto" />
+            <p className="text-white/60 text-[9px] mt-1">de espaldas</p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -53,8 +58,40 @@ export default function UsernameSetup({ onSave }) {
 
           {/* Chico o chica */}
           <div className="flex gap-3">
-            {option('boy', 'Chico')}
-            {option('girl', 'Chica')}
+            {[['boy', 'Chico'], ['girl', 'Chica']].map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setGender(value)}
+                className={`flex-1 border-4 py-3 font-black text-[10px] text-white transition ${
+                  gender === value ? 'bg-yellow-300/25 border-yellow-300' : 'bg-white/10 border-white/20 hover:bg-white/20'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Conjuntos de ropa */}
+          <div>
+            <p className="text-white/80 text-[10px] leading-loose mb-2">Elige tu ropa</p>
+            <div className="grid grid-cols-4 gap-2">
+              {OUTFITS.map(option => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setOutfit(option.id)}
+                  className={`border-4 p-1 transition ${
+                    outfit === option.id
+                      ? 'bg-yellow-300/25 border-yellow-300'
+                      : 'bg-white/10 border-white/20 hover:bg-white/20'
+                  }`}
+                >
+                  <PixelTrainer gender={gender} outfit={option.id} className="w-10 h-12 mx-auto" />
+                  <p className="text-white text-[8px] font-black text-center truncate leading-loose">{option.name}</p>
+                </button>
+              ))}
+            </div>
           </div>
 
           <input
@@ -63,10 +100,9 @@ export default function UsernameSetup({ onSave }) {
             onChange={(e) => setName(e.target.value)}
             placeholder="Nombre de usuario"
             maxLength={16}
-            autoFocus
             autoCapitalize="none"
             autoCorrect="off"
-            className="w-full bg-black/30 border-4 border-white/30 text-white placeholder-white/40 px-4 py-3 outline-none focus:border-yellow-300 text-center"
+            className="w-full bg-black/40 border-4 border-white/30 text-white placeholder-white/40 px-4 py-3 outline-none focus:border-yellow-300 text-center"
           />
 
           <button

@@ -100,16 +100,24 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col justify-center py-6">
         {/* Viñeta del cuento: el dibujo del sitio con los Pokémon encima */}
         <div className="relative h-52 sm:h-72 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] overflow-hidden mb-4">
-          <PixelScene name={step.bg} className="absolute inset-0 w-full h-full" />
-          <div className="absolute inset-0 flex items-end justify-center gap-3 pb-3">
-            {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index) => (
-              <img
-                key={`${id}-${index}`}
-                src={spriteUrl(id)}
-                alt=""
-                className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_4px_0_rgba(0,0,0,0.5)] animate-float"
-                style={{ animationDelay: `${index * 0.4}s` }}
-              />
+          <div className="absolute inset-0 animate-camera">
+            <PixelScene name={step.bg} className="absolute inset-0 w-full h-full" />
+          </div>
+          {/* Los Pokémon pisan el suelo: su sombra debajo y un pasito al andar */}
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 pb-3">
+            {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index, todos) => (
+              <div key={`${id}-${index}`} className="flex flex-col items-center">
+                <img
+                  src={spriteUrl(id)}
+                  alt=""
+                  className={`object-contain animate-walk ${
+                    todos.length === 1 ? 'w-36 h-36 sm:w-48 sm:h-48' : 'w-24 h-24 sm:w-32 sm:h-32'
+                  }`}
+                  style={{ animationDelay: `${index * 0.2}s` }}
+                />
+                <div className="w-14 h-1.5 bg-black/55" />
+                <div className="w-9 h-1 bg-black/35" />
+              </div>
             ))}
           </div>
         </div>

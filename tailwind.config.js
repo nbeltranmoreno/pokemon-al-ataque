@@ -49,6 +49,10 @@ export default {
           '0%': { transform: 'translateY(2px)', opacity: '0.7' },
           '100%': { transform: 'translateY(-7px)', opacity: '0' }
         },
+        walk: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-1.5px)' }
+        },
         camera: {
           '0%, 100%': { transform: 'scale(1.06) translate(0px, 0px)' },
           '50%': { transform: 'scale(1.12) translate(-6px, -3px)' }
@@ -74,6 +78,7 @@ export default {
         shimmer: 'shimmer 2.2s ease-in-out infinite',
         smoke: 'smoke 4s ease-in-out infinite',
         camera: 'camera 24s ease-in-out infinite',
+        walk: 'walk 0.7s ease-in-out infinite',
         fill: 'fill 2.5s ease-in-out infinite'
       }
     }
