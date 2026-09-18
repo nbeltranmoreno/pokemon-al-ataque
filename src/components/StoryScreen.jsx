@@ -89,6 +89,10 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
           ))}
         </div>
 
+        {creator && (
+          <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-1 flex-shrink-0">CREADOR</span>
+        )}
+
         <button
           onClick={() => setAskRestart(true)}
           className="ml-auto bg-black/30 text-white font-black px-3 py-2 border-4 border-white/40 active:translate-y-1 transition text-[9px] flex-shrink-0"
