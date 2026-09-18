@@ -123,7 +123,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
             <PixelScene name={step.bg} className="absolute inset-0 w-full h-full" />
           </div>
           {/* Los Pokémon pisan el suelo: su sombra debajo y un pasito al andar */}
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 pb-3">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 pb-2">
             {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index, todos) => (
               <div key={`${id}-${index}`} className="flex flex-col items-center">
                 <img
@@ -134,7 +134,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
                   }`}
                   style={{ animationDelay: `${index * 0.2}s` }}
                 />
-                <div className="w-14 h-1.5 bg-black/55" />
+                <div className="w-14 h-1.5 bg-black/55 -mt-4" />
                 <div className="w-9 h-1 bg-black/35" />
               </div>
             ))}

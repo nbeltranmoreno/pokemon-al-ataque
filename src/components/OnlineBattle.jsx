@@ -186,7 +186,7 @@ export default function OnlineBattle({
                 alt={foe.name}
                 className={`w-24 h-24 sm:w-32 sm:h-32 object-contain ${canFloat(foe.speciesId, foe.types) ? 'animate-float' : ''} ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
               />
-              <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
+              <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto -mt-5" />
             </div>
             {/* El entrenador rival, tal como se ha puesto él */}
             <PixelTrainer gender={foeGender} outfit={foeOutfit} className="w-10 h-14 mt-2" />
@@ -204,7 +204,7 @@ export default function OnlineBattle({
                 alt={me.name}
                 className={`w-28 h-28 sm:w-36 sm:h-36 object-contain ${me.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
               />
-              <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
+              <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto -mt-5" />
               <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
             </div>
           </div>

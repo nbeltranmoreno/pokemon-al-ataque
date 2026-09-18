@@ -396,7 +396,7 @@ export default function BattleScreen({
               </span>
             )}
             {/* Plataforma del rival */}
-            <Platform className="w-28 h-7 mx-auto -mt-1" />
+            <Platform className="w-28 h-7 mx-auto -mt-6" />
             <p className="text-center text-[9px] font-black text-red-300 mt-1">RIVAL</p>
           </div>
         </div>
@@ -427,7 +427,7 @@ export default function BattleScreen({
                 </span>
               )}
               {/* Tu plataforma, más cerca de la cámara */}
-              <Platform className="w-36 h-9 mx-auto -mt-1" />
+              <Platform className="w-36 h-9 mx-auto -mt-7" />
               <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
             </div>
           </div>
