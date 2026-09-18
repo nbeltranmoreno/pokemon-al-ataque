@@ -141,12 +141,22 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
           </div>
         </div>
 
-        {/* Cuadro de texto */}
-        <div className="bg-black/70 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] p-4">
-          {step.type === 'battle' && (
-            <p className="text-red-300 font-black text-[10px] leading-loose mb-2">⚔️ {step.trainer}</p>
+        {/* Cuadro de texto, con el nombre de quien habla */}
+        <div>
+          {step.speaker && (
+            <div className="inline-flex items-stretch">
+              <div className="w-1.5 bg-yellow-300" />
+              <p className="bg-black/85 border-t-4 border-r-4 border-white/50 px-3 py-1 text-yellow-300 font-black text-[10px] leading-loose">
+                {step.speaker}
+              </p>
+            </div>
           )}
-          <p className="text-white text-[10px] leading-loose">{step.text}</p>
+          <div className="bg-black/75 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] p-4">
+            {step.type === 'battle' && (
+              <p className="text-red-300 font-black text-[10px] leading-loose mb-2">⚔️ {step.trainer}</p>
+            )}
+            <p className="text-white text-[10px] leading-loose">{step.text}</p>
+          </div>
         </div>
 
         {/* Botón para seguir o para pelear */}
