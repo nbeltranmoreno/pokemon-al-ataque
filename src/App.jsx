@@ -165,7 +165,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
       <PixelBackground />
-      <div className="absolute inset-0 bg-red-950/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/25 via-slate-900/55 to-slate-900/85" />
 
       <div className="relative max-w-md w-full py-6">
         <header className="text-center mb-6">

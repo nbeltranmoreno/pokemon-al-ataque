@@ -11,7 +11,7 @@ export default function StartScreen({ user, username, hasGame, onStart }) {
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
       <PixelBackground />
-      <div className="absolute inset-0 bg-slate-900/55" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/45 to-slate-900/85" />
 
       <div className="relative max-w-md w-full text-center">
         <img src={ball} alt="" className="w-24 h-24 mx-auto mb-6 animate-float" />

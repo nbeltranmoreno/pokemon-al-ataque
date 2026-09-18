@@ -19,6 +19,7 @@ import { VERSION } from '../version';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
+import PixelBackground from './PixelBackground';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -324,8 +325,11 @@ export default function BattleScreen({
   const moves = usableMoves(active).length > 0 ? active.moves : [{ ...STRUGGLE, ppLeft: Infinity }];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-500 via-blue-700 to-indigo-900 p-4 flex flex-col">
-      <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
+    <div className="relative min-h-screen overflow-hidden p-4 flex flex-col">
+      <PixelBackground />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 via-slate-900/35 to-slate-900/70" />
+
+      <div className="relative max-w-2xl w-full mx-auto flex-1 flex flex-col">
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
           <div className="bg-black/30 backdrop-blur rounded-2xl p-3 border-2 border-white/20 flex-1 max-w-[55%]">
