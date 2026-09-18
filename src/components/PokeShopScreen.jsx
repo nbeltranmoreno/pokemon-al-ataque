@@ -7,6 +7,7 @@ import { POKE_SHOP, trainerExp } from '../data/pokeshop';
 import { loadSpecies, spriteUrl } from '../services/pokeapi';
 import { createFighter } from '../game/battle';
 import { useLang } from '../i18n';
+import { precioHoy, porcentajeDeHoy } from '../data/ofertas';
 
 /**
  * Tienda de Pokémon: se desbloquean con la experiencia de entrenador
@@ -20,6 +21,7 @@ export default function PokeShopScreen({ save, onBuy, onBack }) {
   const [comprando, setComprando] = useState(null);
 
   const exp = trainerExp(save);
+  const rebaja = porcentajeDeHoy();
 
   const comprar = async (entry) => {
     if (busy) return;
@@ -56,6 +58,13 @@ export default function PokeShopScreen({ save, onBuy, onBack }) {
           <h1 className="text-base font-black text-white leading-loose">🏪 {t('Tienda de Pokémon')}</h1>
         </div>
 
+        {rebaja > 0 && (
+          <div className="bg-red-500 text-white border-4 border-yellow-300 shadow-[6px_6px_0_rgba(0,0,0,0.45)] p-3 text-center mb-4 animate-pulse">
+            <p className="font-black text-xs leading-loose">{t('🎉 ¡HOY HAY OFERTA! -{0}% en todo', rebaja)}</p>
+            <p className="text-[9px] leading-loose">{t('Solo por hoy. Mañana puede que no haya.')}</p>
+          </div>
+        )}
+
         <div className="bg-yellow-400 text-yellow-900 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] p-3 text-center mb-4">
           <p className="font-black text-xs leading-loose">{t('🪙 {0} monedas · ⭐ {1} de experiencia', save.coins, exp)}</p>
           <p className="text-[9px] leading-loose">
@@ -78,7 +87,8 @@ export default function PokeShopScreen({ save, onBuy, onBack }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {POKE_SHOP.map(entry => {
             const abierto = exp >= entry.exp;
-            const alcanza = save.coins >= entry.price;
+            const precio = precioHoy(entry.price);
+            const alcanza = save.coins >= precio;
 
             return (
               <div
@@ -106,7 +116,14 @@ export default function PokeShopScreen({ save, onBuy, onBack }) {
                     disabled={!alcanza || busy}
                     className="w-full mt-1 bg-yellow-400 text-yellow-900 font-black text-[9px] py-2 border-4 border-yellow-900 shadow-[3px_3px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition disabled:opacity-40"
                   >
-                    🪙 {entry.price}
+                    {rebaja > 0 ? (
+                      <>
+                        <span className="line-through opacity-70 block text-[8px]">🪙 {entry.price}</span>
+                        🪙 {precio}
+                      </>
+                    ) : (
+                      <>🪙 {precio}</>
+                    )}
                   </button>
                 ) : (
                   <p className="w-full mt-1 bg-black/40 text-white/70 font-black text-[9px] py-2 border-4 border-white/20 leading-loose">
@@ -129,7 +146,7 @@ export default function PokeShopScreen({ save, onBuy, onBack }) {
           icon={<PokeSprite src={spriteUrl(comprando.id)} alt="" className="w-16 h-16 object-contain" />}
           tone="info"
           title={t('¿Comprar a {0}?', comprando.name)}
-          confirmText={t('Sí, comprar por {0} 🪙', comprando.price)}
+          confirmText={t('Sí, comprar por {0} 🪙', precioHoy(comprando.price))}
           onConfirm={() => comprar(comprando)}
           onCancel={() => setComprando(null)}
         >

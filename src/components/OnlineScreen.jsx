@@ -17,7 +17,7 @@ const makeCode = () => Array.from({ length: 5 }, () => LETTERS[Math.floor(Math.r
  * Modo online: los dos navegadores se conectan directamente entre sí (WebRTC)
  * Uno crea la sala y dice el código, el otro lo escribe
  */
-export default function OnlineScreen({ team, username, gender = 'boy', outfit = 'clasico', coins = 0, onCoins, onBack }) {
+export default function OnlineScreen({ team, username, gender = 'boy', outfit = 'clasico', coins = 0, onCoins, onPlayed, onBack }) {
   const { t } = useLang();
   const [mode, setMode] = useState(null); // 'host' | 'guest'
   const [code, setCode] = useState('');
@@ -138,6 +138,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
         foeOutfit={foeOutfit}
         bet={Math.min(bet, foeBet, coins)}
         onCoins={onCoins}
+        onPlayed={onPlayed}
         onExit={backToLobby}
       />
     );

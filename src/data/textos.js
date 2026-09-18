@@ -69,6 +69,40 @@ export const DICCIONARIO = {
   '⏱ +{0} 🪙 gratis cada 10 minutos · las siguientes en {1} min': '⏱ +{0} 🪙 free every 10 minutes · next ones in {1} min',
   '¡+{0} monedas por seguir jugando!': '+{0} coins for playing!',
 
+  'En Misiones hay cosas para hacer cada día y logros. Al terminarlas tocas "Cobrar" y te dan monedas.':
+    'In Missions there are things to do each day plus achievements. When you finish one you tap "Claim" and get coins.',
+
+  // --- Ofertas ---
+  '🎉 ¡HOY HAY OFERTA! -{0}% en todo': '🎉 TODAY IS A SALE DAY! -{0}% on everything',
+  'Solo por hoy. Mañana puede que no haya.': 'Only for today. Tomorrow there might not be one.',
+  'Algunos días las tiendas están de oferta y todo cuesta menos. Mira el cartel rojo.':
+    'Some days the shops are on sale and everything costs less. Look for the red sign.',
+
+  // --- Misiones ---
+  'Misiones': 'Missions',
+  'Hoy': 'Today',
+  'Logros': 'Achievements',
+  'Cobrar': 'Claim',
+  '{0} de {1} · premio 🪙 {2}': '{0} of {1} · reward 🪙 {2}',
+  'Las misiones de hoy vuelven a empezar mañana. Los logros se cobran una sola vez.':
+    "Today's missions start again tomorrow. Achievements are claimed only once.",
+  'Entra a jugar hoy': 'Open the game today',
+  'Ten el juego abierto 30 minutos hoy': 'Keep the game open for 30 minutes today',
+  'Gana 3 Peleas hoy': 'Win 3 Battles today',
+  'Atrapa 1 Pokémon hoy': 'Catch 1 Pokémon today',
+  'Pasa 5 escenas de la Historia hoy': 'Get through 5 Story scenes today',
+  'Juega 1 combate Online hoy': 'Play 1 Online battle today',
+  'Mira el tutorial entero': 'Watch the whole tutorial',
+  'Prueba el juego en inglés': 'Try the game in English',
+  'Entra a jugar 3 días distintos': 'Play on 3 different days',
+  'Compra 3 objetos en la Tienda': 'Buy 3 items in the Shop',
+  'Vende 1 Pokémon': 'Sell 1 Pokémon',
+  'Atrapa 10 Pokémon': 'Catch 10 Pokémon',
+  'Consigue 3 medallas': 'Earn 3 badges',
+  'Sube un Pokémon al nivel 20': 'Raise a Pokémon to level 20',
+  'Ten 6 Pokémon en el equipo': 'Have 6 Pokémon on your team',
+  'Termina la Historia': 'Finish the Story',
+
   // --- Menú y pantallas ---
   '¡A jugar!': "Let's play!",
   '¡A la aventura!': 'Off on the adventure!',
@@ -323,8 +357,8 @@ export const DICCIONARIO = {
     'To catch, tap ⚪ Poké Ball inside a Battle. You cannot do it in Practice or in the Story.',
   'Cae más fácil si le queda poca vida y si tu Pokémon tiene más nivel. Si la Poké Ball falla, el salvaje te ataca y puede debilitarte.':
     'It falls more easily when it has little health left and your Pokémon is a higher level. If the Poké Ball fails, the wild one attacks and can make you faint.',
-  'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo", apostando en Online y 5 gratis cada 10 minutos.':
-    'This is how you earn coins: 60 per Story trainer, 15 for winning a Battle, selling Pokémon in "My team", betting Online, and 5 free every 10 minutes.',
+  'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon, apostando en Online, 5 gratis cada 10 minutos y cobrando Misiones.':
+    'This is how you earn coins: 60 per Story trainer, 15 for winning a Battle, selling Pokémon, betting Online, 5 free every 10 minutes, and claiming Missions.',
   'En la Tienda compras objetos. Los Pokémon solo se curan con objetos: ya no hay curación gratis.':
     'In the Shop you buy items. Pokémon are only healed with items: there is no free healing any more.',
   'En "Mi equipo" usas los objetos, ves la experiencia, cambias con los guardados y vendes Pokémon con el botón 🪙.':

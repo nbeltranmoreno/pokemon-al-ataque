@@ -173,7 +173,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo", apostando en Online y 5 gratis cada 10 minutos.',
+    caption: 'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon, apostando en Online, 5 gratis cada 10 minutos y cobrando Misiones.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <p className="text-yellow-300 font-black text-sm">🪙 1240</p>
@@ -183,11 +183,54 @@ const STEPS = [
             ['⚔️', '+15'],
             ['🪙', '+229'],
             ['🌐', '+50'],
-            ['⏱', '+5']
+            ['⏱', '+5'],
+            ['🎯', '+40']
           ].map(([donde, cuanto]) => (
             <div key={donde} className="flex items-center justify-between bg-black/40 border-2 border-white/20 px-2 py-1">
               <span className="text-white text-[10px] leading-loose">{donde}</span>
               <span className="text-yellow-300 text-[9px] font-black">{cuanto}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  },
+  {
+    caption: 'En Misiones hay cosas para hacer cada día y logros. Al terminarlas tocas "Cobrar" y te dan monedas.',
+    scene: (
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
+        <div className="w-64 space-y-1">
+          {[
+            ['👋', 100, '+15'],
+            ['⚔️', 66, '+40'],
+            ['📅', 33, '+80']
+          ].map(([icono, porcentaje, premio]) => (
+            <div key={icono} className="flex items-center gap-2 bg-black/40 border-2 border-white/20 px-2 py-1">
+              <span className="text-sm">{icono}</span>
+              <div className="flex-1">
+                <Bar percent={porcentaje} color={porcentaje === 100 ? 'bg-yellow-300' : 'bg-cyan-400'} />
+              </div>
+              <span className="text-yellow-300 text-[9px] font-black">{premio}</span>
+            </div>
+          ))}
+        </div>
+        <p className="text-yellow-300 text-[9px] font-black animate-pulse">Cobrar</p>
+      </div>
+    )
+  },
+  {
+    caption: 'Algunos días las tiendas están de oferta y todo cuesta menos. Mira el cartel rojo.',
+    scene: (
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
+        <div className="bg-red-500 border-4 border-yellow-300 px-3 py-2 animate-pulse">
+          <p className="text-white font-black text-[10px] leading-loose">🎉 -30%</p>
+        </div>
+        <div className="flex gap-2">
+          {['pocion', 'revivir', 'caramelo'].map(id => (
+            <div key={id} className="bg-white/10 border-2 border-white/30 p-1 text-center">
+              <PixelItem id={id} className="w-7 h-7 mx-auto" />
+              <p className="text-white/50 text-[8px] line-through leading-loose">🪙 120</p>
+              <p className="text-yellow-300 text-[9px] font-black leading-loose">🪙 84</p>
             </div>
           ))}
         </div>

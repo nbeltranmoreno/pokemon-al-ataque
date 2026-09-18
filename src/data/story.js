@@ -1,8 +1,8 @@
 // La Historia completa, repartida en capítulos para que sea más fácil seguir añadiendo
-import { CAPITULOS_1_A_3 } from './story/capitulos1a3';
-import { CAPITULOS_4_A_6 } from './story/capitulos4a6';
-import { CAPITULOS_7_A_8 } from './story/capitulos7a8';
-import { CAPITULOS_9_A_10 } from './story/capitulos9a10';
+import { CAPITULOS_1_A_3 } from './story/capitulos1a3.js';
+import { CAPITULOS_4_A_6 } from './story/capitulos4a6.js';
+import { CAPITULOS_7_A_8 } from './story/capitulos7a8.js';
+import { CAPITULOS_9_A_10 } from './story/capitulos9a10.js';
 
 export const STORY = [
   ...CAPITULOS_1_A_3,

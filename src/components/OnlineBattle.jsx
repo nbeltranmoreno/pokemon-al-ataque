@@ -55,6 +55,7 @@ export default function OnlineBattle({
   foeOutfit = 'clasico',
   bet = 0,
   onCoins,
+  onPlayed,
   onExit
 }) {
   const { t } = useLang();
@@ -108,10 +109,12 @@ export default function OnlineBattle({
   // La apuesta se cobra una sola vez, cuando ya hay resultado
   const paidRef = useRef(false);
   useEffect(() => {
-    if (!result || paidRef.current || !bet || !onCoins) return;
+    if (!result || paidRef.current) return;
     paidRef.current = true;
-    onCoins(result === 'win' ? bet : -bet);
-  }, [result, bet, onCoins]);
+    if (bet && onCoins) onCoins(result === 'win' ? bet : -bet);
+    // El combate cuenta para las misiones del día
+    if (onPlayed) onPlayed();
+  }, [result, bet, onCoins, onPlayed]);
 
   const addLine = (line) => {
     setLog(prev => [...prev.slice(-8), { key: line.key, args: line.args, side: line.side === mineKey ? 'me' : line.side === 'info' ? 'info' : 'foe' }]);

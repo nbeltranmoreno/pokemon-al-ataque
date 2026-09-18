@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import PokeSprite from './components/PokeSprite';
-import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut, Sparkles } from 'lucide-react';
+import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut, Sparkles, Target } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import UsernameSetup from './components/UsernameSetup';
@@ -15,6 +15,7 @@ import StoryScreen from './components/StoryScreen';
 import PracticeSelect from './components/PracticeSelect';
 import ShopScreen from './components/ShopScreen';
 import PokeShopScreen from './components/PokeShopScreen';
+import MissionsScreen from './components/MissionsScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import CaughtLog from './components/CaughtLog';
@@ -27,14 +28,15 @@ import { isCreator } from './data/creator';
 import { VERSION } from './version';
 import { COINS_PER_BLOCK, idleBlocks, msToNextCoins } from './game/idle';
 import { useLang } from './i18n';
+import { misionesListas } from './data/misiones';
 import LangButton from './components/LangButton';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, payIdleCoins, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, payIdleCoins, registrarEntrada, cobrarMision, notarOnline, notarIngles, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
@@ -64,6 +66,19 @@ export default function App() {
     // save.lastCoinAt cambia al cobrar, así que el reloj se reengancha solo
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [save.lastCoinAt]);
+
+  // Al abrir el juego se apunta que hoy has entrado
+  useEffect(() => {
+    registrarEntrada();
+    // Solo hace falta al empezar
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Quien prueba el juego en inglés se lleva su logro
+  useEffect(() => {
+    if (lang === 'en') notarIngles();
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
 
   // El cartelito de las monedas se va solo
   useEffect(() => {
@@ -183,6 +198,7 @@ export default function App() {
         outfit={save.outfit}
         coins={save.coins}
         onCoins={addCoins}
+        onPlayed={notarOnline}
         onBack={() => setScreen('menu')}
       />
     );
@@ -216,6 +232,10 @@ export default function App() {
     );
   }
 
+  if (screen === 'missions') {
+    return <MissionsScreen save={save} onCobrar={cobrarMision} onBack={() => setScreen('menu')} />;
+  }
+
   if (screen === 'pokeshop') {
     return <PokeShopScreen save={save} onBuy={buyPokemon} onBack={() => setScreen('menu')} />;
   }
@@ -234,6 +254,7 @@ export default function App() {
   }
 
   const canFight = save.team.some(pokemon => pokemon.hp > 0);
+  const listas = misionesListas(save); // misiones terminadas sin cobrar
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
@@ -372,6 +393,19 @@ export default function App() {
               {t('Tu equipo está debilitado. Compra Pociones o Revivir en la Tienda y úsalos en "Mi equipo".')}
             </p>
           )}
+
+          <button
+            onClick={() => setScreen('missions')}
+            className={`${menuButton} bg-lime-400 text-lime-900 border-lime-900 relative`}
+          >
+            <Target className="w-5 h-5" />
+            {t('Misiones')}
+            {listas > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black w-6 h-6 flex items-center justify-center border-2 border-white">
+                {listas}
+              </span>
+            )}
+          </button>
 
           <button
             onClick={() => setScreen('shop')}
