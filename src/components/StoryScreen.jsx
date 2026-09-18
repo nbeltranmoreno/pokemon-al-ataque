@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PokeSprite from './PokeSprite';
 import { ArrowLeft, Swords, Play } from 'lucide-react';
 import { STORY, MEDALS, medalsWon } from '../data/story';
+import { STORY_EN } from '../data/story/en';
 import { spriteUrl } from '../services/pokeapi';
 import PixelScene from './PixelScene';
 import PixelDialog from './PixelDialog';
@@ -24,9 +25,15 @@ const BACKGROUNDS = {
  * y de vez en cuando un combate con el Pokémon que presta la historia
  */
 export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack, creator = false }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [askRestart, setAskRestart] = useState(false);
-  const step = STORY[stage];
+
+  // En inglés se cuenta la misma escena con el texto traducido
+  const escena = STORY[stage];
+  const enIngles = lang === 'en' ? STORY_EN[stage] : null;
+  const step = escena && enIngles
+    ? { ...escena, speaker: enIngles.speaker, text: enIngles.text, trainer: enIngles.trainer || escena.trainer }
+    : escena;
   const won = medalsWon(stage);
 
   // Final de la historia
