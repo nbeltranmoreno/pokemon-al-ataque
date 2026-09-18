@@ -22,6 +22,8 @@ export default function OnlineBattle({
   foeTrainer,
   foeGender = 'boy',
   foeOutfit = 'clasico',
+  bet = 0,
+  onCoins,
   onExit
 }) {
   const [me, setMe] = useState(myStart);
@@ -44,6 +46,14 @@ export default function OnlineBattle({
   const rivalMoveRef = useRef(null);
 
   const mineKey = isHost ? 'host' : 'guest';
+
+  // La apuesta se cobra una sola vez, cuando ya hay resultado
+  const paidRef = useRef(false);
+  useEffect(() => {
+    if (!result || paidRef.current || !bet || !onCoins) return;
+    paidRef.current = true;
+    onCoins(result === 'win' ? bet : -bet);
+  }, [result, bet, onCoins]);
 
   // Aplicar el resultado de un turno (lo calcula siempre el anfitrión)
   const applyState = (state) => {
@@ -162,6 +172,10 @@ export default function OnlineBattle({
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 via-blue-800 to-indigo-900 p-4">
       <div className="max-w-2xl mx-auto">
+        {bet > 0 && (
+          <p className="text-yellow-300 font-black text-[10px] text-center mb-2 leading-loose">🪙 Apuesta: {bet} monedas</p>
+        )}
+
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
           <div className="bg-black/30 border-4 border-white/20 p-2 sm:p-3 flex-1 min-w-0 sm:max-w-[55%]">
@@ -245,6 +259,11 @@ export default function OnlineBattle({
               <p className="text-white font-black text-xs leading-loose mb-3">
                 {result === 'win' ? '¡Ganaste el combate online! 🎉' : 'Perdiste el combate online 😵'}
               </p>
+              {bet > 0 && (
+                <p className={`font-black text-[10px] leading-loose mb-3 ${result === 'win' ? 'text-yellow-300' : 'text-red-300'}`}>
+                  {result === 'win' ? `Te llevas ${bet} monedas` : `Pierdes ${bet} monedas`}
+                </p>
+              )}
               <button
                 onClick={leave}
                 className="bg-yellow-400 text-yellow-900 font-black px-6 py-3 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"

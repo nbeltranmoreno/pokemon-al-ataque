@@ -15,7 +15,7 @@ const makeCode = () => Array.from({ length: 5 }, () => LETTERS[Math.floor(Math.r
  * Modo online: los dos navegadores se conectan directamente entre sí (WebRTC)
  * Uno crea la sala y dice el código, el otro lo escribe
  */
-export default function OnlineScreen({ team, username, gender = 'boy', outfit = 'clasico', onBack }) {
+export default function OnlineScreen({ team, username, gender = 'boy', outfit = 'clasico', coins = 0, onCoins, onBack }) {
   const [mode, setMode] = useState(null); // 'host' | 'guest'
   const [code, setCode] = useState('');
   const [input, setInput] = useState('');
@@ -26,6 +26,8 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
   const [foeTrainer, setFoeTrainer] = useState('');
   const [foeGender, setFoeGender] = useState('boy');
   const [foeOutfit, setFoeOutfit] = useState('clasico');
+  const [bet, setBet] = useState(0); // monedas que pones tú
+  const [foeBet, setFoeBet] = useState(0); // las que pone el rival
   const peerRef = useRef(null);
 
   // Tu luchador: el primero con vida, curado para que el combate sea justo
@@ -38,7 +40,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
 
   // Intercambiar Pokémon en cuanto haya conexión
   const setupConnection = (connection) => {
-    const sayHello = () => connection.send({ type: 'hello', fighter: me, trainer: username, gender, outfit });
+    const sayHello = () => connection.send({ type: 'hello', fighter: me, trainer: username, gender, outfit, bet });
 
     if (connection.open) {
       sayHello();
@@ -52,6 +54,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
         setFoeTrainer(data.trainer || 'Rival');
         setFoeGender(data.gender === 'girl' ? 'girl' : 'boy');
         setFoeOutfit(data.outfit || 'clasico');
+        setFoeBet(Math.max(0, Number(data.bet) || 0));
         setConn(connection);
         setStatus('');
       }
@@ -129,6 +132,8 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
         foeTrainer={foeTrainer}
         foeGender={foeGender}
         foeOutfit={foeOutfit}
+        bet={Math.min(bet, foeBet, coins)}
+        onCoins={onCoins}
         onExit={backToLobby}
       />
     );
@@ -173,6 +178,39 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
 
         {!mode && (
           <div className="space-y-3">
+            {/* Apuesta: el que gana se lleva las monedas del otro */}
+            <div className="bg-white/10 border-4 border-white/30 p-3">
+              <p className="text-white/80 text-[10px] leading-loose mb-1">
+                ¿Cuántas monedas apuestas? Puedes poner 0.
+              </p>
+              <p className="text-white/60 text-[9px] leading-loose mb-2">
+                Tienes 🪙 {coins}. El que gana se lleva las del otro. Si vosotros apostáis distinto, vale la más baja.
+              </p>
+              <input
+                type="number"
+                min="0"
+                max={coins}
+                value={bet}
+                onChange={(e) => setBet(Math.max(0, Math.min(coins, Number(e.target.value) || 0)))}
+                className="w-full bg-black/30 border-4 border-white/30 text-white px-4 py-3 mb-2 outline-none focus:border-yellow-300 text-center"
+              />
+              <div className="flex gap-2">
+                {[0, 10, 25, 50].map(value => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setBet(Math.min(coins, value))}
+                    disabled={value > coins}
+                    className={`flex-1 border-4 py-2 text-[10px] font-black text-white transition disabled:opacity-40 ${
+                      bet === Math.min(coins, value) ? 'bg-yellow-300/30 border-yellow-300' : 'bg-white/10 border-white/20'
+                    }`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               onClick={createRoom}
               className="w-full bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3"

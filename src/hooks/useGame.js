@@ -179,6 +179,9 @@ export const useGame = () => {
     });
   };
 
+  // Sumar o quitar monedas (apuestas de los combates Online)
+  const addCoins = (amount) => update(prev => ({ ...prev, coins: Math.max(0, prev.coins + amount) }));
+
   // Desbloqueo secreto del modo creador (tocando la versión varias veces)
   const toggleCreatorMode = () => update(prev => ({ ...prev, creatorMode: !prev.creatorMode }));
 
@@ -238,6 +241,7 @@ export const useGame = () => {
     advanceStory,
     restartStory,
     addPokemon,
+    addCoins,
     toggleCreatorMode,
     markTutorialSeen,
     wipeSave,
