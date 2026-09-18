@@ -7,10 +7,14 @@ const fecha = (ms) => {
 };
 
 /**
- * Historial de capturas: todos los Pokémon que has atrapado, del último al primero
+ * Mi colección: los Pokémon que tienes ahora (equipo y caja) y el historial de capturas
  */
-export default function CaughtLog({ caughtLog = [], onBack }) {
-  const distintos = new Set(caughtLog.map(entry => entry.speciesId)).size;
+export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack }) {
+  const coleccion = [
+    ...team.map(pokemon => ({ ...pokemon, donde: 'En el equipo' })),
+    ...box.map(pokemon => ({ ...pokemon, donde: 'Guardado' }))
+  ];
+  const distintos = new Set(coleccion.map(pokemon => pokemon.speciesId)).size;
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4">
@@ -26,39 +30,71 @@ export default function CaughtLog({ caughtLog = [], onBack }) {
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-base font-black text-white leading-loose">📒 Historial de capturas</h1>
+            <h1 className="text-base font-black text-white leading-loose">📒 Mi colección</h1>
             <p className="text-white/70 text-[9px] leading-loose">
-              {caughtLog.length} capturas · {distintos} Pokémon distintos
+              {coleccion.length} Pokémon · {distintos} distintos · {caughtLog.length} capturas
             </p>
           </div>
         </div>
 
-        {caughtLog.length === 0 ? (
-          <div className="bg-black/30 border-4 border-white/20 p-6 text-center">
-            <p className="text-5xl mb-3">⚪</p>
-            <p className="text-white font-black text-[10px] leading-loose mb-2">Todavía no has atrapado a ninguno</p>
-            <p className="text-white/70 text-[9px] leading-loose">
-              Lanza Poké Balls en Práctica o en Peleas. Cuanta menos vida le quede al salvaje, y cuanto más fuerte sea
-              tu Pokémon, más fácil es atraparlo.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {caughtLog.map((entry, index) => (
+        {/* Los que tienes ahora mismo */}
+        <section className="mb-6">
+          <h2 className="text-white font-black text-xs mb-2">Los tuyos</h2>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {coleccion.map(pokemon => (
               <div
-                key={`${entry.at}-${index}`}
-                className="bg-white/10 border-4 border-white/20 p-2 flex items-center gap-3"
+                key={pokemon.uid}
+                className={`bg-white/10 border-4 p-2 ${
+                  pokemon.donde === 'En el equipo' ? 'border-green-300/70' : 'border-white/20'
+                } ${pokemon.hp <= 0 ? 'opacity-50 grayscale' : ''}`}
               >
-                <img src={entry.sprite} alt="" className="w-12 h-12 object-contain flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-black text-[10px] truncate leading-loose">{entry.name}</p>
-                  <p className="text-white/60 text-[9px]">Nivel {entry.level} · {fecha(entry.at)}</p>
-                </div>
-                <span className="text-white/40 text-[9px] font-black flex-shrink-0">Nº {entry.speciesId}</span>
+                <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
+                <p className="text-white text-[9px] font-black text-center truncate leading-loose">{pokemon.name}</p>
+                <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
+                <p
+                  className={`text-[8px] text-center leading-loose ${
+                    pokemon.donde === 'En el equipo' ? 'text-green-300' : 'text-white/50'
+                  }`}
+                >
+                  {pokemon.donde}
+                </p>
               </div>
             ))}
           </div>
-        )}
+        </section>
+
+        {/* Historial de capturas */}
+        <section>
+          <h2 className="text-white font-black text-xs mb-2">Historial de capturas</h2>
+          {caughtLog.length === 0 ? (
+            <div className="bg-black/30 border-4 border-white/20 p-5 text-center">
+              <p className="text-4xl mb-2">⚪</p>
+              <p className="text-white font-black text-[10px] leading-loose mb-2">Todavía no has atrapado a ninguno</p>
+              <p className="text-white/70 text-[9px] leading-loose">
+                Lanza Poké Balls en Práctica o en Peleas. Cuanta menos vida le quede al salvaje, y cuanto más fuerte
+                sea tu Pokémon, más fácil es atraparlo.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {caughtLog.map((entry, index) => (
+                <div
+                  key={`${entry.at}-${index}`}
+                  className="bg-white/10 border-4 border-white/20 p-2 flex items-center gap-3"
+                >
+                  <img src={entry.sprite} alt="" className="w-12 h-12 object-contain flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-black text-[10px] truncate leading-loose">{entry.name}</p>
+                    <p className="text-white/60 text-[9px]">
+                      Nivel {entry.level} · {fecha(entry.at)}
+                    </p>
+                  </div>
+                  <span className="text-white/40 text-[9px] font-black flex-shrink-0">Nº {entry.speciesId}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

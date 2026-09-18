@@ -147,7 +147,14 @@ export default function App() {
   }
 
   if (screen === 'history') {
-    return <CaughtLog caughtLog={save.caughtLog} onBack={() => setScreen('menu')} />;
+    return (
+      <CaughtLog
+        team={save.team}
+        box={save.box}
+        caughtLog={save.caughtLog}
+        onBack={() => setScreen('menu')}
+      />
+    );
   }
 
   if (screen === 'shop') {
@@ -307,7 +314,7 @@ export default function App() {
             className={`${menuButton} bg-white/20 backdrop-blur text-white border-white/40`}
           >
             <BookOpen className="w-5 h-5" />
-            Historial de capturas
+            Mi colección
           </button>
 
           <button
