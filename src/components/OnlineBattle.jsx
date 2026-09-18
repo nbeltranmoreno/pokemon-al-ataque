@@ -164,14 +164,12 @@ export default function OnlineBattle({
       <div className="max-w-2xl mx-auto">
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
-          <div className="bg-black/30 border-4 border-white/20 p-3 flex-1 max-w-[55%]">
+          <div className="bg-black/30 border-4 border-white/20 p-2 sm:p-3 flex-1 min-w-0 sm:max-w-[55%]">
             <span className="inline-block bg-red-500 text-white text-[9px] font-black px-2 py-0.5 mb-1 truncate max-w-full">
               🎮 {foeTrainer || 'RIVAL'}
             </span>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-white font-black text-[10px] truncate">{foe.name}</p>
-              <span className="text-white/90 text-[9px] font-bold whitespace-nowrap">Nv. {foe.level}</span>
-            </div>
+            <p className="text-white font-black text-[10px] truncate leading-loose">{foe.name}</p>
+            <p className="text-white/90 text-[9px] font-bold">Nv. {foe.level}</p>
             <HealthBar hp={foe.hp} maxHp={foe.maxHp} />
             <div className="flex gap-1 mt-2 flex-wrap">
               {foe.types.map(type => (
@@ -184,12 +182,12 @@ export default function OnlineBattle({
               <img
                 src={foe.sprites.front}
                 alt={foe.name}
-                className={`w-24 h-24 sm:w-32 sm:h-32 object-contain ${canFloat(foe.speciesId, foe.types) ? 'animate-float' : ''} ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+                className={`w-20 h-20 sm:w-32 sm:h-32 object-contain ${canFloat(foe.speciesId, foe.types) ? 'animate-float' : ''} ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
               />
               <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto -mt-5" />
             </div>
             {/* El entrenador rival, tal como se ha puesto él */}
-            <PixelTrainer gender={foeGender} outfit={foeOutfit} className="w-10 h-14 mt-2" />
+            <PixelTrainer gender={foeGender} outfit={foeOutfit} className="w-8 h-11 sm:w-10 sm:h-14 mt-2" />
           </div>
         </div>
 
@@ -197,23 +195,21 @@ export default function OnlineBattle({
         <div className="flex items-end justify-between gap-4 mt-2">
           <div className="flex items-end gap-1 flex-shrink-0">
             {/* Tu entrenador: señala cuando ya has elegido ataque */}
-            <PixelTrainer gender={gender} outfit={outfit} view="back" pointing={Boolean(chosen)} className="w-16 h-[5.5rem] mb-4" />
+            <PixelTrainer gender={gender} outfit={outfit} view="back" pointing={Boolean(chosen)} className="w-11 h-16 sm:w-16 sm:h-[5.5rem] mb-3" />
             <div>
               <img
                 src={me.sprites.back}
                 alt={me.name}
-                className={`w-28 h-28 sm:w-36 sm:h-36 object-contain ${me.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+                className={`w-20 h-20 sm:w-36 sm:h-36 object-contain ${me.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
               />
               <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto -mt-5" />
               <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
             </div>
           </div>
-          <div className="bg-black/30 border-4 border-white/20 p-3 flex-1 max-w-[55%]">
+          <div className="bg-black/30 border-4 border-white/20 p-2 sm:p-3 flex-1 min-w-0 sm:max-w-[55%]">
             <span className="inline-block bg-green-500 text-white text-[9px] font-black px-2 py-0.5 mb-1">TU POKÉMON</span>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-white font-black text-[10px] truncate">{me.name}</p>
-              <span className="text-white/90 text-[9px] font-bold whitespace-nowrap">Nv. {me.level}</span>
-            </div>
+            <p className="text-white font-black text-[10px] truncate leading-loose">{me.name}</p>
+            <p className="text-white/90 text-[9px] font-bold">Nv. {me.level}</p>
             <HealthBar hp={me.hp} maxHp={me.maxHp} />
           </div>
         </div>

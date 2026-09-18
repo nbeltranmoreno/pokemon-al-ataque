@@ -364,14 +364,12 @@ export default function BattleScreen({
       <div className="relative max-w-2xl w-full mx-auto flex-1 flex flex-col">
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
-          <div className="bg-black/30 backdrop-blur rounded-2xl p-3 border-2 border-white/20 flex-1 max-w-[55%]">
+          <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <span className="inline-block bg-red-500 text-white text-[10px] font-black px-2 py-0.5 mb-1 truncate max-w-full">
               {opponent ? opponent.trainer.toUpperCase() : 'RIVAL SALVAJE'}
             </span>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-white font-black truncate">{enemy.name}</p>
-              <span className="text-white/90 text-xs font-bold whitespace-nowrap">Nv. {enemy.level}</span>
-            </div>
+            <p className="text-white font-black text-[10px] truncate leading-loose">{enemy.name}</p>
+            <p className="text-white/90 text-[9px] font-bold">Nv. {enemy.level}</p>
             <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} />
             <div className="flex gap-1 mt-2 flex-wrap">
               {enemy.types.map(type => (
@@ -383,7 +381,7 @@ export default function BattleScreen({
             <img
               src={enemy.sprites.front}
               alt={enemy.name}
-              className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
+              className={`w-24 h-24 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
                 shake === 'enemy'
                   ? 'animate-hit'
                   : attacker === 'enemy'
@@ -399,7 +397,7 @@ export default function BattleScreen({
               </span>
             )}
             {/* Plataforma del rival */}
-            <Platform className="w-28 h-7 mx-auto -mt-6" />
+            <Platform className="w-20 sm:w-28 h-6 sm:h-7 mx-auto -mt-5 sm:-mt-6" />
             <p className="text-center text-[9px] font-black text-red-300 mt-1">RIVAL</p>
           </div>
         </div>
@@ -413,14 +411,14 @@ export default function BattleScreen({
               outfit={outfit}
               view="back"
               pointing={attacker === 'player'}
-              className="w-16 h-[5.5rem] sm:w-20 sm:h-28 mb-4"
+              className="w-11 h-16 sm:w-20 sm:h-28 mb-3 sm:mb-4"
             />
 
             <div className="relative">
               <img
                 src={active.sprites.back}
                 alt={active.name}
-                className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
+                className={`w-24 h-24 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
                   shake === 'player' ? 'animate-hit' : attacker === 'player' ? 'animate-lunge' : ''
                 } ${active.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
               />
@@ -430,18 +428,16 @@ export default function BattleScreen({
                 </span>
               )}
               {/* Tu plataforma, más cerca de la cámara */}
-              <Platform className="w-36 h-9 mx-auto -mt-7" />
+              <Platform className="w-24 sm:w-36 h-7 sm:h-9 mx-auto -mt-5 sm:-mt-7" />
               <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
             </div>
           </div>
-          <div className="bg-black/30 backdrop-blur rounded-2xl p-3 border-2 border-white/20 flex-1 max-w-[55%]">
+          <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">
               TU POKÉMON
             </span>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-white font-black truncate">{active.name}</p>
-              <span className="text-white/90 text-xs font-bold whitespace-nowrap">Nv. {active.level}</span>
-            </div>
+            <p className="text-white font-black text-[10px] truncate leading-loose">{active.name}</p>
+            <p className="text-white/90 text-[9px] font-bold">Nv. {active.level}</p>
             <HealthBar hp={active.hp} maxHp={active.maxHp} />
             <div className="h-1.5 w-full bg-black/30 rounded-full overflow-hidden mt-1">
               <div
