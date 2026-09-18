@@ -144,11 +144,17 @@ export default function BattleScreen({
     setTimeout(() => setShake(null), 400);
     setTimeout(() => setPopup(null), 1000);
 
-    const remaining = Math.max(0, defender.hp - hit.amount);
+    let remaining = Math.max(0, defender.hp - hit.amount);
+
+    // Si tu Pokémon estaba a vida llena, un solo golpe no puede tumbarlo: aguanta con 1 PS
+    const aguanta = targetSide === 'player' && defender.hp >= defender.maxHp && remaining <= 0;
+    if (aguanta) remaining = 1;
+
     if (hit.critical) addLog('¡Un golpe crítico!', side);
     const text = effectivenessText(hit.effectiveness);
     if (text) addLog(text, side);
     addLog(`${defenderLabel} perdió ${hit.amount} PS.`, side);
+    if (aguanta) addLog(`¡${defender.name} aguantó el golpe con 1 PS!`, 'info');
 
     await delay(700);
     return remaining;

@@ -60,6 +60,8 @@ export default function App() {
     return <UsernameSetup onSave={setTrainer} />;
   }
 
+  const creator = isCreator(user) || save.creatorMode;
+
   // Solo quien empieza de nuevo elige equipo
   if (save.team.length === 0) {
     return <TeamSelect onReady={team => startWithTeam(team)} />;
@@ -109,6 +111,7 @@ export default function App() {
         stage={Math.min(save.storyStage, STORY.length)}
         onAdvance={advanceStory}
         onRestart={restartStory}
+        creator={creator}
         onFight={step => {
           setOpponent(step);
           setScreen('battle');
@@ -149,7 +152,7 @@ export default function App() {
   }
 
   // Pantalla del creador: solo para su cuenta
-  if (screen === 'creator' && isCreator(user)) {
+  if (screen === 'creator' && creator) {
     return <CreatorPicker onAdd={addPokemon} onBack={() => setScreen('menu')} />;
   }
 
@@ -189,7 +192,6 @@ export default function App() {
   }
 
   const canFight = save.team.some(pokemon => pokemon.hp > 0);
-  const creator = isCreator(user) || save.creatorMode;
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">

@@ -21,7 +21,7 @@ const BACKGROUNDS = {
  * Historia en forma de cuento: escenas con dibujo y texto que se van pasando,
  * y de vez en cuando un combate con el Pokémon que presta la historia
  */
-export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack }) {
+export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack, creator = false }) {
   const [askRestart, setAskRestart] = useState(false);
   const step = STORY[stage];
   const won = medalsWon(stage);
@@ -184,6 +184,17 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
               <Swords className="w-5 h-5" />
               ¡Luchar!
             </button>
+
+            {/* Solo el creador puede saltarse el combate */}
+            {creator && (
+              <button
+                onClick={onAdvance}
+                className="w-full mt-2 bg-fuchsia-600 text-white font-black py-3 border-4 border-fuchsia-200 shadow-[4px_4px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition text-[10px]"
+                title="Solo lo ves tú"
+              >
+                ⭐ Saltar este combate
+              </button>
+            )}
           </div>
         ) : (
           <button
