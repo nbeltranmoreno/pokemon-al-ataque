@@ -21,6 +21,7 @@ import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
 import PixelBackground from './PixelBackground';
 import PixelScene from './PixelScene';
+import AttackCutIn from './AttackCutIn';
 import { canFloat } from '../data/floaters';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -63,6 +64,7 @@ export default function BattleScreen({
   const [shake, setShake] = useState(null); // 'player' | 'enemy'
   const [popup, setPopup] = useState(null); // daño flotante: { side, amount }
   const [attacker, setAttacker] = useState(null); // quién está embistiendo: 'player' | 'enemy'
+  const [cutIn, setCutIn] = useState(null); // corte de ataque estilo anime
   const [error, setError] = useState('');
   const loadedRef = useRef(false);
 
@@ -117,6 +119,11 @@ export default function BattleScreen({
     const side = mine ? 'me' : 'foe';
     const attackerLabel = mine ? `Tu ${attacker.name}` : foeLabel(attacker.name);
     const defenderLabel = mine ? foeLabel(defender.name) : `Tu ${defender.name}`;
+
+    // Corte estilo anime antes de golpear
+    setCutIn({ side: mine ? 'player' : 'enemy', sprite: attacker.sprites.front, name: attacker.name, move });
+    await delay(mine ? 1100 : 800);
+    setCutIn(null);
 
     addLog(`¡${attackerLabel} usó ${move.name}!`, side);
     setAttacker(mine ? 'player' : 'enemy');
@@ -343,6 +350,8 @@ export default function BattleScreen({
         {scene ? <PixelScene name={scene} className="absolute inset-0 w-full h-full" /> : <PixelBackground />}
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 via-slate-900/35 to-slate-900/70" />
+      {cutIn && <AttackCutIn {...cutIn} gender={gender} outfit={outfit} />}
+
       {/* Viñeteado, como el encuadre de una cámara */}
       <div
         className="absolute inset-0 pointer-events-none"

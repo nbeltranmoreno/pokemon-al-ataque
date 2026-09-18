@@ -53,6 +53,15 @@ export default {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-1.5px)' }
         },
+        speed: {
+          '0%': { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '120px 0' }
+        },
+        zoomIn: {
+          '0%': { transform: 'scale(0.55)', opacity: '0' },
+          '60%': { transform: 'scale(1.08)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
+        },
         camera: {
           '0%, 100%': { transform: 'scale(1.06) translate(0px, 0px)' },
           '50%': { transform: 'scale(1.12) translate(-6px, -3px)' }
@@ -77,6 +86,9 @@ export default {
         twinkle: 'twinkle 2.5s ease-in-out infinite',
         shimmer: 'shimmer 2.2s ease-in-out infinite',
         smoke: 'smoke 4s ease-in-out infinite',
+        speed: 'speed 0.5s linear infinite',
+        speedSlow: 'speed 1.1s linear infinite',
+        zoomIn: 'zoomIn 0.45s ease-out',
         camera: 'camera 24s ease-in-out infinite',
         walk: 'walk 0.7s ease-in-out infinite',
         fill: 'fill 2.5s ease-in-out infinite'
