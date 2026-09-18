@@ -115,8 +115,9 @@ export const levelUpFighter = (fighter) =>
   gainXp(fighter, Math.max(1, xpToNextLevel(fighter.level) - fighter.xp)).fighter;
 
 // Cuanto más debilitado esté el rival, más fácil es capturarlo
-export const catchChance = (target) => {
+export const catchChance = (target, myLevel = target.level) => {
   const missingHp = 1 - target.hp / target.maxHp;
-  const byLevel = target.level < 8 ? 0.1 : 0;
-  return Math.min(0.9, 0.2 + missingHp * 0.6 + byLevel);
+  // Cuanto más fuerte seas tú frente al salvaje, más fácil es atraparlo
+  const levelEdge = Math.max(-0.2, Math.min(0.3, (myLevel - target.level) * 0.03));
+  return Math.max(0.05, Math.min(0.95, 0.2 + missingHp * 0.6 + levelEdge));
 };

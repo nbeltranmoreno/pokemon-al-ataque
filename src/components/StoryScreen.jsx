@@ -122,22 +122,31 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
           <div className="absolute inset-0 animate-camera">
             <PixelScene name={step.bg} className="absolute inset-0 w-full h-full" />
           </div>
-          {/* Los Pokémon pisan el suelo: su sombra debajo y un pasito al andar */}
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 pb-2">
-            {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index, todos) => (
-              <div key={`${id}-${index}`} className="flex flex-col items-center">
-                <img
-                  src={spriteUrl(id)}
-                  alt=""
-                  className={`object-contain ${canFloat(id) ? 'animate-float' : ''} ${
-                    todos.length === 1 ? 'w-36 h-36 sm:w-48 sm:h-48' : 'w-24 h-24 sm:w-32 sm:h-32'
-                  }`}
-                  style={{ animationDelay: `${index * 0.2}s` }}
-                />
-                <div className="w-14 h-1.5 bg-black/55 -mt-4" />
-                <div className="w-9 h-1 bg-black/35" />
-              </div>
-            ))}
+          {/* Los Pokémon pisan el suelo: los sprites traen hueco transparente abajo,
+              así que se bajan un poco y la sombra se pone justo en los pies */}
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 pb-1">
+            {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index, todos) => {
+              const flota = canFloat(id);
+
+              return (
+                <div key={`${id}-${index}`} className="flex flex-col items-center">
+                  <img
+                    src={spriteUrl(id)}
+                    alt=""
+                    className={`object-contain ${flota ? 'animate-float' : ''} ${
+                      todos.length === 1 ? 'w-36 h-36 sm:w-48 sm:h-48' : 'w-24 h-24 sm:w-32 sm:h-32'
+                    }`}
+                    style={{
+                      animationDelay: `${index * 0.2}s`,
+                      // Los que no vuelan se bajan hasta apoyar los pies
+                      transform: flota ? undefined : 'translateY(11%)'
+                    }}
+                  />
+                  <div className={`w-14 h-1.5 bg-black/55 ${flota ? '-mt-2' : '-mt-1'}`} />
+                  <div className="w-9 h-1 bg-black/35" />
+                </div>
+              );
+            })}
           </div>
         </div>
 

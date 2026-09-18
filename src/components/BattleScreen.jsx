@@ -47,6 +47,7 @@ export default function BattleScreen({
   opponent,
   wildId,
   storyFighter,
+  mode = 'practice',
   scene,
   gender = 'boy',
   outfit = 'clasico',
@@ -70,7 +71,8 @@ export default function BattleScreen({
 
   const active = team[activeIndex];
   // En Práctica tu Pokémon nunca se debilita: aguanta siempre con 1 PS
-  const practice = !opponent;
+  // En Peleas el daño es de verdad y sí puede debilitarse
+  const practice = mode === 'practice';
 
   // Buscar rival al empezar: el Pokémon del entrenador, o uno salvaje en Práctica
   useEffect(() => {
@@ -209,6 +211,7 @@ export default function BattleScreen({
       await delay(600);
 
       // La Práctica es entrenamiento libre: no da experiencia ni monedas
+      // En Peleas se gana poca experiencia; en la Historia la reparte el juego
       if (practice) {
         addLog('En Práctica no se gana experiencia ni monedas.', 'info');
         endBattle(team.map((p, i) => (i === activeIndex ? meNow() : p)), 'win');
@@ -216,7 +219,7 @@ export default function BattleScreen({
         return;
       }
 
-      const xp = xpReward(enemy);
+      const xp = mode === 'wild' ? Math.max(4, Math.round(xpReward(enemy) / 4)) : xpReward(enemy);
       const { fighter, levelsGained } = gainXp(meNow(), xp);
       addLog(`${fighter.name} ganó ${xp} puntos de experiencia.`);
       levelsGained.forEach(level => addLog(`¡${fighter.name} subió al nivel ${level}!`));
@@ -261,7 +264,7 @@ export default function BattleScreen({
 
   const throwBall = async () => {
     // A los Pokémon de otro entrenador no se les puede lanzar una Poké Ball
-    if (opponent) {
+    if (mode === 'story') {
       addLog('¡No puedes capturar el Pokémon de otro entrenador!');
       return;
     }
@@ -277,7 +280,7 @@ export default function BattleScreen({
     addLog('¡Lanzaste una Poké Ball!');
     await delay(900);
 
-    if (Math.random() < catchChance(enemy)) {
+    if (Math.random() < catchChance(enemy, active.level)) {
       addLog(`¡Atrapaste a ${enemy.name}!`);
       endBattle(team, 'caught', enemy);
       setBusy(false);

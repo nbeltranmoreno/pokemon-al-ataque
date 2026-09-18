@@ -15,6 +15,7 @@ import PracticeSelect from './components/PracticeSelect';
 import ShopScreen from './components/ShopScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
+import CaughtLog from './components/CaughtLog';
 import PixelEgg from './components/PixelEgg';
 import PixelTrainer from './components/PixelTrainer';
 import PixelBackground from './components/PixelBackground';
@@ -30,6 +31,7 @@ export default function App() {
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
+  const [battleMode, setBattleMode] = useState('practice'); // 'practice' (entrenar) o 'wild' (peleas de verdad)
   const [showTutorial, setShowTutorial] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -81,16 +83,17 @@ export default function App() {
         opponent={opponent}
         wildId={wildId}
         storyFighter={opponent ? { pokemonId: opponent.myPokemonId, level: opponent.myLevel } : null}
+        mode={opponent ? 'story' : battleMode}
         scene={opponent?.bg}
         gender={save.gender}
         outfit={save.outfit}
         onFinish={outcome => {
           finishBattle({
             ...outcome,
-            story: Boolean(opponent),
+            mode: opponent ? 'story' : battleMode,
             xpAward: opponent ? 20 + opponent.level * 12 : 0
           });
-          setScreen(opponent ? 'story' : 'practice');
+          setScreen(opponent ? 'story' : battleMode === 'wild' ? 'menu' : 'practice');
           setOpponent(null);
           setWildId(null);
         }}
@@ -141,6 +144,10 @@ export default function App() {
         onBack={() => setScreen('menu')}
       />
     );
+  }
+
+  if (screen === 'history') {
+    return <CaughtLog caughtLog={save.caughtLog} onBack={() => setScreen('menu')} />;
   }
 
   if (screen === 'shop') {
@@ -229,12 +236,29 @@ export default function App() {
           </button>
 
           <button
-            onClick={() => setScreen('practice')}
+            onClick={() => {
+              setBattleMode('practice');
+              setScreen('practice');
+            }}
             disabled={!canFight}
             className={`${menuButton} bg-yellow-400 text-yellow-900 border-yellow-900`}
           >
             <Swords className="w-5 h-5" />
             Práctica
+          </button>
+
+          <button
+            onClick={() => {
+              setBattleMode('wild');
+              setOpponent(null);
+              setWildId(null);
+              setScreen('battle');
+            }}
+            disabled={!canFight}
+            className={`${menuButton} bg-orange-500 text-white border-orange-900`}
+          >
+            <Swords className="w-5 h-5" />
+            Peleas
           </button>
 
           <button
@@ -276,6 +300,14 @@ export default function App() {
           >
             <Users className="w-5 h-5" />
             Mi equipo
+          </button>
+
+          <button
+            onClick={() => setScreen('history')}
+            className={`${menuButton} bg-white/20 backdrop-blur text-white border-white/40`}
+          >
+            <BookOpen className="w-5 h-5" />
+            Historial de capturas
           </button>
 
           <button

@@ -14,6 +14,7 @@ const emptySave = {
   balls: 10,
   coins: 50,
   inventory: {},
+  caughtLog: [],
   storyStage: 0,
   tutorialSeen: false,
   username: '',
@@ -63,19 +64,21 @@ export const useGame = () => {
   const setTrainer = (username, gender, outfit) => update({ username, gender, outfit });
 
   // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
-  const finishBattle = ({ team, result, caught, ballsUsed = 0, story = false, xpAward = 0 }) => {
+  // mode: 'story' (Historia), 'practice' (entrenamiento) o 'wild' (peleas de verdad)
+  const finishBattle = ({ team, result, caught, ballsUsed = 0, mode = 'practice', xpAward = 0 }) => {
     update(prev => {
       const won = result === 'win' || result === 'caught';
       const next = {
         ...prev,
-        // En la Historia peleas con un Pokémon prestado, así que tu equipo no cambia;
-        // en Práctica sale del combate como entró: sin daño y con los PP llenos
-        team: story ? prev.team : team.map(healFighter),
+        // Historia: peleas con un Pokémon prestado, tu equipo no cambia
+        // Práctica: sale como entró, sin daño y con los PP llenos
+        // Peleas: el daño y los PP gastados se quedan
+        team: mode === 'story' ? prev.team : mode === 'practice' ? team.map(healFighter) : team,
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
         // Monedas solo en la Historia
-        coins: prev.coins + (story ? (won ? 60 : 5) : 0)
+        coins: prev.coins + (mode === 'story' ? (won ? 60 : 5) : 0)
       };
 
       if (won) {
@@ -83,13 +86,24 @@ export const useGame = () => {
       }
 
       // Ganar en la Historia avanza el cuento y da experiencia a todo tu equipo
-      if (story && result === 'win') {
+      if (mode === 'story' && result === 'win') {
         next.storyStage = prev.storyStage + 1;
         next.team = prev.team.map(pokemon => gainXp(pokemon, xpAward).fighter);
       }
 
-      // El Pokémon capturado se une curado
+      // El Pokémon capturado se une curado y queda apuntado en el historial
       if (caught) {
+        next.caughtLog = [
+          {
+            speciesId: caught.speciesId,
+            name: caught.name,
+            level: caught.level,
+            sprite: caught.sprites.front,
+            at: Date.now()
+          },
+          ...(prev.caughtLog || [])
+        ].slice(0, 200);
+
         if (next.team.length < MAX_TEAM) {
           next.team = [...next.team, healFighter(caught)];
         } else {
