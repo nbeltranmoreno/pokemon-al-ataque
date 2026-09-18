@@ -60,18 +60,18 @@ export default function AttackCutIn({ side, sprite, name, move, gender = 'boy', 
       <div className="absolute inset-x-0 bottom-0 h-6 bg-slate-950" />
 
       <div className="relative h-full flex flex-col items-center justify-center gap-3 px-4">
-        <div className={`flex items-end gap-2 animate-shakeHard ${mine ? '' : 'flex-row-reverse'}`}>
+        <div className={`flex items-end gap-1 animate-zoomPush ${mine ? '' : 'flex-row-reverse'}`}>
           <PixelTrainer
             gender={gender}
             outfit={outfit}
             pointing
-            className="w-14 h-20 sm:w-16 sm:h-[5.5rem] animate-zoomIn"
+            className="w-20 h-28 sm:w-24 sm:h-[8.5rem] animate-zoomIn drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]"
 
           />
           <img
             src={sprite}
             alt=""
-            className="w-40 h-40 sm:w-56 sm:h-56 object-contain animate-zoomIn"
+            className="w-56 h-56 sm:w-72 sm:h-72 object-contain animate-shakeHard"
             style={{ filter: `drop-shadow(0 0 6px ${color}) drop-shadow(0 0 18px ${color}) drop-shadow(0 4px 0 rgba(0,0,0,0.6))` }}
           />
         </div>

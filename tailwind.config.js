@@ -67,6 +67,10 @@ export default {
           '20%': { opacity: '1' },
           '100%': { transform: 'translateY(-140px) scaleY(2)', opacity: '0' }
         },
+        zoomPush: {
+          '0%': { transform: 'scale(0.85)' },
+          '100%': { transform: 'scale(1.18)' }
+        },
         burst: {
           '0%': { transform: 'rotate(0deg) scale(1.6)' },
           '100%': { transform: 'rotate(360deg) scale(1.6)' }
@@ -106,6 +110,7 @@ export default {
         shimmer: 'shimmer 2.2s ease-in-out infinite',
         smoke: 'smoke 4s ease-in-out infinite',
         burst: 'burst 3.5s linear infinite',
+        zoomPush: 'zoomPush 1.2s ease-out forwards',
         rise: 'rise 1.1s ease-out infinite',
         flash: 'flash 0.45s ease-out',
         shakeHard: 'shakeHard 0.4s ease-in-out infinite',
