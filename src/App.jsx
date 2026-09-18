@@ -16,6 +16,7 @@ import ShopScreen from './components/ShopScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import CaughtLog from './components/CaughtLog';
+import CreatorPicker from './components/CreatorPicker';
 import PixelEgg from './components/PixelEgg';
 import PixelTrainer from './components/PixelTrainer';
 import PixelBackground from './components/PixelBackground';
@@ -26,7 +27,7 @@ import { VERSION } from './version';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, markTutorialSeen, wipeSave, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
@@ -144,6 +145,11 @@ export default function App() {
         onBack={() => setScreen('menu')}
       />
     );
+  }
+
+  // Pantalla del creador: solo para su cuenta
+  if (screen === 'creator' && isCreator(user)) {
+    return <CreatorPicker onAdd={addPokemon} onBack={() => setScreen('menu')} />;
   }
 
   if (screen === 'history') {
@@ -289,6 +295,17 @@ export default function App() {
             <ShoppingCart className="w-5 h-5" />
             Tienda
           </button>
+
+          {creator && (
+            <button
+              onClick={() => setScreen('creator')}
+              className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
+              title="Solo lo ves tú"
+            >
+              <Sparkles className="w-5 h-5" />
+              Coger Pokémon
+            </button>
+          )}
 
           {creator && (
             <button

@@ -178,6 +178,29 @@ export const useGame = () => {
     });
   };
 
+  // Añadir un Pokémon a la colección (lo usa el botón del creador)
+  const addPokemon = (fighter) => {
+    update(prev => {
+      const next = { ...prev };
+      if (next.team.length < MAX_TEAM) {
+        next.team = [...next.team, fighter];
+      } else {
+        next.box = [...next.box, fighter];
+      }
+      next.caughtLog = [
+        {
+          speciesId: fighter.speciesId,
+          name: fighter.name,
+          level: fighter.level,
+          sprite: fighter.sprites.front,
+          at: Date.now()
+        },
+        ...(prev.caughtLog || [])
+      ].slice(0, 200);
+      return next;
+    });
+  };
+
   // Volver a empezar el cuento desde la primera escena
   const restartStory = () => update({ storyStage: 0 });
 
@@ -210,6 +233,7 @@ export const useGame = () => {
     useItem,
     advanceStory,
     restartStory,
+    addPokemon,
     markTutorialSeen,
     wipeSave,
     resetGame
