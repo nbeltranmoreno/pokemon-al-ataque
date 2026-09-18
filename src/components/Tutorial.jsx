@@ -19,7 +19,7 @@ const STEPS = [
       <div className="relative w-full h-40">
         <img src={spriteUrl(1)} alt="" className="w-20 h-20 absolute top-0 right-6 animate-counter" />
         <span className="absolute top-0 right-24 text-red-400 font-black text-sm animate-pulse">-13</span>
-        <PixelTrainer gender="boy" pointing className="w-12 h-14 absolute bottom-2 left-0" />
+        <PixelTrainer gender="boy" pointing className="w-12 h-[4.25rem] absolute bottom-0 left-0" />
         <img src={back(4)} alt="" className="w-24 h-24 absolute bottom-0 left-12 animate-attack" />
         <span className="absolute bottom-6 left-36 text-2xl animate-attack">💥</span>
       </div>
@@ -156,9 +156,9 @@ const STEPS = [
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-6">
-          <PixelTrainer gender="boy" className="w-12 h-14" />
+          <PixelTrainer gender="boy" className="w-12 h-[4.25rem]" />
           <p className="text-white text-lg">⚔️</p>
-          <PixelTrainer gender="girl" className="w-12 h-14" />
+          <PixelTrainer gender="girl" className="w-12 h-[4.25rem]" />
         </div>
         <div className="bg-black/50 border-4 border-yellow-300 px-4 py-2">
           <p className="text-yellow-300 font-black text-sm tracking-widest">K7MPX</p>

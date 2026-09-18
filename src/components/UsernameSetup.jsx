@@ -40,11 +40,11 @@ export default function UsernameSetup({ onSave }) {
         {/* Cómo va quedando */}
         <div className="flex justify-center gap-6 bg-black/30 border-4 border-white/20 p-3 mb-4">
           <div className="text-center">
-            <PixelTrainer gender={gender} outfit={outfit} className="w-16 h-20 mx-auto" />
+            <PixelTrainer gender={gender} outfit={outfit} className="w-16 h-[5.5rem] mx-auto" />
             <p className="text-white/60 text-[9px] mt-1">de frente</p>
           </div>
           <div className="text-center">
-            <PixelTrainer gender={gender} outfit={outfit} view="back" className="w-16 h-20 mx-auto" />
+            <PixelTrainer gender={gender} outfit={outfit} view="back" className="w-16 h-[5.5rem] mx-auto" />
             <p className="text-white/60 text-[9px] mt-1">de espaldas</p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function UsernameSetup({ onSave }) {
                       : 'bg-white/10 border-white/20 hover:bg-white/20'
                   }`}
                 >
-                  <PixelTrainer gender={gender} outfit={option.id} className="w-10 h-12 mx-auto" />
+                  <PixelTrainer gender={gender} outfit={option.id} className="w-10 h-14 mx-auto" />
                   <p className="text-white text-[8px] font-black text-center truncate leading-loose">{option.name}</p>
                 </button>
               ))}

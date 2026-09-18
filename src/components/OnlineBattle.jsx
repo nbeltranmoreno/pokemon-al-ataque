@@ -189,7 +189,7 @@ export default function OnlineBattle({
               <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
             </div>
             {/* El entrenador rival, tal como se ha puesto él */}
-            <PixelTrainer gender={foeGender} outfit={foeOutfit} className="w-9 h-11 mt-2" />
+            <PixelTrainer gender={foeGender} outfit={foeOutfit} className="w-10 h-14 mt-2" />
           </div>
         </div>
 
@@ -197,7 +197,7 @@ export default function OnlineBattle({
         <div className="flex items-end justify-between gap-4 mt-2">
           <div className="flex items-end gap-1 flex-shrink-0">
             {/* Tu entrenador: señala cuando ya has elegido ataque */}
-            <PixelTrainer gender={gender} outfit={outfit} view="back" pointing={Boolean(chosen)} className="w-14 h-16 mb-5" />
+            <PixelTrainer gender={gender} outfit={outfit} view="back" pointing={Boolean(chosen)} className="w-16 h-[5.5rem] mb-4" />
             <div>
               <img
                 src={me.sprites.back}

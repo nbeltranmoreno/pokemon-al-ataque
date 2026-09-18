@@ -187,7 +187,7 @@ export default function App() {
             🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
-            <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-7 h-9" />
+            <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-8 h-11" />
             <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
           </div>
           <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>

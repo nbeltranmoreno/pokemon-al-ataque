@@ -159,7 +159,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
         {/* Con qué Pokémon peleas */}
         {me && (
           <div className="bg-white/10 border-4 border-white/30 p-3 flex items-center gap-3 mb-5">
-            <PixelTrainer gender={gender} outfit={outfit} className="w-9 h-11 flex-shrink-0" />
+            <PixelTrainer gender={gender} outfit={outfit} className="w-10 h-14 flex-shrink-0" />
             <img src={me.sprites.front} alt={me.name} className="w-16 h-16 object-contain flex-shrink-0" />
             <div className="min-w-0">
               <p className="text-white/70 text-[9px] leading-loose">Peleas con</p>

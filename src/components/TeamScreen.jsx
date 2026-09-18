@@ -54,7 +54,7 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-8 h-10 flex-shrink-0" />
+          <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-9 h-12 flex-shrink-0" />
           <div className="min-w-0">
             <h1 className="text-base font-black text-white leading-loose">Mi equipo</h1>
             {save.username && <p className="text-white/70 text-[9px] truncate">{save.username}</p>}

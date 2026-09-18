@@ -401,7 +401,7 @@ export default function BattleScreen({
               outfit={outfit}
               view="back"
               pointing={attacker === 'player'}
-              className="w-14 h-16 sm:w-16 sm:h-20 mb-5"
+              className="w-16 h-[5.5rem] sm:w-20 sm:h-28 mb-4"
             />
 
             <div className="relative">
