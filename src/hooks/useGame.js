@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { healFighter, levelUpFighter, gainXp } from '../game/battle';
 import { getItem } from '../data/items';
 import { sellPrice } from '../game/prices';
+import { idleBlocks, nextCoinMark, COINS_PER_BLOCK } from '../game/idle';
 
 const SAVE_KEY = 'pokemonAlAtaque_partida_v1';
 const MAX_TEAM = 6;
@@ -21,15 +22,18 @@ const emptySave = {
   username: '',
   gender: 'boy',
   creatorMode: false,
-  outfit: 'clasico'
+  outfit: 'clasico',
+  lastCoinAt: 0 // desde cuándo se cuentan las monedas del reloj
 };
 
 const readSave = () => {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
-    return raw ? { ...emptySave, ...JSON.parse(raw) } : emptySave;
+    const guardado = raw ? { ...emptySave, ...JSON.parse(raw) } : emptySave;
+    // La primera vez el reloj de las monedas empieza ahora
+    return guardado.lastCoinAt ? guardado : { ...guardado, lastCoinAt: Date.now() };
   } catch {
-    return emptySave;
+    return { ...emptySave, lastCoinAt: Date.now() };
   }
 };
 
@@ -56,6 +60,7 @@ export const useGame = () => {
   const startWithTeam = (team) =>
     update(prev => ({
       ...emptySave,
+      lastCoinAt: Date.now(),
       tutorialSeen: prev.tutorialSeen,
       username: prev.username,
       gender: prev.gender,
@@ -64,6 +69,19 @@ export const useGame = () => {
     }));
 
   const setTrainer = (username, gender, outfit) => update({ username, gender, outfit });
+
+  // Monedas del reloj: 5 por cada 10 minutos que hayan pasado
+  const payIdleCoins = () =>
+    update(prev => {
+      const bloques = idleBlocks(prev.lastCoinAt);
+      if (bloques <= 0) return prev;
+
+      return {
+        ...prev,
+        coins: prev.coins + bloques * COINS_PER_BLOCK,
+        lastCoinAt: nextCoinMark(prev.lastCoinAt)
+      };
+    });
 
   // Guardar el resultado de un combate: equipo, capturas, marcador, monedas e historia
   // mode: 'story' (Historia), 'practice' (entrenamiento) o 'wild' (peleas de verdad)
@@ -272,12 +290,20 @@ export const useGame = () => {
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
   const resetGame = () =>
-    update(prev => ({ ...emptySave, tutorialSeen: true, username: prev.username, gender: prev.gender, outfit: prev.outfit }));
+    update(prev => ({
+      ...emptySave,
+      tutorialSeen: true,
+      username: prev.username,
+      gender: prev.gender,
+      outfit: prev.outfit,
+      lastCoinAt: Date.now()
+    }));
 
   return {
     save,
     startWithTeam,
     setTrainer,
+    payIdleCoins,
     finishBattle,
     healTeam,
     swapWithBox,

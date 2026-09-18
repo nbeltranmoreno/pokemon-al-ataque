@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PokeSprite from './components/PokeSprite';
 import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
@@ -25,13 +25,14 @@ import PixelBackground from './components/PixelBackground';
 import PixelDialog from './components/PixelDialog';
 import { isCreator } from './data/creator';
 import { VERSION } from './version';
+import { COINS_PER_BLOCK, idleBlocks, msToNextCoins } from './game/idle';
 import { useLang } from './i18n';
 import LangButton from './components/LangButton';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, payIdleCoins, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
   const { t } = useLang();
   const [screen, setScreen] = useState('menu');
@@ -43,6 +44,35 @@ export default function App() {
   const [showLogout, setShowLogout] = useState(false);
   const [started, setStarted] = useState(false);
   const [taps, setTaps] = useState(0); // toques en la versión para desbloquear el modo creador
+  const [ahora, setAhora] = useState(() => Date.now()); // para ir contando los minutos que faltan
+  const [regalo, setRegalo] = useState(0); // monedas del reloj recién cobradas
+
+  // Cada poco se mira el reloj: si han pasado 10 minutos, caen 5 monedas
+  useEffect(() => {
+    const mirar = () => {
+      setAhora(Date.now());
+      const ganadas = idleBlocks(save.lastCoinAt) * COINS_PER_BLOCK;
+      if (ganadas > 0) {
+        payIdleCoins();
+        setRegalo(ganadas);
+      }
+    };
+
+    mirar();
+    const reloj = setInterval(mirar, 15000);
+    return () => clearInterval(reloj);
+    // save.lastCoinAt cambia al cobrar, así que el reloj se reengancha solo
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [save.lastCoinAt]);
+
+  // El cartelito de las monedas se va solo
+  useEffect(() => {
+    if (!regalo) return;
+    const tiempo = setTimeout(() => setRegalo(0), 5000);
+    return () => clearTimeout(tiempo);
+  }, [regalo]);
+
+  const minutosParaMonedas = Math.max(1, Math.ceil(msToNextCoins(save.lastCoinAt, ahora) / 60000));
 
   // Portada: un botón para entrar
   if (!started) {
@@ -223,6 +253,9 @@ export default function App() {
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             {t('🪙 {0} monedas · ⚪ {1} Poké Balls', save.coins, save.balls)}
           </p>
+          <p className="text-yellow-300/90 font-medium text-[9px] leading-loose">
+            {t('⏱ +{0} 🪙 gratis cada 10 minutos · las siguientes en {1} min', COINS_PER_BLOCK, minutosParaMonedas)}
+          </p>
           <div className="flex items-center justify-center gap-2 mt-2">
             <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-8 h-11" />
             <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
@@ -397,6 +430,15 @@ export default function App() {
           </button>
         </div>
       </div>
+
+      {/* Las monedas del reloj, cuando caen */}
+      {regalo > 0 && (
+        <div className="fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+          <p className="bg-yellow-400 text-yellow-900 font-black text-[10px] leading-loose px-4 py-2 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
+            {t('¡+{0} monedas por seguir jugando!', regalo)}
+          </p>
+        </div>
+      )}
 
       {/* Aviso antes de borrar la partida */}
       {showReset && (

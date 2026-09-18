@@ -173,7 +173,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo" y apostando en Online.',
+    caption: 'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo", apostando en Online y 5 gratis cada 10 minutos.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <p className="text-yellow-300 font-black text-sm">🪙 1240</p>
@@ -182,7 +182,8 @@ const STEPS = [
             ['📖', '+60'],
             ['⚔️', '+15'],
             ['🪙', '+229'],
-            ['🌐', '+50']
+            ['🌐', '+50'],
+            ['⏱', '+5']
           ].map(([donde, cuanto]) => (
             <div key={donde} className="flex items-center justify-between bg-black/40 border-2 border-white/20 px-2 py-1">
               <span className="text-white text-[10px] leading-loose">{donde}</span>

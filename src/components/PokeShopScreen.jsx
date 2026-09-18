@@ -119,7 +119,7 @@ export default function PokeShopScreen({ save, onBuy, onBack }) {
         </div>
 
         <p className="text-white/70 text-[9px] leading-loose text-center mt-5">
-          {t('Ganas monedas peleando en la Historia y en Peleas, vendiendo Pokémon en "Mi equipo" y apostando en Online.')}
+          {t('Ganas monedas peleando en la Historia y en Peleas, vendiendo Pokémon, apostando en Online y 5 gratis cada 10 minutos.')}
         </p>
       </div>
 

@@ -66,6 +66,9 @@ export const DICCIONARIO = {
   'Tu rival ya ha elegido.': 'Your rival has chosen.',
   '¡Empieza el combate!': 'The battle begins!',
 
+  '⏱ +{0} 🪙 gratis cada 10 minutos · las siguientes en {1} min': '⏱ +{0} 🪙 free every 10 minutes · next ones in {1} min',
+  '¡+{0} monedas por seguir jugando!': '+{0} coins for playing!',
+
   // --- Menú y pantallas ---
   '¡A jugar!': "Let's play!",
   '¡A la aventura!': 'Off on the adventure!',
@@ -223,8 +226,8 @@ export const DICCIONARIO = {
   '¿Comprar a {0}?': 'Buy {0}?',
   '⭐ {0} exp': '⭐ {0} exp',
   '🪙 {0} monedas · ⭐ {1} de experiencia': '🪙 {0} coins · ⭐ {1} experience',
-  'Ganas monedas peleando en la Historia y en Peleas, vendiendo Pokémon en "Mi equipo" y apostando en Online.':
-    'You earn coins by battling in the Story and in Battles, selling Pokémon in "My team", and betting Online.',
+  'Ganas monedas peleando en la Historia y en Peleas, vendiendo Pokémon, apostando en Online y 5 gratis cada 10 minutos.':
+    'You earn coins by battling in the Story and in Battles, selling Pokémon, betting Online, and 5 free every 10 minutes.',
   'Llega al nivel {0} y se une a tu equipo. Si ya tienes 6, se queda guardado.':
     'It arrives at level {0} and joins your team. If you already have 6, it goes to storage.',
   'No se pudo comprar. Revisa tu conexión a internet.': "Couldn't buy it. Check your internet connection.",
@@ -320,8 +323,8 @@ export const DICCIONARIO = {
     'To catch, tap ⚪ Poké Ball inside a Battle. You cannot do it in Practice or in the Story.',
   'Cae más fácil si le queda poca vida y si tu Pokémon tiene más nivel. Si la Poké Ball falla, el salvaje te ataca y puede debilitarte.':
     'It falls more easily when it has little health left and your Pokémon is a higher level. If the Poké Ball fails, the wild one attacks and can make you faint.',
-  'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo" y apostando en Online.':
-    'This is how you earn coins: 60 per Story trainer, 15 for winning a Battle, selling Pokémon in "My team", and betting Online.',
+  'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo", apostando en Online y 5 gratis cada 10 minutos.':
+    'This is how you earn coins: 60 per Story trainer, 15 for winning a Battle, selling Pokémon in "My team", betting Online, and 5 free every 10 minutes.',
   'En la Tienda compras objetos. Los Pokémon solo se curan con objetos: ya no hay curación gratis.':
     'In the Shop you buy items. Pokémon are only healed with items: there is no free healing any more.',
   'En "Mi equipo" usas los objetos, ves la experiencia, cambias con los guardados y vendes Pokémon con el botón 🪙.':
