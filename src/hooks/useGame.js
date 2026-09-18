@@ -19,6 +19,7 @@ const emptySave = {
   tutorialSeen: false,
   username: '',
   gender: 'boy',
+  creatorMode: false,
   outfit: 'clasico'
 };
 
@@ -178,6 +179,9 @@ export const useGame = () => {
     });
   };
 
+  // Desbloqueo secreto del modo creador (tocando la versión varias veces)
+  const toggleCreatorMode = () => update(prev => ({ ...prev, creatorMode: !prev.creatorMode }));
+
   // Añadir un Pokémon a la colección (lo usa el botón del creador)
   const addPokemon = (fighter) => {
     update(prev => {
@@ -234,6 +238,7 @@ export const useGame = () => {
     advanceStory,
     restartStory,
     addPokemon,
+    toggleCreatorMode,
     markTutorialSeen,
     wipeSave,
     resetGame

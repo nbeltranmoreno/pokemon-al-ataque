@@ -27,7 +27,7 @@ import { VERSION } from './version';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, markTutorialSeen, wipeSave, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
@@ -37,6 +37,7 @@ export default function App() {
   const [showReset, setShowReset] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [started, setStarted] = useState(false);
+  const [taps, setTaps] = useState(0); // toques en la versión para desbloquear el modo creador
 
   // Portada: un botón para entrar
   if (!started) {
@@ -188,7 +189,7 @@ export default function App() {
   }
 
   const canFight = save.team.some(pokemon => pokemon.hp > 0);
-  const creator = isCreator(user);
+  const creator = isCreator(user) || save.creatorMode;
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
@@ -213,7 +214,20 @@ export default function App() {
             <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
             {creator && <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-0.5">CREADOR</span>}
           </div>
-          <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>
+          <p className="text-white/50 text-[8px] leading-loose truncate">{user.email}</p>
+          <p
+            className="text-white/40 text-[8px] mt-1 cursor-pointer select-none"
+            onClick={() => {
+              const next = taps + 1;
+              setTaps(next);
+              if (next >= 7) {
+                setTaps(0);
+                toggleCreatorMode();
+              }
+            }}
+          >
+            {VERSION}
+          </p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
             Historia: {medalsWon(save.storyStage)} de {MEDALS.length} medallas
           </p>
