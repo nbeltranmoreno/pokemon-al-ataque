@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PokeSprite from './PokeSprite';
 import { ArrowLeft, Swords, Play } from 'lucide-react';
 import { STORY, MEDALS, medalsWon } from '../data/story';
 import { spriteUrl } from '../services/pokeapi';
@@ -134,7 +135,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
 
               return (
                 <div key={`${id}-${index}`} className="flex flex-col items-center">
-                  <img
+                  <PokeSprite
                     src={spriteUrl(id)}
                     alt=""
                     className={`object-contain ${flota ? 'animate-float' : ''} ${
@@ -176,7 +177,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
         {step.type === 'battle' ? (
           <div className="mt-4">
             <div className="bg-white/15 border-4 border-white/30 p-3 flex items-center gap-3 mb-3">
-              <img src={spriteUrl(step.myPokemonId)} alt="" className="w-14 h-14 object-contain flex-shrink-0" />
+              <PokeSprite src={spriteUrl(step.myPokemonId)} alt="" className="w-14 h-14 object-contain flex-shrink-0" />
               <p className="text-white text-[9px] leading-loose">
                 Peleas con el Pokémon que te presta la historia, nivel {step.myLevel}. Tu equipo se queda descansando.
               </p>

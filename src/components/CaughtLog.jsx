@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
+import PokeSprite from './PokeSprite';
 import PixelBackground from './PixelBackground';
 
 const fecha = (ms) => {
@@ -48,7 +49,7 @@ export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack 
                   pokemon.donde === 'En el equipo' ? 'border-green-300/70' : 'border-white/20'
                 } ${pokemon.hp <= 0 ? 'opacity-50 grayscale' : ''}`}
               >
-                <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
+                <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
                 <p className="text-white text-[9px] font-black text-center truncate leading-loose">{pokemon.name}</p>
                 <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
                 <p
@@ -82,7 +83,7 @@ export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack 
                   key={`${entry.at}-${index}`}
                   className="bg-white/10 border-4 border-white/20 p-2 flex items-center gap-3"
                 >
-                  <img src={entry.sprite} alt="" className="w-12 h-12 object-contain flex-shrink-0" />
+                  <PokeSprite src={entry.sprite} alt="" className="w-12 h-12 object-contain flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-black text-[10px] truncate leading-loose">{entry.name}</p>
                     <p className="text-white/60 text-[9px]">

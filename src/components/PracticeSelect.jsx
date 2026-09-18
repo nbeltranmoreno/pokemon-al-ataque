@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PokeSprite from './PokeSprite';
 import PixelBackground from './PixelBackground';
 import { ArrowLeft, Shuffle } from 'lucide-react';
 import { loadPokedex } from '../services/pokeapi';
@@ -93,7 +94,7 @@ export default function PracticeSelect({ onChoose, onRandom, onBack }) {
               onClick={() => onChoose(pokemon.id)}
               className="bg-white/10 border-4 border-white/20 p-2 hover:bg-white/25 hover:border-yellow-300 active:translate-y-1 transition"
             >
-              <img src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mx-auto object-contain" loading="lazy" />
+              <PokeSprite src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mx-auto object-contain" loading="lazy" />
               <p className="text-white font-black text-[9px] text-center truncate leading-loose">{pokemon.name}</p>
               <p className="text-white/50 text-[8px] text-center">Nº {pokemon.id}</p>
             </button>

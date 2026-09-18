@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PokeSprite from './PokeSprite';
 import { spriteUrl } from '../services/pokeapi';
 import PixelItem from './PixelItem';
 import PixelTrainer from './PixelTrainer';
@@ -17,10 +18,10 @@ const STEPS = [
     caption: 'Eliges un ataque y tu entrenador manda: el Pokémon golpea. El más rápido pega primero.',
     scene: (
       <div className="relative w-full h-40">
-        <img src={spriteUrl(1)} alt="" className="w-20 h-20 absolute top-0 right-6 animate-counter" />
+        <PokeSprite src={spriteUrl(1)} alt="" className="w-20 h-20 absolute top-0 right-6 animate-counter" />
         <span className="absolute top-0 right-24 text-red-400 font-black text-sm animate-pulse">-13</span>
         <PixelTrainer gender="boy" pointing className="w-12 h-[4.25rem] absolute bottom-0 left-0" />
-        <img src={back(4)} alt="" className="w-24 h-24 absolute bottom-0 left-12 animate-attack" />
+        <PokeSprite src={back(4)} alt="" className="w-24 h-24 absolute bottom-0 left-12 animate-attack" />
         <span className="absolute bottom-6 left-36 text-2xl animate-attack">💥</span>
       </div>
     )
@@ -36,7 +37,7 @@ const STEPS = [
         ].map((item, index) => (
           <div key={item.id} className="flex items-center gap-1">
             <div className="text-center">
-              <img src={spriteUrl(item.id)} alt="" className="w-16 h-16" />
+              <PokeSprite src={spriteUrl(item.id)} alt="" className="w-16 h-16" />
               <span className={`${item.color} text-white text-[8px] font-black px-1 py-0.5 block`}>{item.type}</span>
             </div>
             {index < 2 && (
@@ -55,8 +56,8 @@ const STEPS = [
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <div className="flex gap-2">
-          <img src={spriteUrl(25)} alt="" className="w-16 h-16 animate-float" />
-          <img src={spriteUrl(10)} alt="" className="w-16 h-16 animate-float" style={{ animationDelay: '0.4s' }} />
+          <PokeSprite src={spriteUrl(25)} alt="" className="w-16 h-16 animate-float" />
+          <PokeSprite src={spriteUrl(10)} alt="" className="w-16 h-16 animate-float" style={{ animationDelay: '0.4s' }} />
         </div>
         <div className="bg-black/70 border-4 border-white/50 px-3 py-2 w-56">
           <p className="text-white text-[9px] leading-loose">Algo se mueve en la hierba...</p>
@@ -71,12 +72,12 @@ const STEPS = [
       <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-4">
           <div className="text-center">
-            <img src={spriteUrl(7)} alt="" className="w-20 h-20" />
+            <PokeSprite src={spriteUrl(7)} alt="" className="w-20 h-20" />
             <p className="text-green-300 text-[9px] font-black">PRESTADO</p>
           </div>
           <p className="text-white text-lg">⚔️</p>
           <div className="text-center">
-            <img src={spriteUrl(74)} alt="" className="w-20 h-20" />
+            <PokeSprite src={spriteUrl(74)} alt="" className="w-20 h-20" />
             <p className="text-red-300 text-[9px] font-black">LÍDER</p>
           </div>
         </div>
@@ -91,7 +92,7 @@ const STEPS = [
         <div className="grid grid-cols-4 gap-1">
           {[1, 4, 7, 25, 39, 52, 54, 63].map(id => (
             <div key={id} className="bg-white/10 border-2 border-white/20 p-0.5">
-              <img src={spriteUrl(id)} alt="" className="w-10 h-10" />
+              <PokeSprite src={spriteUrl(id)} alt="" className="w-10 h-10" />
             </div>
           ))}
         </div>
@@ -105,7 +106,7 @@ const STEPS = [
       <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-4">
           <div className="text-center">
-            <img src={spriteUrl(4)} alt="" className="w-16 h-16" />
+            <PokeSprite src={spriteUrl(4)} alt="" className="w-16 h-16" />
             <div className="w-20 mx-auto">
               <Bar percent={30} color="bg-yellow-400" />
             </div>
@@ -113,7 +114,7 @@ const STEPS = [
           </div>
           <p className="text-white text-lg">⚔️</p>
           <div className="text-center">
-            <img src={spriteUrl(19)} alt="" className="w-16 h-16" />
+            <PokeSprite src={spriteUrl(19)} alt="" className="w-16 h-16" />
             <p className="text-red-300 text-[9px] font-black mt-1">Salvaje</p>
           </div>
         </div>
@@ -126,7 +127,7 @@ const STEPS = [
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <div className="flex items-center gap-2">
-          <img src={spriteUrl(25)} alt="" className="w-14 h-14" />
+          <PokeSprite src={spriteUrl(25)} alt="" className="w-14 h-14" />
           <div className="w-20">
             <Bar percent={15} color="bg-red-500" />
             <p className="text-red-300 text-[9px] font-black mt-1">¡Casi sin vida!</p>
@@ -156,7 +157,7 @@ const STEPS = [
       <div className="w-full h-40 flex items-center justify-center gap-4">
         <PixelItem id="pokeball" className="w-10 h-10 animate-ball" />
         <div className="text-center">
-          <img src={spriteUrl(25)} alt="" className="w-20 h-20 mx-auto" />
+          <PokeSprite src={spriteUrl(25)} alt="" className="w-20 h-20 mx-auto" />
           <p className="text-green-300 text-[9px] font-black mt-1">Nv. 6 · poca vida</p>
           <p className="text-white/70 text-[9px]">Tu Pokémon: Nv. 14</p>
           <p className="text-yellow-300 text-[9px] font-black mt-1 animate-pulse">¡Muy fácil de atrapar!</p>
@@ -187,7 +188,7 @@ const STEPS = [
         <div className="w-52 space-y-2">
           {[4, 1, 7].map(id => (
             <div key={id} className="flex items-center gap-2">
-              <img src={spriteUrl(id)} alt="" className="w-10 h-10" />
+              <PokeSprite src={spriteUrl(id)} alt="" className="w-10 h-10" />
               <div className="flex-1 space-y-1">
                 <Bar percent={100} color="bg-green-500" />
                 <div className="h-1.5 w-full bg-black/40 border border-white/30">

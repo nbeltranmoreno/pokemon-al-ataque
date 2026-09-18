@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import PokeSprite from './PokeSprite';
 import { LogOut } from 'lucide-react';
 import { resolveAttack, speedOf, STRUGGLE } from '../game/battle';
 import { effectivenessText } from '../data/types';
@@ -193,7 +194,7 @@ export default function OnlineBattle({
           </div>
           <div className="flex items-start gap-1 flex-shrink-0">
             <div>
-              <img
+              <PokeSprite
                 src={foe.sprites.front}
                 alt={foe.name}
                 className={`w-20 h-20 sm:w-32 sm:h-32 object-contain ${canFloat(foe.speciesId, foe.types) ? 'animate-float' : ''} ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
@@ -211,7 +212,7 @@ export default function OnlineBattle({
             {/* Tu entrenador: señala cuando ya has elegido ataque */}
             <PixelTrainer gender={gender} outfit={outfit} view="back" pointing={Boolean(chosen)} className="w-11 h-16 sm:w-16 sm:h-[5.5rem] mb-3" />
             <div>
-              <img
+              <PokeSprite
                 src={me.sprites.back}
                 alt={me.name}
                 className={`w-20 h-20 sm:w-36 sm:h-36 object-contain ${me.hp <= 0 ? 'opacity-30 grayscale' : ''}`}

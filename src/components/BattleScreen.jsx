@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import PokeSprite from './PokeSprite';
 import { Swords, Repeat, LogOut } from 'lucide-react';
 import { loadRandomWild, loadSpecies } from '../services/pokeapi';
 import {
@@ -384,7 +385,7 @@ export default function BattleScreen({
             </div>
           </div>
           <div className="relative flex-shrink-0">
-            <img
+            <PokeSprite
               src={enemy.sprites.front}
               alt={enemy.name}
               className={`w-24 h-24 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
@@ -421,7 +422,7 @@ export default function BattleScreen({
             />
 
             <div className="relative">
-              <img
+              <PokeSprite
                 src={active.sprites.back}
                 alt={active.name}
                 className={`w-24 h-24 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
@@ -526,7 +527,7 @@ export default function BattleScreen({
                   disabled={busy || pokemon.hp <= 0 || index === activeIndex}
                   className="w-full bg-white/90 rounded-2xl p-2 flex items-center gap-3 shadow-lg hover:scale-[1.01] transition disabled:opacity-40"
                 >
-                  <img src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain" />
+                  <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain" />
                   <div className="flex-1 min-w-0 text-left">
                     <p className="font-black text-gray-800 text-sm truncate">
                       {pokemon.name} <span className="text-gray-500">Nv. {pokemon.level}</span>

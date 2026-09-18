@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PokeSprite from './PokeSprite';
 import { ArrowLeft, HeartPulse, Repeat } from 'lucide-react';
 import { xpToNextLevel } from '../game/battle';
 import { getItem, ITEMS } from '../data/items';
@@ -126,7 +127,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <img src={pokemon.sprites.front} alt={pokemon.name} className="w-16 h-16 object-contain flex-shrink-0" />
+                  <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-16 h-16 object-contain flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-white font-black text-[10px] truncate leading-loose">{pokemon.name}</p>
@@ -203,7 +204,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                     disabled={!swapping}
                     className="w-full hover:opacity-80 transition disabled:opacity-100"
                   >
-                    <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
+                    <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
                     <p className="text-white text-[9px] font-bold text-center truncate">{pokemon.name}</p>
                     <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
                   </button>
@@ -224,7 +225,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
       {/* Aviso antes de vender */}
       {selling && (
         <PixelDialog
-          icon={<img src={selling.sprites.front} alt="" className="w-16 h-16 object-contain" />}
+          icon={<PokeSprite src={selling.sprites.front} alt="" className="w-16 h-16 object-contain" />}
           title={`¿Vender a ${selling.name}?`}
           confirmText={`Sí, vender por ${sellPrice(selling)} 🪙`}
           onConfirm={() => {

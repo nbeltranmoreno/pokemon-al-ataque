@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PokeSprite from './PokeSprite';
 import { Check } from 'lucide-react';
 import { loadStarters } from '../services/pokeapi';
 import { createFighter } from '../game/battle';
@@ -86,7 +87,7 @@ export default function TeamSelect({ onReady }) {
                     <Check className="w-5 h-5 text-yellow-900" strokeWidth={4} />
                   </div>
                 )}
-                <img
+                <PokeSprite
                   src={pokemon.sprites.front}
                   alt={pokemon.name}
                   className="w-32 h-32 sm:w-36 sm:h-36 mx-auto object-contain drop-shadow-xl"

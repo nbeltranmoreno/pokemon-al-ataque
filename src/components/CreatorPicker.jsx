@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PokeSprite from './PokeSprite';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { loadPokedex, loadSpecies } from '../services/pokeapi';
 import { createFighter } from '../game/battle';
@@ -136,7 +137,7 @@ export default function CreatorPicker({ onAdd, onBack }) {
               disabled={busy}
               className="bg-white/10 border-4 border-white/20 p-2 hover:bg-white/25 hover:border-fuchsia-300 active:translate-y-1 transition disabled:opacity-50"
             >
-              <img src={pokemon.sprite} alt={pokemon.name} className="w-16 h-16 mx-auto object-contain" loading="lazy" />
+              <PokeSprite src={pokemon.sprite} alt={pokemon.name} className="w-16 h-16 mx-auto object-contain" loading="lazy" />
               <p className="text-white font-black text-[9px] text-center truncate leading-loose">{pokemon.name}</p>
               <p className="text-white/50 text-[8px] text-center">Nº {pokemon.id}</p>
             </button>

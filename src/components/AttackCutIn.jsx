@@ -1,4 +1,5 @@
 import { TYPE_HEX, TYPE_NAMES } from '../data/types';
+import PokeSprite from './PokeSprite';
 import PixelTrainer from './PixelTrainer';
 
 // Chispas que suben alrededor, como el aura de energía
@@ -68,7 +69,7 @@ export default function AttackCutIn({ side, sprite, name, move, gender = 'boy', 
             className="w-20 h-28 sm:w-24 sm:h-[8.5rem] animate-zoomIn drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]"
 
           />
-          <img
+          <PokeSprite
             src={sprite}
             alt=""
             className="w-56 h-56 sm:w-72 sm:h-72 object-contain animate-shakeHard"

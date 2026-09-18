@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PokeSprite from './components/PokeSprite';
 import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
@@ -244,7 +245,7 @@ export default function App() {
               key={pokemon.uid}
               className={`bg-white/15 border-4 border-white/30 p-1 ${pokemon.hp <= 0 ? 'opacity-40 grayscale' : ''}`}
             >
-              <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 object-contain" />
+              <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 object-contain" />
               <p className="text-white text-[9px] font-bold text-center">Nv. {pokemon.level}</p>
               {/* Experiencia hacia el siguiente nivel */}
               <div className="h-1.5 w-full bg-black/40 border border-white/30">
