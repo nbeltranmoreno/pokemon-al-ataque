@@ -18,7 +18,7 @@ const BACKGROUNDS = {
  * Historia en forma de cuento: escenas con dibujo y texto que se van pasando,
  * y de vez en cuando un combate con el Pokémon que presta la historia
  */
-export default function StoryScreen({ stage, onAdvance, onFight, onBack }) {
+export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack }) {
   const step = STORY[stage];
   const won = medalsWon(stage);
 
@@ -41,12 +41,20 @@ export default function StoryScreen({ stage, onAdvance, onFight, onBack }) {
               </span>
             ))}
           </div>
-          <button
-            onClick={onBack}
-            className="bg-white text-amber-800 font-black px-6 py-3 border-4 border-amber-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
-          >
-            Volver al menú
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={onRestart}
+              className="w-full bg-amber-500 text-white font-black py-3 border-4 border-amber-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
+            >
+              Jugar la historia otra vez
+            </button>
+            <button
+              onClick={onBack}
+              className="w-full bg-white text-amber-800 font-black py-3 border-4 border-amber-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
+            >
+              Volver al menú
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -76,12 +84,22 @@ export default function StoryScreen({ stage, onAdvance, onFight, onBack }) {
             </span>
           ))}
         </div>
+
+        <button
+          onClick={() => {
+            if (window.confirm('¿Empezar la historia otra vez desde el principio?')) onRestart();
+          }}
+          className="ml-auto bg-black/30 text-white font-black px-3 py-2 border-4 border-white/40 active:translate-y-1 transition text-[9px] flex-shrink-0"
+          title="Empezar la historia otra vez"
+        >
+          🔄
+        </button>
       </div>
 
       {/* Escena */}
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col justify-center py-6">
         {/* Viñeta del cuento: el dibujo del sitio con los Pokémon encima */}
-        <div className="relative h-44 sm:h-56 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] overflow-hidden mb-4">
+        <div className="relative h-52 sm:h-72 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] overflow-hidden mb-4">
           <PixelScene name={step.bg} className="absolute inset-0 w-full h-full" />
           <div className="absolute inset-0 flex items-end justify-center gap-3 pb-3">
             {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index) => (

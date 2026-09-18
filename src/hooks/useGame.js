@@ -162,6 +162,9 @@ export const useGame = () => {
     });
   };
 
+  // Volver a empezar el cuento desde la primera escena
+  const restartStory = () => update({ storyStage: 0 });
+
   // Pasar a la siguiente escena del cuento
   const advanceStory = () => update(prev => ({ ...prev, storyStage: prev.storyStage + 1 }));
 
@@ -180,6 +183,7 @@ export const useGame = () => {
     buyItem,
     useItem,
     advanceStory,
+    restartStory,
     markTutorialSeen,
     resetGame
   };

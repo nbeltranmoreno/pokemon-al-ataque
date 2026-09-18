@@ -23,7 +23,7 @@ import { VERSION } from './version';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, markTutorialSeen, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, markTutorialSeen, resetGame } = useGame();
   const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
@@ -99,6 +99,7 @@ export default function App() {
       <StoryScreen
         stage={Math.min(save.storyStage, STORY.length)}
         onAdvance={advanceStory}
+        onRestart={restartStory}
         onFight={step => {
           setOpponent(step);
           setScreen('battle');
