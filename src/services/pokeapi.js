@@ -3,7 +3,7 @@
 import { getLang } from '../i18n';
 
 const API = 'https://pokeapi.co/api/v2';
-const CACHE_PREFIX = 'pokemonAlAtaque_especie_v2_';
+const CACHE_PREFIX = 'pokemonAlAtaque_especie_v3_';
 
 // Pokémon entre los que se elige el equipo inicial
 export const STARTER_IDS = [1, 4, 7, 25, 133, 152, 155, 158, 252, 255, 258, 447];
@@ -64,19 +64,49 @@ const toMove = (data) => ({
   category: data.damage_class.name === 'special' ? 'special' : 'physical'
 });
 
-// Elegir hasta 4 ataques con potencia entre los que aprende el Pokémon
-const pickMoves = async (moveEntries) => {
-  const candidates = shuffle(moveEntries).slice(0, 14);
+// Elegir hasta 4 ataques que le peguen a ese Pokémon, no siempre los mismos golpes normales:
+// primero los de su propio tipo (que hacen más daño) y luego variados, uno de cada tipo
+const pickMoves = async (moveEntries, types = [], ataque = 50, ataqueEspecial = 50) => {
+  const candidates = shuffle(moveEntries).slice(0, 18);
   const details = await Promise.all(
     candidates.map(entry => fetchJson(entry.move.url).catch(() => null))
   );
 
-  const moves = details
+  const golpes = details
     .filter(move => move && move.power && move.damage_class.name !== 'status')
-    .slice(0, 4)
     .map(toMove);
 
-  return moves.length > 0 ? moves : [FALLBACK_MOVE];
+  if (golpes.length === 0) return [FALLBACK_MOVE];
+
+  // Un Pokémon con más ataque físico prefiere golpes físicos, y al revés
+  const leSienta = (move) =>
+    move.power + (move.category === (ataqueEspecial > ataque ? 'special' : 'physical') ? 15 : 0);
+  const mejorPrimero = (a, b) => leSienta(b) - leSienta(a);
+
+  const propios = golpes.filter(move => types.includes(move.type)).sort(mejorPrimero);
+  const otros = golpes.filter(move => !types.includes(move.type)).sort(mejorPrimero);
+
+  const elegidos = [];
+  const añadir = (move) => {
+    if (move && elegidos.length < 4 && !elegidos.some(puesto => puesto.id === move.id)) elegidos.push(move);
+  };
+
+  // Hasta dos de su tipo: así un Charmander pega con fuego
+  propios.slice(0, 2).forEach(añadir);
+
+  // El resto, de tipos distintos para que tenga respuestas variadas
+  const tiposPuestos = new Set(elegidos.map(move => move.type));
+  for (const move of otros) {
+    if (elegidos.length >= 4) break;
+    if (tiposPuestos.has(move.type)) continue;
+    añadir(move);
+    tiposPuestos.add(move.type);
+  }
+
+  // Si aún faltan, se rellena con lo que haya
+  [...propios, ...otros].forEach(añadir);
+
+  return elegidos;
 };
 
 export const loadSpecies = async (id) => {
@@ -107,7 +137,7 @@ export const loadSpecies = async (id) => {
       back: data.sprites.back_default || data.sprites.front_default,
       artwork: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default
     },
-    moves: await pickMoves(data.moves)
+    moves: await pickMoves(data.moves, data.types.map(t => t.type.name), stat('attack'), stat('special-attack'))
   };
 
   writeCache(id, result);
