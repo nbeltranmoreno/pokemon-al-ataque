@@ -185,7 +185,6 @@ export default function App() {
     return (
       <TeamScreen
         save={save}
-        onHeal={healTeam}
         onSwap={swapWithBox}
         onUseItem={useItem}
         onSell={sellPokemon}
@@ -326,7 +325,7 @@ export default function App() {
 
           {!canFight && (
             <p className="text-white text-center font-bold bg-black/40 border-4 border-white/20 py-3 text-[10px] leading-loose">
-              Tu equipo está debilitado. Cúralo en &quot;Mi equipo&quot;.
+              Tu equipo está debilitado. Compra Pociones o Revivir en la Tienda y úsalos en &quot;Mi equipo&quot;.
             </p>
           )}
 

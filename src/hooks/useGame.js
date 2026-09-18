@@ -73,9 +73,9 @@ export const useGame = () => {
       const next = {
         ...prev,
         // Historia: peleas con un Pokémon prestado, tu equipo no cambia
-        // Práctica: sale como entró, sin daño y con los PP llenos
+        // Práctica: sale exactamente como entró (ni se cura ni se hace daño)
         // Peleas: el daño y los PP gastados se quedan
-        team: mode === 'story' ? prev.team : mode === 'practice' ? team.map(healFighter) : team,
+        team: mode === 'story' || mode === 'practice' ? prev.team : team,
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
@@ -163,6 +163,8 @@ export const useGame = () => {
 
       if (item.effect === 'heal' && pokemon.hp > 0 && pokemon.hp < pokemon.maxHp) {
         updated = { ...pokemon, hp: Math.min(pokemon.maxHp, pokemon.hp + item.amount) };
+      } else if (item.effect === 'full' && pokemon.hp > 0) {
+        updated = healFighter(pokemon);
       } else if (item.effect === 'revive' && pokemon.hp <= 0) {
         updated = { ...pokemon, hp: Math.ceil(pokemon.maxHp / 2) };
       } else if (item.effect === 'levelup') {

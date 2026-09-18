@@ -13,7 +13,7 @@ import PixelItem from './PixelItem';
 /**
  * Pantalla del equipo: ver Pokémon, curarlos, usar el inventario e intercambiar con los guardados
  */
-export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onSell, onBack }) {
+export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) {
   const [swapping, setSwapping] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selling, setSelling] = useState(null); // Pokémon que se está vendiendo
@@ -38,6 +38,8 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onSell, on
   const itemWorksOn = (item, pokemon) => {
     if (!item) return false;
     if (item.effect === 'heal') return pokemon.hp > 0 && pokemon.hp < pokemon.maxHp;
+    if (item.effect === 'full')
+      return pokemon.hp > 0 && (pokemon.hp < pokemon.maxHp || pokemon.moves.some(move => move.ppLeft < move.pp));
     if (item.effect === 'revive') return pokemon.hp <= 0;
     return true;
   };
@@ -64,13 +66,12 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onSell, on
           </div>
         </div>
 
-        <button
-          onClick={onHeal}
-          className="w-full bg-white text-emerald-700 font-black py-4 border-4 border-emerald-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2 mb-6"
-        >
-          <HeartPulse className="w-5 h-5" />
-          Curar a todo el equipo
-        </button>
+        <div className="bg-white/10 border-4 border-white/30 p-3 mb-6 flex items-center gap-3">
+          <HeartPulse className="w-5 h-5 text-emerald-300 flex-shrink-0" />
+          <p className="text-white/80 text-[9px] leading-loose">
+            Para curar usa objetos de la Tienda: Poción, Super Poción, Cura Total o Revivir. Ya no se cura gratis.
+          </p>
+        </div>
 
         {/* Inventario */}
         <section className="mb-6">

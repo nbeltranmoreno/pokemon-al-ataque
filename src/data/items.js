@@ -30,6 +30,14 @@ export const ITEMS = [
     description: 'Cura 70 PS a un Pokémon'
   },
   {
+    id: 'curatotal',
+    name: 'Cura Total',
+    emoji: '🧯',
+    price: 120,
+    effect: 'full',
+    description: 'Cura del todo a un Pokémon y le devuelve los PP'
+  },
+  {
     id: 'revivir',
     name: 'Revivir',
     emoji: '✨',

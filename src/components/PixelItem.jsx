@@ -44,6 +44,20 @@ const SPRITES = {
     '..oooooooo..',
     '............'
   ],
+  curatotal: [
+    '.....oo.....',
+    '.....oo.....',
+    '....owwo....',
+    '...owwwwo...',
+    '..owwwwwwo..',
+    '..oyyyyyyo..',
+    '..oyyrryyo..',
+    '..oyrrrryo..',
+    '..oyyrryyo..',
+    '..oyyyyyyo..',
+    '..oooooooo..',
+    '............'
+  ],
   revivir: [
     '.....yy.....',
     '.....yy.....',
