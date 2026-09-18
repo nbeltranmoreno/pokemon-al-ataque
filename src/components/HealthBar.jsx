@@ -1,4 +1,7 @@
+import { useLang } from '../i18n';
+
 export default function HealthBar({ hp, maxHp, showNumbers = true }) {
+  const { t } = useLang();
   const percent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
   const color = percent > 50 ? 'bg-green-500' : percent > 20 ? 'bg-yellow-400' : 'bg-red-500';
 
@@ -12,7 +15,7 @@ export default function HealthBar({ hp, maxHp, showNumbers = true }) {
       </div>
       {showNumbers && (
         <p className="text-white/90 text-xs font-bold mt-1 text-right">
-          {Math.max(0, hp)} / {maxHp} PS
+          {Math.max(0, hp)} / {maxHp} {t('PS')}
         </p>
       )}
     </div>

@@ -9,7 +9,7 @@ export const ITEMS = [
     price: 40,
     effect: 'balls',
     amount: 3,
-    description: 'Tres Poké Balls para capturar en Práctica'
+    description: 'Tres Poké Balls para capturar en Peleas'
   },
   {
     id: 'pocion',

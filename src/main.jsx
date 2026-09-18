@@ -4,12 +4,15 @@ import './index.css'
 import App from './App.jsx'
 import UpdateBanner from './components/UpdateBanner.jsx'
 import { AuthProvider } from './contexts/AuthContext'
+import { LangProvider } from './i18n'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <UpdateBanner />
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <LangProvider>
+      <UpdateBanner />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </LangProvider>
   </StrictMode>,
 )

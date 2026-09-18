@@ -4,6 +4,8 @@ import { Check } from 'lucide-react';
 import { loadStarters } from '../services/pokeapi';
 import { createFighter } from '../game/battle';
 import TypeBadge from './TypeBadge';
+import { useLang } from '../i18n';
+import LangButton from './LangButton';
 
 const TEAM_SIZE = 3;
 const START_LEVEL = 1;
@@ -12,6 +14,7 @@ const START_LEVEL = 1;
  * Pantalla para elegir los Pokémon iniciales
  */
 export default function TeamSelect({ onReady }) {
+  const { t } = useLang();
   const [species, setSpecies] = useState([]);
   const [chosen, setChosen] = useState([]);
   const [error, setError] = useState('');
@@ -52,22 +55,24 @@ export default function TeamSelect({ onReady }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 p-4">
       <div className="max-w-3xl mx-auto pb-28">
         <header className="text-center py-6">
-          <h1 className="text-xl font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose">Elige tu equipo</h1>
+          <h1 className="text-xl font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose">{t('Elige tu equipo')}</h1>
           <p className="text-white/80 font-medium mt-3 text-[10px] leading-loose">
-            Escoge {TEAM_SIZE} Pokémon para empezar tu aventura
+            {t('Escoge {0} Pokémon para empezar tu aventura', TEAM_SIZE)}
+            <br />
+            <LangButton className="mt-3" />
           </p>
         </header>
 
         {error && (
           <div className="bg-red-500/30 border-2 border-red-300/50 text-white rounded-2xl p-4 text-center font-bold">
-            {error}
+            {t(error)}
           </div>
         )}
 
         {!error && species.length === 0 && (
           <div className="text-center py-16">
             <div className="animate-spin text-5xl mb-3">⚡</div>
-            <p className="text-white font-bold">Cargando Pokémon...</p>
+            <p className="text-white font-bold">{t('Cargando Pokémon...')}</p>
           </div>
         )}
 
@@ -109,14 +114,14 @@ export default function TeamSelect({ onReady }) {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-black/40 backdrop-blur border-t-2 border-white/20">
         <div className="max-w-3xl mx-auto flex items-center gap-4">
           <p className="text-white font-bold flex-1">
-            {chosen.length} de {TEAM_SIZE} elegidos
+            {t('{0} de {1} elegidos', chosen.length, TEAM_SIZE)}
           </p>
           <button
             onClick={confirm}
             disabled={chosen.length !== TEAM_SIZE}
             className="bg-yellow-400 text-yellow-900 font-black px-8 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            ¡A la aventura!
+            {t('¡A la aventura!')}
           </button>
         </div>
       </div>

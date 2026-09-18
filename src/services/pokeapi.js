@@ -1,7 +1,9 @@
 // Datos de Pokémon desde PokéAPI (https://pokeapi.co), con caché en el navegador
 
+import { getLang } from '../i18n';
+
 const API = 'https://pokeapi.co/api/v2';
-const CACHE_PREFIX = 'pokemonAlAtaque_especie_v1_';
+const CACHE_PREFIX = 'pokemonAlAtaque_especie_v2_';
 
 // Pokémon entre los que se elige el equipo inicial
 export const STARTER_IDS = [1, 4, 7, 25, 133, 152, 155, 158, 252, 255, 258, 447];
@@ -20,9 +22,10 @@ const FALLBACK_MOVE = {
   category: 'physical'
 };
 
+// Cada idioma guarda sus propios nombres
 const readCache = (key) => {
   try {
-    const raw = localStorage.getItem(CACHE_PREFIX + key);
+    const raw = localStorage.getItem(CACHE_PREFIX + getLang() + '_' + key);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -31,7 +34,7 @@ const readCache = (key) => {
 
 const writeCache = (key, value) => {
   try {
-    localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(value));
+    localStorage.setItem(CACHE_PREFIX + getLang() + '_' + key, JSON.stringify(value));
   } catch {
     // Si no hay espacio, seguimos sin caché
   }
@@ -43,8 +46,9 @@ const fetchJson = async (url) => {
   return response.json();
 };
 
-const spanishName = (names, fallback) => {
-  const found = names?.find(n => n.language.name === 'es')?.name;
+// El nombre en el idioma elegido; si no está, el que venga de serie
+const localName = (names, fallback) => {
+  const found = names?.find(n => n.language.name === getLang())?.name;
   return found || fallback.charAt(0).toUpperCase() + fallback.slice(1);
 };
 
@@ -52,7 +56,7 @@ const shuffle = (list) => [...list].sort(() => Math.random() - 0.5);
 
 const toMove = (data) => ({
   id: data.id,
-  name: spanishName(data.names, data.name),
+  name: localName(data.names, data.name),
   type: data.type.name,
   power: data.power,
   accuracy: data.accuracy ?? 100,
@@ -88,7 +92,7 @@ export const loadSpecies = async (id) => {
 
   const result = {
     id: data.id,
-    name: spanishName(species.names, data.name),
+    name: localName(species.names, data.name),
     types: data.types.map(t => t.type.name),
     baseStats: {
       hp: stat('hp'),

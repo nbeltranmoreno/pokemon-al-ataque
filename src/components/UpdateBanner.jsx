@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { VERSION } from '../version';
+import { useLang } from '../i18n';
 
 // Para no dar vueltas: solo se recarga solo una vez por cada versión nueva
 const CLAVE = 'pokemonAlAtaque_yaIntentado';
@@ -25,6 +26,7 @@ const guardar = (clave, valor) => {
  * Así nadie se queda jugando con una versión vieja guardada en el navegador.
  */
 export default function UpdateBanner() {
+  const { t } = useLang();
   const [nueva, setNueva] = useState(null);
 
   useEffect(() => {
@@ -69,13 +71,13 @@ export default function UpdateBanner() {
   return (
     <div className="fixed top-0 inset-x-0 z-[60] bg-yellow-400 border-b-4 border-yellow-900 p-2 flex items-center justify-center gap-3 flex-wrap">
       <p className="text-yellow-900 font-black text-[10px] leading-loose">
-        ¡Hay una versión nueva! ({nueva})
+        {t('¡Hay una versión nueva! ({0})', nueva)}
       </p>
       <button
         onClick={() => window.location.replace(`${window.location.pathname}?v=${nueva}&r=${Date.now()}`)}
         className="bg-yellow-900 text-yellow-100 font-black px-3 py-1 text-[10px] border-2 border-yellow-700 active:translate-y-0.5 transition"
       >
-        Actualizar
+        {t('Actualizar')}
       </button>
     </div>
   );

@@ -1,11 +1,14 @@
 import { VERSION } from '../version';
 import PixelBackground from './PixelBackground';
+import { useLang } from '../i18n';
+import LangButton from './LangButton';
 
 /**
  * Portada del juego: un solo botón
  * "Continuar" si ya hay sesión abierta, "Jugar" si todavía no
  */
 export default function StartScreen({ user, username, hasGame, onStart }) {
+  const { t } = useLang();
   const ball = `${import.meta.env.BASE_URL}favicon.svg`;
 
   return (
@@ -24,24 +27,26 @@ export default function StartScreen({ user, username, hasGame, onStart }) {
 
         <p className="text-white/70 text-[10px] leading-loose mb-8">
           {user
-            ? `Hola, ${username || user.displayName || 'entrenador'} 🎮`
-            : 'Combates por turnos contra la máquina o contra tus amigos'}
+            ? t('Hola, {0} 🎮', username || user.displayName || t('entrenador'))
+            : t('Combates por turnos contra la máquina o contra tus amigos')}
         </p>
 
         <button
           onClick={onStart}
           className="w-full bg-yellow-400 text-yellow-900 font-black py-5 border-4 border-yellow-900 shadow-[8px_8px_0_rgba(0,0,0,0.55)] active:translate-y-1 transition text-sm animate-pulse"
         >
-          {user ? (hasGame ? 'Continuar' : 'Empezar') : 'Jugar'}
+          {user ? (hasGame ? t('Continuar') : t('Empezar')) : t('Jugar')}
         </button>
 
         {!user && (
           <p className="text-white/50 text-[9px] leading-loose mt-5">
-            Entrarás con Google o con tu email
+            {t('Entrarás con Google o con tu email')}
           </p>
         )}
 
-        <p className="text-white/30 text-[8px] mt-8">{VERSION}</p>
+        <LangButton className="mt-6" />
+
+        <p className="text-white/30 text-[8px] mt-4">{VERSION}</p>
       </div>
     </div>
   );

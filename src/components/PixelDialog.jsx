@@ -1,3 +1,5 @@
+import { useLang } from '../i18n';
+
 // Cartel de aviso con el estilo del juego, para no usar los del navegador
 
 const TONES = {
@@ -9,12 +11,13 @@ export default function PixelDialog({
   icon = '⚠️',
   title,
   children,
-  confirmText = 'Sí',
-  cancelText = 'No, volver',
+  confirmText,
+  cancelText,
   tone = 'danger',
   onConfirm,
   onCancel
 }) {
+  const { t } = useLang();
   const colors = TONES[tone] || TONES.danger;
 
   return (
@@ -33,13 +36,13 @@ export default function PixelDialog({
             onClick={onConfirm}
             className={`w-full font-black py-3 border-4 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition ${colors.confirm}`}
           >
-            {confirmText}
+            {confirmText || t('Sí')}
           </button>
           <button
             onClick={onCancel}
             className="w-full bg-white/20 text-white font-black py-3 border-4 border-white/40 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition"
           >
-            {cancelText}
+            {cancelText || t('No, volver')}
           </button>
         </div>
       </div>

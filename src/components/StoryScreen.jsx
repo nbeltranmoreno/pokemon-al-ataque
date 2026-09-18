@@ -6,6 +6,7 @@ import { spriteUrl } from '../services/pokeapi';
 import PixelScene from './PixelScene';
 import PixelDialog from './PixelDialog';
 import { canFloat } from '../data/floaters';
+import { useLang } from '../i18n';
 
 const BACKGROUNDS = {
   pueblo: 'from-sky-400 via-sky-600 to-green-700',
@@ -23,6 +24,7 @@ const BACKGROUNDS = {
  * y de vez en cuando un combate con el Pokémon que presta la historia
  */
 export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack, creator = false }) {
+  const { t } = useLang();
   const [askRestart, setAskRestart] = useState(false);
   const step = STORY[stage];
   const won = medalsWon(stage);
@@ -34,10 +36,10 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
         <div className="max-w-md w-full text-center">
           <p className="text-5xl mb-4 animate-float">👑</p>
           <h1 className="text-lg font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose mb-3">
-            ¡Eres el Campeón!
+            {t('¡Eres el Campeón!')}
           </h1>
           <p className="text-white/90 text-[10px] leading-loose mb-5">
-            Has terminado la historia con las {MEDALS.length} medallas.
+            {t('Has terminado la historia con las {0} medallas.', MEDALS.length)}
           </p>
           <div className="flex justify-center gap-2 flex-wrap mb-6">
             {MEDALS.map(medal => (
@@ -51,13 +53,13 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
               onClick={onRestart}
               className="w-full bg-amber-500 text-white font-black py-3 border-4 border-amber-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
             >
-              Jugar la historia otra vez
+              {t('Jugar la historia otra vez')}
             </button>
             <button
               onClick={onBack}
               className="w-full bg-white text-amber-800 font-black py-3 border-4 border-amber-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
             >
-              Volver al menú
+              {t('Volver al menú')}
             </button>
           </div>
         </div>
@@ -91,13 +93,13 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
         </div>
 
         {creator && (
-          <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-1 flex-shrink-0">CREADOR</span>
+          <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-1 flex-shrink-0">{t('CREADOR')}</span>
         )}
 
         <button
           onClick={() => setAskRestart(true)}
           className="ml-auto bg-black/30 text-white font-black px-3 py-2 border-4 border-white/40 active:translate-y-1 transition text-[9px] flex-shrink-0"
-          title="Empezar la historia otra vez"
+          title={t('Empezar la historia otra vez')}
         >
           🔄
         </button>
@@ -107,16 +109,15 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
         <PixelDialog
           icon="📖"
           tone="info"
-          title="¿Empezar de nuevo?"
-          confirmText="Sí, desde el principio"
+          title={t('¿Empezar de nuevo?')}
+          confirmText={t('Sí, desde el principio')}
           onConfirm={() => {
             setAskRestart(false);
             onRestart();
           }}
           onCancel={() => setAskRestart(false)}
         >
-          La historia volverá a la primera escena y perderás las medallas conseguidas. Tu equipo, tus monedas y tus
-          objetos se quedan como están.
+          {t('La historia volverá a la primera escena y perderás las medallas conseguidas. Tu equipo, tus monedas y tus objetos se quedan como están.')}
         </PixelDialog>
       )}
 
@@ -179,7 +180,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
             <div className="bg-white/15 border-4 border-white/30 p-3 flex items-center gap-3 mb-3">
               <PokeSprite src={spriteUrl(step.myPokemonId)} alt="" className="w-14 h-14 object-contain flex-shrink-0" />
               <p className="text-white text-[9px] leading-loose">
-                Peleas con el Pokémon que te presta la historia, nivel {step.myLevel}. Tu equipo se queda descansando.
+                {t('Peleas con el Pokémon que te presta la historia, nivel {0}. Tu equipo se queda descansando.', step.myLevel)}
               </p>
             </div>
             <button
@@ -187,7 +188,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
               className="w-full bg-red-500 text-white font-black py-4 border-4 border-red-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
             >
               <Swords className="w-5 h-5" />
-              ¡Luchar!
+              {t('¡Luchar!')}
             </button>
 
             {/* Solo el creador puede saltarse el combate */}
@@ -195,9 +196,9 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
               <button
                 onClick={onAdvance}
                 className="w-full mt-2 bg-fuchsia-600 text-white font-black py-3 border-4 border-fuchsia-200 shadow-[4px_4px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition text-[10px]"
-                title="Solo lo ves tú"
+                title={t('Solo lo ves tú')}
               >
-                ⭐ Saltar este combate
+                {t('⭐ Saltar este combate')}
               </button>
             )}
           </div>
@@ -207,12 +208,12 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
             className="w-full mt-4 bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
           >
             <Play className="w-5 h-5" />
-            Continuar
+            {t('Continuar')}
           </button>
         )}
 
         <p className="text-white/60 text-[9px] text-center mt-3">
-          Escena {stage + 1} de {STORY.length}
+          {t('Escena {0} de {1}', stage + 1, STORY.length)}
         </p>
       </div>
     </div>

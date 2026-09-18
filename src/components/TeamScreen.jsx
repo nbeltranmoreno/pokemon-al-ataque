@@ -10,11 +10,13 @@ import PixelBackground from './PixelBackground';
 import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
 import PixelItem from './PixelItem';
+import { useLang } from '../i18n';
 
 /**
  * Pantalla del equipo: ver Pokémon, curarlos, usar el inventario e intercambiar con los guardados
  */
-export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) {
+export default function TeamScreen({ save, onSwap, onUseItem, onSell, onRescue, onBack }) {
+  const { t } = useLang();
   const [swapping, setSwapping] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selling, setSelling] = useState(null); // Pokémon que se está vendiendo
@@ -45,7 +47,20 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
     return true;
   };
 
+  // Por qué un objeto no le sirve a ese Pokémon, para que se entienda
+  const whyNot = (item, pokemon) => {
+    if (!item || itemWorksOn(item, pokemon)) return '';
+    if (item.effect === 'revive') return 'No está debilitado';
+    if (pokemon.hp <= 0) return 'Está debilitado: necesita Revivir';
+    return 'Ya está curado del todo';
+  };
+
   const chosen = getItem(selectedItem);
+
+  // Rescate: todos debilitados, sin objetos para curar y sin monedas para comprarlos
+  const tieneCura = ITEMS.some(item => (item.effect === 'heal' || item.effect === 'full' || item.effect === 'revive') && (save.inventory[item.id] || 0) > 0);
+  const masBarato = Math.min(...ITEMS.filter(item => item.effect === 'heal' || item.effect === 'revive').map(item => item.price));
+  const atascado = save.team.length > 0 && save.team.every(pokemon => pokemon.hp <= 0) && !tieneCura && save.coins < masBarato;
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4">
@@ -62,7 +77,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
           </button>
           <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-9 h-12 flex-shrink-0" />
           <div className="min-w-0">
-            <h1 className="text-base font-black text-white leading-loose">Mi equipo</h1>
+            <h1 className="text-base font-black text-white leading-loose">{t('Mi equipo')}</h1>
             {save.username && <p className="text-white/70 text-[9px] truncate">{save.username}</p>}
           </div>
         </div>
@@ -70,21 +85,36 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
         <div className="bg-white/10 border-4 border-white/30 p-3 mb-6 flex items-center gap-3">
           <HeartPulse className="w-5 h-5 text-emerald-300 flex-shrink-0" />
           <p className="text-white/80 text-[9px] leading-loose">
-            Para curar usa objetos de la Tienda: Poción, Super Poción, Cura Total o Revivir. Ya no se cura gratis.
+            {t('Para curar usa objetos de la Tienda: Poción, Super Poción, Cura Total o Revivir. Ya no se cura gratis.')}
           </p>
         </div>
 
+        {/* Rescate: para no quedarse sin poder jugar */}
+        {atascado && onRescue && (
+          <div className="bg-red-500/30 border-4 border-red-300/60 p-3 mb-5">
+            <p className="text-white text-[10px] leading-loose mb-2">
+              {t('Todos tus Pokémon están debilitados y no te llega para curarlos. Por esta vez, el Centro Pokémon te los cura gratis.')}
+            </p>
+            <button
+              onClick={onRescue}
+              className="w-full bg-white text-red-700 font-black py-3 border-4 border-red-900 shadow-[4px_4px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition text-[10px]"
+            >
+              {t('🚑 Curar gratis (rescate)')}
+            </button>
+          </div>
+        )}
+
         {/* Inventario */}
         <section className="mb-6">
-          <h2 className="text-white font-black text-xs mb-1">🎒 Inventario</h2>
+          <h2 className="text-white font-black text-xs mb-1">🎒 {t('Inventario')}</h2>
           {owned.length === 0 ? (
             <p className="text-white/70 text-[9px] leading-loose bg-black/20 border-4 border-white/20 p-3">
-              Está vacío. Lo que compres en la Tienda 🛒 aparecerá aquí.
+              {t('Está vacío. Lo que compres en la Tienda 🛒 aparecerá aquí.')}
             </p>
           ) : (
             <>
               <p className="text-white/70 text-[9px] leading-loose mb-2">
-                {chosen ? `Toca al Pokémon que va a usar ${chosen.name}` : 'Toca un objeto para usarlo'}
+                {chosen ? t('Toca al Pokémon que va a usar {0}', t(chosen.name)) : t('Toca un objeto para usarlo')}
               </p>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {owned.map(item => (
@@ -98,7 +128,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                     }`}
                   >
                     <PixelItem id={item.id} className="w-8 h-8 mx-auto" />
-                    <p className="text-white text-[9px] font-black text-center truncate leading-loose">{item.name}</p>
+                    <p className="text-white text-[9px] font-black text-center truncate leading-loose">{t(item.name)}</p>
                     <p className="text-white/60 text-[9px] text-center">x{save.inventory[item.id]}</p>
                   </button>
                 ))}
@@ -131,13 +161,16 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-white font-black text-[10px] truncate leading-loose">{pokemon.name}</p>
-                      <span className="text-white/80 text-[9px] font-bold whitespace-nowrap">Nv. {pokemon.level}</span>
+                      <span className="text-white/80 text-[9px] font-bold whitespace-nowrap">{t('Nv. {0}', pokemon.level)}</span>
                     </div>
                     <HealthBar hp={pokemon.hp} maxHp={pokemon.maxHp} />
                     <div className="flex items-center gap-2 mt-2 flex-wrap">
                       {pokemon.types.map(type => (
                         <TypeBadge key={type} type={type} small />
                       ))}
+                      {chosen && whyNot(chosen, pokemon) && (
+                        <span className="text-yellow-300 text-[9px] font-black leading-loose">{t(whyNot(chosen, pokemon))}</span>
+                      )}
                     </div>
 
                     {/* Barra de experiencia */}
@@ -149,8 +182,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                         />
                       </div>
                       <p className="text-cyan-200 text-[9px] font-bold mt-1 leading-loose">
-                        EXP {pokemon.xp}/{xpToNextLevel(pokemon.level)} · faltan{' '}
-                        {Math.max(0, xpToNextLevel(pokemon.level) - pokemon.xp)} para el nivel {pokemon.level + 1}
+                        {t('EXP {0}/{1} · faltan {2} para el nivel {3}', pokemon.xp, xpToNextLevel(pokemon.level), Math.max(0, xpToNextLevel(pokemon.level) - pokemon.xp), pokemon.level + 1)}
                       </p>
                     </div>
                   </div>
@@ -160,7 +192,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                         <button
                           onClick={() => setSwapping(swapping === pokemon.uid ? null : pokemon.uid)}
                           className="w-10 h-10 bg-white/20 flex items-center justify-center border-4 border-white/30 hover:bg-white/30 transition"
-                          title="Intercambiar"
+                          title={t('Intercambiar')}
                         >
                           <Repeat className="w-4 h-4 text-white" />
                         </button>
@@ -170,7 +202,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                         onClick={() => setSelling(pokemon)}
                         disabled={save.team.length <= 1}
                         className="w-10 h-10 bg-yellow-400/90 text-yellow-900 font-black flex items-center justify-center border-4 border-yellow-200 hover:bg-yellow-300 transition disabled:opacity-40"
-                        title={save.team.length <= 1 ? 'No puedes quedarte sin Pokémon' : 'Vender'}
+                        title={save.team.length <= 1 ? t('No puedes quedarte sin Pokémon') : t('Vender')}
                       >
                         🪙
                       </button>
@@ -181,7 +213,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {pokemon.moves.map(move => (
                     <span key={move.id} className="bg-black/30 text-white text-[9px] font-bold px-2 py-1">
-                      {move.name} · {move.ppLeft}/{move.pp} PP
+                      {move.name} · {move.ppLeft}/{move.pp} {t('PP')}
                     </span>
                   ))}
                 </div>
@@ -192,9 +224,9 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
 
         {save.box.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-white font-black text-xs mb-2">Pokémon guardados</h2>
+            <h2 className="text-white font-black text-xs mb-2">{t('Pokémon guardados')}</h2>
             <p className="text-white/70 text-[9px] leading-loose mb-3">
-              {swapping ? 'Toca uno para intercambiarlo' : 'Pulsa 🔁 en un Pokémon del equipo para intercambiarlo'}
+              {swapping ? t('Toca uno para intercambiarlo') : t('Pulsa 🔁 en un Pokémon del equipo para intercambiarlo')}
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {save.box.map(pokemon => (
@@ -206,7 +238,7 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
                   >
                     <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
                     <p className="text-white text-[9px] font-bold text-center truncate">{pokemon.name}</p>
-                    <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
+                    <p className="text-white/60 text-[9px] text-center">{t('Nv. {0}', pokemon.level)}</p>
                   </button>
 
                   <button
@@ -226,16 +258,15 @@ export default function TeamScreen({ save, onSwap, onUseItem, onSell, onBack }) 
       {selling && (
         <PixelDialog
           icon={<PokeSprite src={selling.sprites.front} alt="" className="w-16 h-16 object-contain" />}
-          title={`¿Vender a ${selling.name}?`}
-          confirmText={`Sí, vender por ${sellPrice(selling)} 🪙`}
+          title={t('¿Vender a {0}?', selling.name)}
+          confirmText={t('Sí, vender por {0} 🪙', sellPrice(selling))}
           onConfirm={() => {
             onSell(selling.uid);
             setSelling(null);
           }}
           onCancel={() => setSelling(null)}
         >
-          Te pagan {sellPrice(selling)} monedas por él, porque es de nivel {selling.level}. Cuanto mejor y más alto de
-          nivel sea un Pokémon, más te dan. Esto no se puede deshacer.
+          {t('Te pagan {0} monedas por él, porque es de nivel {1}. Cuanto mejor y más alto de nivel sea un Pokémon, más te dan. Esto no se puede deshacer.', sellPrice(selling), selling.level)}
         </PixelDialog>
       )}
     </div>

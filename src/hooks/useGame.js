@@ -79,8 +79,8 @@ export const useGame = () => {
         balls: Math.max(0, prev.balls - ballsUsed),
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (result === 'lose' ? 1 : 0),
-        // Monedas solo en la Historia
-        coins: prev.coins + (mode === 'story' ? (won ? 60 : 5) : 0)
+        // Monedas: muchas en la Historia, unas pocas en Peleas, ninguna en Práctica
+        coins: prev.coins + (mode === 'story' ? (won ? 60 : 5) : mode === 'wild' ? (won ? 15 : 2) : 0)
       };
 
       if (won) {
@@ -199,6 +199,31 @@ export const useGame = () => {
     });
   };
 
+  // Comprar un Pokémon en la tienda: se paga y se une al equipo
+  const buyPokemon = (fighter, price) => {
+    update(prev => {
+      if (prev.coins < price) return prev;
+
+      const next = { ...prev, coins: prev.coins - price };
+      if (next.team.length < MAX_TEAM) {
+        next.team = [...next.team, fighter];
+      } else {
+        next.box = [...next.box, fighter];
+      }
+      next.caughtLog = [
+        {
+          speciesId: fighter.speciesId,
+          name: fighter.name,
+          level: fighter.level,
+          sprite: fighter.sprites.front,
+          at: Date.now()
+        },
+        ...(prev.caughtLog || [])
+      ].slice(0, 200);
+      return next;
+    });
+  };
+
   // Sumar o quitar monedas (apuestas de los combates Online)
   const addCoins = (amount) => update(prev => ({ ...prev, coins: Math.max(0, prev.coins + amount) }));
 
@@ -261,6 +286,7 @@ export const useGame = () => {
     advanceStory,
     restartStory,
     addPokemon,
+    buyPokemon,
     addCoins,
     sellPokemon,
     toggleCreatorMode,

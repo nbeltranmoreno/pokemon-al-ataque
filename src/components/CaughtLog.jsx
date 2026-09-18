@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import PokeSprite from './PokeSprite';
 import PixelBackground from './PixelBackground';
+import { useLang } from '../i18n';
 
 const fecha = (ms) => {
   const d = new Date(ms);
@@ -11,9 +12,10 @@ const fecha = (ms) => {
  * Mi colección: los Pokémon que tienes ahora (equipo y caja) y el historial de capturas
  */
 export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack }) {
+  const { t } = useLang();
   const coleccion = [
-    ...team.map(pokemon => ({ ...pokemon, donde: 'En el equipo' })),
-    ...box.map(pokemon => ({ ...pokemon, donde: 'Guardado' }))
+    ...team.map(pokemon => ({ ...pokemon, enEquipo: true })),
+    ...box.map(pokemon => ({ ...pokemon, enEquipo: false }))
   ];
   const distintos = new Set(coleccion.map(pokemon => pokemon.speciesId)).size;
 
@@ -31,33 +33,33 @@ export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack 
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-base font-black text-white leading-loose">📒 Mi colección</h1>
+            <h1 className="text-base font-black text-white leading-loose">📒 {t('Mi colección')}</h1>
             <p className="text-white/70 text-[9px] leading-loose">
-              {coleccion.length} Pokémon · {distintos} distintos · {caughtLog.length} capturas
+              {t('{0} Pokémon · {1} distintos · {2} capturas', coleccion.length, distintos, caughtLog.length)}
             </p>
           </div>
         </div>
 
         {/* Los que tienes ahora mismo */}
         <section className="mb-6">
-          <h2 className="text-white font-black text-xs mb-2">Los tuyos</h2>
+          <h2 className="text-white font-black text-xs mb-2">{t('Los tuyos')}</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {coleccion.map(pokemon => (
               <div
                 key={pokemon.uid}
                 className={`bg-white/10 border-4 p-2 ${
-                  pokemon.donde === 'En el equipo' ? 'border-green-300/70' : 'border-white/20'
+                  pokemon.enEquipo ? 'border-green-300/70' : 'border-white/20'
                 } ${pokemon.hp <= 0 ? 'opacity-50 grayscale' : ''}`}
               >
                 <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
                 <p className="text-white text-[9px] font-black text-center truncate leading-loose">{pokemon.name}</p>
-                <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
+                <p className="text-white/60 text-[9px] text-center">{t('Nv. {0}', pokemon.level)}</p>
                 <p
                   className={`text-[8px] text-center leading-loose ${
-                    pokemon.donde === 'En el equipo' ? 'text-green-300' : 'text-white/50'
+                    pokemon.enEquipo ? 'text-green-300' : 'text-white/50'
                   }`}
                 >
-                  {pokemon.donde}
+                  {pokemon.enEquipo ? t('En el equipo') : t('Guardado')}
                 </p>
               </div>
             ))}
@@ -66,14 +68,13 @@ export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack 
 
         {/* Historial de capturas */}
         <section>
-          <h2 className="text-white font-black text-xs mb-2">Historial de capturas</h2>
+          <h2 className="text-white font-black text-xs mb-2">{t('Historial de capturas')}</h2>
           {caughtLog.length === 0 ? (
             <div className="bg-black/30 border-4 border-white/20 p-5 text-center">
               <p className="text-4xl mb-2">⚪</p>
-              <p className="text-white font-black text-[10px] leading-loose mb-2">Todavía no has atrapado a ninguno</p>
+              <p className="text-white font-black text-[10px] leading-loose mb-2">{t('Todavía no has atrapado a ninguno')}</p>
               <p className="text-white/70 text-[9px] leading-loose">
-                Lanza Poké Balls en Práctica o en Peleas. Cuanta menos vida le quede al salvaje, y cuanto más fuerte
-                sea tu Pokémon, más fácil es atraparlo.
+                {t('Lanza Poké Balls en Peleas. Cuanta menos vida le quede al salvaje, y cuanto más fuerte sea tu Pokémon, más fácil es atraparlo.')}
               </p>
             </div>
           ) : (
@@ -86,11 +87,9 @@ export default function CaughtLog({ team = [], box = [], caughtLog = [], onBack 
                   <PokeSprite src={entry.sprite} alt="" className="w-12 h-12 object-contain flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-black text-[10px] truncate leading-loose">{entry.name}</p>
-                    <p className="text-white/60 text-[9px]">
-                      Nivel {entry.level} · {fecha(entry.at)}
-                    </p>
+                    <p className="text-white/60 text-[9px]">{t('Nivel {0} · {1}', entry.level, fecha(entry.at))}</p>
                   </div>
-                  <span className="text-white/40 text-[9px] font-black flex-shrink-0">Nº {entry.speciesId}</span>
+                  <span className="text-white/40 text-[9px] font-black flex-shrink-0">{t('Nº {0}', entry.speciesId)}</span>
                 </div>
               ))}
             </div>

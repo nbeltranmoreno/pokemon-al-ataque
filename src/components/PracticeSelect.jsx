@@ -3,11 +3,13 @@ import PokeSprite from './PokeSprite';
 import PixelBackground from './PixelBackground';
 import { ArrowLeft, Shuffle } from 'lucide-react';
 import { loadPokedex } from '../services/pokeapi';
+import { useLang } from '../i18n';
 
 /**
  * Práctica: elegir contra qué Pokémon salvaje pelear
  */
 export default function PracticeSelect({ onChoose, onRandom, onBack }) {
+  const { t } = useLang();
   const [list, setList] = useState([]);
   const [query, setQuery] = useState('');
   const [error, setError] = useState('');
@@ -45,9 +47,9 @@ export default function PracticeSelect({ onChoose, onRandom, onBack }) {
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-base font-black text-white leading-loose">⚔️ Práctica</h1>
+            <h1 className="text-base font-black text-white leading-loose">⚔️ {t('Práctica')}</h1>
             <p className="text-white/80 text-[10px] leading-loose">
-              Entrenamiento libre: no se debilitan, salen curados y no ganan experiencia ni monedas
+              {t('Entrenamiento libre: no se debilitan, salen curados y no ganan experiencia ni monedas')}
             </p>
           </div>
         </div>
@@ -57,33 +59,33 @@ export default function PracticeSelect({ onChoose, onRandom, onBack }) {
           className="w-full bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 mb-4"
         >
           <Shuffle className="w-5 h-5" />
-          Sorpresa: uno al azar
+          {t('Sorpresa: uno al azar')}
         </button>
 
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar por nombre..."
+          placeholder={t('Buscar por nombre...')}
           className="w-full bg-black/30 border-4 border-white/30 text-white placeholder-white/50 px-4 py-3 mb-4 outline-none focus:border-yellow-300"
         />
 
         {error && (
           <div className="bg-red-500/30 border-4 border-red-300/50 text-white p-4 text-center text-[10px] leading-loose">
-            {error}
+            {t(error)}
           </div>
         )}
 
         {!error && list.length === 0 && (
           <div className="text-center py-16">
             <div className="animate-spin text-5xl mb-3">⚡</div>
-            <p className="text-white font-bold text-[10px]">Cargando Pokémon...</p>
+            <p className="text-white font-bold text-[10px]">{t('Cargando Pokémon...')}</p>
           </div>
         )}
 
         {filtered.length === 0 && list.length > 0 && (
           <p className="text-white/80 text-center text-[10px] leading-loose py-8">
-            Ningún Pokémon se llama así.
+            {t('Ningún Pokémon se llama así.')}
           </p>
         )}
 

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLang } from '../i18n';
+import LangButton from './LangButton';
 
 const ERRORS = {
   'auth/invalid-credential': 'Email o contraseña incorrectos.',
@@ -14,6 +16,7 @@ const ERRORS = {
  */
 export default function Login() {
   const { login, signup, loginWithGoogle } = useAuth();
+  const { t } = useLang();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,17 +49,17 @@ export default function Login() {
       <div className="max-w-md w-full">
         <header className="text-center mb-6">
           <h1 className="text-xl font-black text-white drop-shadow-[4px_4px_0_rgba(0,0,0,0.6)] leading-loose">
-            Entra a jugar
+            {t('Entra a jugar')}
           </h1>
           <p className="text-white/80 text-[10px] leading-loose mt-2">
-            Tu cuenta guarda quién eres para los combates Online
+            {t('Tu cuenta guarda quién eres para los combates Online')}
           </p>
         </header>
 
         <div className="bg-white/10 border-4 border-white/40 shadow-[8px_8px_0_rgba(0,0,0,0.5)] p-5">
           {error && (
             <div className="bg-red-500/30 border-4 border-red-300/50 text-white p-3 text-[10px] leading-loose mb-4">
-              {error}
+              {t(error)}
             </div>
           )}
 
@@ -72,10 +75,10 @@ export default function Login() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
-            Entrar con Google
+            {t('Entrar con Google')}
           </button>
 
-          <p className="text-white/50 text-[9px] text-center leading-loose mb-4">o con tu email</p>
+          <p className="text-white/50 text-[9px] text-center leading-loose mb-4">{t('o con tu email')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {!isLogin && (
@@ -83,7 +86,7 @@ export default function Login() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Tu nombre"
+                placeholder={t('Tu nombre')}
                 required
                 className={input}
               />
@@ -100,7 +103,7 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Contraseña"
+              placeholder={t('Contraseña')}
               required
               className={input}
             />
@@ -110,7 +113,7 @@ export default function Login() {
               disabled={busy}
               className="w-full bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition disabled:opacity-50"
             >
-              {busy ? 'Entrando...' : isLogin ? 'Iniciar sesión' : 'Crear cuenta'}
+              {busy ? t('Entrando...') : isLogin ? t('Iniciar sesión') : t('Crear cuenta')}
             </button>
           </form>
 
@@ -121,8 +124,12 @@ export default function Login() {
             }}
             className="w-full text-white/70 hover:text-white mt-4 text-[10px] leading-loose"
           >
-            {isLogin ? '¿No tienes cuenta? Créala aquí' : '¿Ya tienes cuenta? Inicia sesión'}
+            {isLogin ? t('¿No tienes cuenta? Créala aquí') : t('¿Ya tienes cuenta? Inicia sesión')}
           </button>
+        </div>
+
+        <div className="text-center mt-5">
+          <LangButton />
         </div>
       </div>
     </div>

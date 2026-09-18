@@ -24,6 +24,7 @@ import PixelBackground from './PixelBackground';
 import PixelScene from './PixelScene';
 import AttackCutIn from './AttackCutIn';
 import { canFloat } from '../data/floaters';
+import { useLang } from '../i18n';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -54,6 +55,7 @@ export default function BattleScreen({
   outfit = 'clasico',
   onFinish
 }) {
+  const { t } = useLang();
   const [team, setTeam] = useState(() => initialTeam.map(clone));
   const [enemy, setEnemy] = useState(null);
   const [activeIndex, setActiveIndex] = useState(() => initialTeam.findIndex(p => p.hp > 0));
@@ -98,8 +100,8 @@ export default function BattleScreen({
         setEnemy(rival);
         setLog([{
           text: opponent
-            ? `¡${opponent.trainer} te reta con ${rival.name}!`
-            : `¡Un ${rival.name} salvaje apareció!`,
+            ? t('¡{0} te reta con {1}!', opponent.trainer, rival.name)
+            : t('¡Un {0} salvaje apareció!', rival.name),
           side: 'info'
         }]);
       })
@@ -110,7 +112,7 @@ export default function BattleScreen({
   }, [initialTeam, opponent, wildId, storyFighter]);
 
   // Cómo se nombra al rival según el modo
-  const foeLabel = (name) => (opponent ? `El ${name} de ${opponent.trainer}` : `El ${name} salvaje`);
+  const foeLabel = (name) => (opponent ? t('El {0} de {1}', name, opponent.trainer) : t('El {0} salvaje', name));
 
   // side: 'me' (lo hace tu Pokémon), 'foe' (lo hace el salvaje) o 'info'
   const addLog = (message, side = 'info') => setLog(prev => [...prev.slice(-5), { text: message, side }]);
@@ -120,22 +122,22 @@ export default function BattleScreen({
   const attack = async (attacker, defender, move, targetSide) => {
     const mine = targetSide === 'enemy'; // si el golpe va al rival, quien ataca eres tú
     const side = mine ? 'me' : 'foe';
-    const attackerLabel = mine ? `Tu ${attacker.name}` : foeLabel(attacker.name);
-    const defenderLabel = mine ? foeLabel(defender.name) : `Tu ${defender.name}`;
+    const attackerLabel = mine ? t('Tu {0}', attacker.name) : foeLabel(attacker.name);
+    const defenderLabel = mine ? foeLabel(defender.name) : t('Tu {0}', defender.name);
 
     // Corte estilo anime antes de golpear
     setCutIn({ side: mine ? 'player' : 'enemy', sprite: attacker.sprites.front, name: attacker.name, move });
     await delay(mine ? 1100 : 800);
     setCutIn(null);
 
-    addLog(`¡${attackerLabel} usó ${move.name}!`, side);
+    addLog(t('¡{0} usó {1}!', attackerLabel, move.name), side);
     setAttacker(mine ? 'player' : 'enemy');
     setTimeout(() => setAttacker(null), 600);
     await delay(700);
 
     const hit = resolveAttack(attacker, defender, move);
     if (hit.missed) {
-      addLog('¡Pero falló!', side);
+      addLog(t('¡Pero falló!'), side);
       await delay(700);
       return defender.hp;
     }
@@ -151,11 +153,11 @@ export default function BattleScreen({
     const aguanta = targetSide === 'player' && defender.hp >= defender.maxHp && remaining <= 0;
     if (aguanta) remaining = 1;
 
-    if (hit.critical) addLog('¡Un golpe crítico!', side);
+    if (hit.critical) addLog(t('¡Un golpe crítico!'), side);
     const text = effectivenessText(hit.effectiveness);
-    if (text) addLog(text, side);
-    addLog(`${defenderLabel} perdió ${hit.amount} PS.`, side);
-    if (aguanta) addLog(`¡${defender.name} aguantó el golpe con 1 PS!`, 'info');
+    if (text) addLog(t(text), side);
+    addLog(t('{0} perdió {1} PS.', defenderLabel, hit.amount), side);
+    if (aguanta) addLog(t('¡{0} aguantó el golpe con 1 PS!', defender.name), 'info');
 
     await delay(700);
     return remaining;
@@ -188,7 +190,7 @@ export default function BattleScreen({
 
     // Si el salvaje es más rápido pega antes que tú: se avisa para que se entienda
     if (!playerFirst) {
-      addLog(`¡${foeLabel(enemy.name)} es más rápido y ataca primero!`, 'foe');
+      addLog(t('¡{0} es más rápido y ataca primero!', foeLabel(enemy.name)), 'foe');
       await delay(800);
     }
 
@@ -205,7 +207,7 @@ export default function BattleScreen({
         myHp = practice ? Math.max(1, remaining) : remaining;
 
         if (practice && remaining <= 0) {
-          addLog(`¡Tu ${active.name} aguanta con 1 PS! En Práctica no se debilita.`, 'info');
+          addLog(t('¡Tu {0} aguanta con 1 PS! En Práctica no se debilita.', active.name), 'info');
         }
 
         setTeam(prev => prev.map((p, i) => (i === activeIndex ? meNow() : p)));
@@ -214,13 +216,13 @@ export default function BattleScreen({
 
     // ¿Ganó el jugador?
     if (foeHp <= 0) {
-      addLog(`¡${enemy.name} se debilitó!`);
+      addLog(t('¡{0} se debilitó!', enemy.name));
       await delay(600);
 
       // La Práctica es entrenamiento libre: no da experiencia ni monedas
       // En Peleas se gana poca experiencia; en la Historia la reparte el juego
       if (practice) {
-        addLog('En Práctica no se gana experiencia ni monedas.', 'info');
+        addLog(t('En Práctica no se gana experiencia ni monedas.'), 'info');
         endBattle(team.map((p, i) => (i === activeIndex ? meNow() : p)), 'win');
         setBusy(false);
         return;
@@ -228,8 +230,8 @@ export default function BattleScreen({
 
       const xp = mode === 'wild' ? Math.max(4, Math.round(xpReward(enemy) / 4)) : xpReward(enemy);
       const { fighter, levelsGained } = gainXp(meNow(), xp);
-      addLog(`${fighter.name} ganó ${xp} puntos de experiencia.`);
-      levelsGained.forEach(level => addLog(`¡${fighter.name} subió al nivel ${level}!`));
+      addLog(t('{0} ganó {1} puntos de experiencia.', fighter.name, xp));
+      levelsGained.forEach(level => addLog(t('¡{0} subió al nivel {1}!', fighter.name, level)));
 
       endBattle(team.map((p, i) => (i === activeIndex ? fighter : p)), 'win');
       setBusy(false);
@@ -238,19 +240,19 @@ export default function BattleScreen({
 
     // ¿Se debilitó el Pokémon del jugador?
     if (myHp <= 0) {
-      addLog(`¡${active.name} se debilitó!`);
+      addLog(t('¡{0} se debilitó!', active.name));
       await delay(600);
 
       const updatedTeam = team.map((p, i) => (i === activeIndex ? meNow() : p));
       const next = updatedTeam.findIndex(p => p.hp > 0);
 
       if (next === -1) {
-        addLog('¡No te quedan Pokémon en pie!');
+        addLog(t('¡No te quedan Pokémon en pie!'));
         endBattle(updatedTeam, 'lose');
       } else {
         setTeam(updatedTeam);
         setMenu('team');
-        addLog('Elige otro Pokémon.');
+        addLog(t('Elige otro Pokémon.'));
       }
       setBusy(false);
       return;
@@ -264,7 +266,7 @@ export default function BattleScreen({
     setBusy(true);
     setMenu('main');
     setActiveIndex(index);
-    addLog(`¡Adelante, ${team[index].name}!`);
+    addLog(t('¡Adelante, {0}!', team[index].name));
     await delay(600);
     setBusy(false);
   };
@@ -272,41 +274,47 @@ export default function BattleScreen({
   const throwBall = async () => {
     // A los Pokémon de otro entrenador no se les puede lanzar una Poké Ball
     if (mode === 'story') {
-      addLog('¡No puedes capturar el Pokémon de otro entrenador!');
+      addLog(t('¡No puedes capturar el Pokémon de otro entrenador!'));
+      return;
+    }
+
+    // En Práctica no hay consecuencias, así que tampoco se captura: es solo entrenamiento
+    if (practice) {
+      addLog(t('En Práctica no se puede capturar. Hazlo en Peleas.'));
       return;
     }
 
     if (balls - ballsUsed <= 0) {
-      addLog('¡No te quedan Poké Balls!');
+      addLog(t('¡No te quedan Poké Balls!'));
       return;
     }
 
     setBusy(true);
     setMenu('main');
     setBallsUsed(used => used + 1);
-    addLog('¡Lanzaste una Poké Ball!');
+    addLog(t('¡Lanzaste una Poké Ball!'));
     await delay(900);
 
     if (Math.random() < catchChance(enemy, active.level)) {
-      addLog(`¡Atrapaste a ${enemy.name}!`);
+      addLog(t('¡Atrapaste a {0}!', enemy.name));
       endBattle(team, 'caught', enemy);
       setBusy(false);
       return;
     }
 
-    addLog(`¡Oh no! ${enemy.name} se escapó de la Poké Ball.`);
+    addLog(t('¡Oh no! {0} se escapó de la Poké Ball.', enemy.name));
     await delay(700);
 
     // El rival aprovecha el turno para atacar
     const enemyMove = chooseEnemyMove(enemy, active);
     const remaining = await attack(enemy, active, enemyMove, 'player');
-    // La Poké Ball solo existe en Práctica, así que aquí tu Pokémon tampoco se debilita
-    const me = { ...active, hp: Math.max(1, remaining) };
+    // En Peleas el fallo se paga: si el golpe lo tumba, se debilita de verdad
+    const me = { ...active, hp: remaining };
     const updatedTeam = team.map((p, i) => (i === activeIndex ? me : p));
     setTeam(updatedTeam);
 
     if (isFainted(me)) {
-      addLog(`¡${me.name} se debilitó!`);
+      addLog(t('¡{0} se debilitó!', me.name));
       const next = updatedTeam.findIndex(p => p.hp > 0);
       if (next === -1) {
         endBattle(updatedTeam, 'lose');
@@ -319,7 +327,7 @@ export default function BattleScreen({
   };
 
   const flee = () => {
-    addLog('Huiste del combate.');
+    addLog(t('Huiste del combate.'));
     endBattle(team, 'fled');
   };
 
@@ -328,12 +336,12 @@ export default function BattleScreen({
       <div className="min-h-screen bg-gradient-to-br from-blue-800 to-purple-900 flex items-center justify-center p-4">
         <div className="bg-white/15 backdrop-blur rounded-3xl p-8 text-center border-2 border-white/20 max-w-sm">
           <p className="text-5xl mb-3">📡</p>
-          <p className="text-white font-bold text-lg mb-4">{error}</p>
+          <p className="text-white font-bold text-lg mb-4">{t(error)}</p>
           <button
             onClick={() => onFinish({ team, result: 'fled', caught: null, ballsUsed })}
             className="bg-white text-blue-800 font-black px-6 py-3 rounded-2xl shadow-xl hover:scale-105 transition"
           >
-            Volver
+            {t('Volver')}
           </button>
         </div>
       </div>
@@ -345,7 +353,7 @@ export default function BattleScreen({
       <div className="min-h-screen bg-gradient-to-br from-blue-800 to-purple-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin text-6xl mb-3">⚡</div>
-          <p className="text-white font-bold text-xl">Buscando rival...</p>
+          <p className="text-white font-bold text-xl">{t('Buscando rival...')}</p>
         </div>
       </div>
     );
@@ -373,10 +381,10 @@ export default function BattleScreen({
         <div className="flex items-start justify-between gap-4">
           <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <span className="inline-block bg-red-500 text-white text-[10px] font-black px-2 py-0.5 mb-1 truncate max-w-full">
-              {opponent ? opponent.trainer.toUpperCase() : 'RIVAL SALVAJE'}
+              {opponent ? opponent.trainer.toUpperCase() : t('RIVAL SALVAJE')}
             </span>
             <p className="text-white font-black text-[10px] truncate leading-loose">{enemy.name}</p>
-            <p className="text-white/90 text-[9px] font-bold">Nv. {enemy.level}</p>
+            <p className="text-white/90 text-[9px] font-bold">{t('Nv. {0}', enemy.level)}</p>
             <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} />
             <div className="flex gap-1 mt-2 flex-wrap">
               {enemy.types.map(type => (
@@ -405,7 +413,7 @@ export default function BattleScreen({
             )}
             {/* Plataforma del rival */}
             <Platform className="w-20 sm:w-28 h-6 sm:h-7 mx-auto -mt-5 sm:-mt-6" />
-            <p className="text-center text-[9px] font-black text-red-300 mt-1">RIVAL</p>
+            <p className="text-center text-[9px] font-black text-red-300 mt-1">{t('RIVAL')}</p>
           </div>
         </div>
 
@@ -436,15 +444,15 @@ export default function BattleScreen({
               )}
               {/* Tu plataforma, más cerca de la cámara */}
               <Platform className="w-24 sm:w-36 h-7 sm:h-9 mx-auto -mt-5 sm:-mt-7" />
-              <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
+              <p className="text-center text-[9px] font-black text-green-300 mt-1">{t('TÚ')}</p>
             </div>
           </div>
           <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">
-              TU POKÉMON
+              {t('TU POKÉMON')}
             </span>
             <p className="text-white font-black text-[10px] truncate leading-loose">{active.name}</p>
-            <p className="text-white/90 text-[9px] font-bold">Nv. {active.level}</p>
+            <p className="text-white/90 text-[9px] font-bold">{t('Nv. {0}', active.level)}</p>
             <HealthBar hp={active.hp} maxHp={active.maxHp} />
             <div className="h-1.5 w-full bg-black/30 rounded-full overflow-hidden mt-1">
               <div
@@ -476,21 +484,21 @@ export default function BattleScreen({
           {result ? (
             <div className="bg-white/15 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-xs mb-3 leading-relaxed">
-                {result === 'win' && '¡Ganaste el combate! 🎉'}
-                {result === 'caught' && `¡${caught?.name} es tuyo! 🎊`}
-                {result === 'lose' && 'Te quedaste sin Pokémon... 😵'}
-                {result === 'fled' && 'Escapaste del combate 💨'}
+                {result === 'win' && t('¡Ganaste el combate! 🎉')}
+                {result === 'caught' && t('¡{0} es tuyo! 🎊', caught?.name)}
+                {result === 'lose' && t('Te quedaste sin Pokémon... 😵')}
+                {result === 'fled' && t('Escapaste del combate 💨')}
               </p>
               {practice && (
                 <p className="text-green-300 text-[9px] leading-loose mb-3">
-                  Entrenamiento: sales curado, sin experiencia ni monedas
+                  {t('Entrenamiento: sales curado, sin experiencia ni monedas')}
                 </p>
               )}
               <button
                 onClick={() => onFinish({ team, result, caught, ballsUsed })}
                 className="bg-yellow-400 text-yellow-900 font-black px-8 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition"
               >
-                Continuar
+                {t('Continuar')}
               </button>
             </div>
           ) : menu === 'moves' ? (
@@ -506,7 +514,7 @@ export default function BattleScreen({
                   <div className="flex items-center justify-between mt-1">
                     <TypeBadge type={move.type} small />
                     <span className="text-gray-600 text-xs font-bold">
-                      {move.ppLeft === Infinity ? '∞' : `${move.ppLeft}/${move.pp}`} PP
+                      {move.ppLeft === Infinity ? '∞' : `${move.ppLeft}/${move.pp}`} {t('PP')}
                     </span>
                   </div>
                 </button>
@@ -515,7 +523,7 @@ export default function BattleScreen({
                 onClick={() => setMenu('main')}
                 className="col-span-2 bg-black/40 text-white font-bold py-2 rounded-2xl border-2 border-white/20"
               >
-                Volver
+                {t('Volver')}
               </button>
             </div>
           ) : menu === 'team' ? (
@@ -530,7 +538,7 @@ export default function BattleScreen({
                   <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain" />
                   <div className="flex-1 min-w-0 text-left">
                     <p className="font-black text-gray-800 text-sm truncate">
-                      {pokemon.name} <span className="text-gray-500">Nv. {pokemon.level}</span>
+                      {pokemon.name} <span className="text-gray-500">{t('Nv. {0}', pokemon.level)}</span>
                     </p>
                     <div className="h-2 w-full bg-gray-300 rounded-full overflow-hidden mt-1">
                       <div
@@ -549,7 +557,7 @@ export default function BattleScreen({
                   onClick={() => setMenu('main')}
                   className="w-full bg-black/40 text-white font-bold py-2 rounded-2xl border-2 border-white/20"
                 >
-                  Volver
+                  {t('Volver')}
                 </button>
               )}
             </div>
@@ -560,28 +568,28 @@ export default function BattleScreen({
                 disabled={busy}
                 className="bg-red-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-red-300 hover:scale-[1.02] active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <Swords className="w-5 h-5" /> Atacar
+                <Swords className="w-5 h-5" /> {t('Atacar')}
               </button>
               <button
                 onClick={throwBall}
-                disabled={busy || ballsLeft <= 0 || Boolean(opponent)}
+                disabled={busy || practice || ballsLeft <= 0 || Boolean(opponent)}
                 className="bg-white text-red-600 font-black py-4 rounded-2xl shadow-xl border-2 border-white hover:scale-[1.02] active:scale-95 transition disabled:opacity-50"
               >
-                ⚪ Poké Ball ({ballsLeft})
+                {t('⚪ Poké Ball ({0})', ballsLeft)}
               </button>
               <button
                 onClick={() => setMenu('team')}
                 disabled={busy}
                 className="bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-blue-300 hover:scale-[1.02] active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <Repeat className="w-5 h-5" /> Cambiar
+                <Repeat className="w-5 h-5" /> {t('Cambiar')}
               </button>
               <button
                 onClick={flee}
                 disabled={busy}
                 className="bg-gray-700 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-gray-500 hover:scale-[1.02] active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <LogOut className="w-5 h-5" /> Huir
+                <LogOut className="w-5 h-5" /> {t('Huir')}
               </button>
             </div>
           )}

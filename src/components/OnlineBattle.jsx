@@ -10,6 +10,7 @@ import PixelTrainer from './PixelTrainer';
 import PixelScene from './PixelScene';
 import AttackCutIn from './AttackCutIn';
 import { canFloat } from '../data/floaters';
+import { useLang } from '../i18n';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -56,11 +57,12 @@ export default function OnlineBattle({
   onCoins,
   onExit
 }) {
+  const { t } = useLang();
   const [myTeam, setMyTeam] = useState(myStart);
   const [foeTeam, setFoeTeam] = useState(foeStart);
   const [myActive, setMyActive] = useState(0);
   const [foeActive, setFoeActive] = useState(0);
-  const [log, setLog] = useState([{ text: '¡Empieza el combate!', side: 'info' }]);
+  const [log, setLog] = useState([{ key: '¡Empieza el combate!', side: 'info' }]);
   const [menu, setMenu] = useState('main'); // 'main' | 'moves' | 'team'
   const [esperando, setEsperando] = useState(false); // ya elegiste, falta el rival
   const [mustSwitch, setMustSwitch] = useState(false); // tu Pokémon cayó: saca otro
@@ -112,7 +114,7 @@ export default function OnlineBattle({
   }, [result, bet, onCoins]);
 
   const addLine = (line) => {
-    setLog(prev => [...prev.slice(-8), { text: line.text, side: line.side === mineKey ? 'me' : line.side === 'info' ? 'info' : 'foe' }]);
+    setLog(prev => [...prev.slice(-8), { key: line.key, args: line.args, side: line.side === mineKey ? 'me' : line.side === 'info' ? 'info' : 'foe' }]);
   };
 
   // Poner las vidas que dice el anfitrión
@@ -210,11 +212,11 @@ export default function OnlineBattle({
     // Los cambios van primero: cambiar de Pokémon gasta tu turno
     if (hostAction.kind === 'switch') {
       hostActive = hostAction.index;
-      lines.push({ kind: 'switch', text: `¡Adelante, ${hostTeam[hostActive].name}!`, side: 'host' });
+      lines.push({ kind: 'switch', key: '¡Adelante, {0}!', args: [hostTeam[hostActive].name], side: 'host' });
     }
     if (guestAction.kind === 'switch') {
       guestActive = guestAction.index;
-      lines.push({ kind: 'switch', text: `¡Adelante, ${guestTeam[guestActive].name}!`, side: 'guest' });
+      lines.push({ kind: 'switch', key: '¡Adelante, {0}!', args: [guestTeam[guestActive].name], side: 'guest' });
     }
 
     const hostMon = hostTeam[hostActive];
@@ -235,14 +237,15 @@ export default function OnlineBattle({
 
       lines.push({
         kind: 'attack',
-        text: `¡${atacante.name} usó ${move.name}!`,
+        key: '¡{0} usó {1}!',
+        args: [atacante.name, move.name],
         side: quien,
         cut: { sprite: atacante.sprites.front, name: atacante.name, move: { name: move.name, type: move.type } }
       });
 
       const hit = resolveAttack(atacante, defensor, move);
       if (hit.missed) {
-        lines.push({ kind: 'miss', text: '¡Pero falló!', side: quien });
+        lines.push({ kind: 'miss', key: '¡Pero falló!', side: quien });
         continue;
       }
 
@@ -256,13 +259,14 @@ export default function OnlineBattle({
         hostHps[hostActive] = quedan;
       }
 
-      if (hit.critical) lines.push({ kind: 'crit', text: '¡Un golpe crítico!', side: quien });
+      if (hit.critical) lines.push({ kind: 'crit', key: '¡Un golpe crítico!', side: quien });
       const texto = effectivenessText(hit.effectiveness);
-      if (texto) lines.push({ kind: 'eff', text: texto, side: quien });
+      if (texto) lines.push({ kind: 'eff', key: texto, side: quien });
 
       lines.push({
         kind: 'damage',
-        text: `${defensor.name} perdió ${defensorHp - quedan} PS.`,
+        key: '{0} perdió {1} PS.',
+        args: [defensor.name, defensorHp - quedan],
         side: quien,
         amount: defensorHp - quedan,
         target: quien === 'host' ? 'guest' : 'host',
@@ -270,7 +274,7 @@ export default function OnlineBattle({
         guestHps: [...guestHps]
       });
 
-      if (quedan <= 0) lines.push({ kind: 'faint', text: `¡${defensor.name} se debilitó!`, side: quien });
+      if (quedan <= 0) lines.push({ kind: 'faint', key: '¡{0} se debilitó!', args: [defensor.name], side: quien });
     }
 
     // Se pierde cuando caen todos, no solo el que está peleando
@@ -310,11 +314,11 @@ export default function OnlineBattle({
 
     if (need.host) {
       hostActive = pend.host;
-      lines.push({ kind: 'switch', text: `¡Adelante, ${hostTeam[hostActive].name}!`, side: 'host' });
+      lines.push({ kind: 'switch', key: '¡Adelante, {0}!', args: [hostTeam[hostActive].name], side: 'host' });
     }
     if (need.guest) {
       guestActive = pend.guest;
-      lines.push({ kind: 'switch', text: `¡Adelante, ${guestTeam[guestActive].name}!`, side: 'guest' });
+      lines.push({ kind: 'switch', key: '¡Adelante, {0}!', args: [guestTeam[guestActive].name], side: 'guest' });
     }
 
     needRef.current = { host: false, guest: false };
@@ -340,7 +344,7 @@ export default function OnlineBattle({
     const onData = (data) => {
       if (data?.type === 'action') {
         rivalActionRef.current = data.action;
-        setLog(prev => [...prev.slice(-8), { text: 'Tu rival ya ha elegido.', side: 'info' }]);
+        setLog(prev => [...prev.slice(-8), { key: 'Tu rival ya ha elegido.', side: 'info' }]);
         if (isHost && myActionRef.current !== null) resolveTurn();
       } else if (data?.type === 'replace') {
         if (isHost) {
@@ -425,7 +429,7 @@ export default function OnlineBattle({
 
       <div className="relative max-w-2xl w-full mx-auto flex-1 flex flex-col">
         {bet > 0 && (
-          <p className="text-yellow-300 font-black text-[10px] text-center mb-2 leading-loose">🪙 Apuesta: {bet} monedas</p>
+          <p className="text-yellow-300 font-black text-[10px] text-center mb-2 leading-loose">{t('🪙 Apuesta: {0} monedas', bet)}</p>
         )}
 
         {/* Rival */}
@@ -433,15 +437,15 @@ export default function OnlineBattle({
           <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="inline-block bg-red-500 text-white text-[10px] font-black px-2 py-0.5 truncate max-w-full">
-                🎮 {foeTrainer || 'RIVAL'}
+                🎮 {foeTrainer || t('RIVAL')}
               </span>
               <TeamDots team={foeTeam} active={foeActive} color="bg-red-400" />
             </div>
             <p className="text-white font-black text-[10px] truncate leading-loose">{foe.name}</p>
-            <p className="text-white/90 text-[9px] font-bold">Nv. {foe.level}</p>
+            <p className="text-white/90 text-[9px] font-bold">{t('Nv. {0}', foe.level)}</p>
             <HealthBar hp={foe.hp} maxHp={foe.maxHp} />
             <p className="text-white/60 text-[9px] leading-loose mt-1">
-              Le quedan {foeAlive} de {foeTeam.length}
+              {t('Le quedan {0} de {1}', foeAlive, foeTeam.length)}
             </p>
             <div className="flex gap-1 mt-2 flex-wrap">
               {foe.types.map(type => (
@@ -470,7 +474,7 @@ export default function OnlineBattle({
                 </span>
               )}
               <Platform className="w-20 sm:w-28 h-6 sm:h-7 mx-auto -mt-5 sm:-mt-6" />
-              <p className="text-center text-[9px] font-black text-red-300 mt-1">RIVAL</p>
+              <p className="text-center text-[9px] font-black text-red-300 mt-1">{t('RIVAL')}</p>
             </div>
             {/* El entrenador rival, tal como se ha puesto él */}
             <PixelTrainer gender={foeGender} outfit={foeOutfit} className="w-8 h-11 sm:w-12 sm:h-[4.25rem] mt-2" />
@@ -502,19 +506,19 @@ export default function OnlineBattle({
                 </span>
               )}
               <Platform className="w-24 sm:w-36 h-7 sm:h-9 mx-auto -mt-5 sm:-mt-7" />
-              <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
+              <p className="text-center text-[9px] font-black text-green-300 mt-1">{t('TÚ')}</p>
             </div>
           </div>
           <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">TU POKÉMON</span>
+              <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">{t('TU POKÉMON')}</span>
               <TeamDots team={myTeam} active={myActive} color="bg-green-400" />
             </div>
             <p className="text-white font-black text-[10px] truncate leading-loose">{me.name}</p>
-            <p className="text-white/90 text-[9px] font-bold">Nv. {me.level}</p>
+            <p className="text-white/90 text-[9px] font-bold">{t('Nv. {0}', me.level)}</p>
             <HealthBar hp={me.hp} maxHp={me.maxHp} />
             <p className="text-white/60 text-[9px] leading-loose mt-1">
-              Te quedan {myAlive} de {myTeam.length}
+              {t('Te quedan {0} de {1}', myAlive, myTeam.length)}
             </p>
           </div>
         </div>
@@ -530,7 +534,7 @@ export default function OnlineBattle({
                 line.side === 'me' ? 'text-green-300' : line.side === 'foe' ? 'text-red-300' : 'text-white'
               }`}
             >
-              {line.text}
+              {t(line.key, ...(line.args || []))}
             </p>
           ))}
         </div>
@@ -539,39 +543,39 @@ export default function OnlineBattle({
         <div className="mt-3">
           {disconnected ? (
             <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
-              <p className="text-white font-black text-xs leading-loose mb-3">Tu rival se fue 👋</p>
+              <p className="text-white font-black text-xs leading-loose mb-3">{t('Tu rival se fue 👋')}</p>
               <button
                 onClick={onExit}
                 className="bg-white text-blue-800 font-black px-6 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition"
               >
-                Volver
+                {t('Volver')}
               </button>
             </div>
           ) : result ? (
             <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-xs leading-loose mb-3">
-                {result === 'win' ? '¡Ganaste el combate online! 🎉' : 'Perdiste el combate online 😵'}
+                {result === 'win' ? t('¡Ganaste el combate online! 🎉') : t('Perdiste el combate online 😵')}
               </p>
               {bet > 0 && (
                 <p className={`font-black text-[10px] leading-loose mb-3 ${result === 'win' ? 'text-yellow-300' : 'text-red-300'}`}>
-                  {result === 'win' ? `Te llevas ${bet} monedas` : `Pierdes ${bet} monedas`}
+                  {result === 'win' ? t('Te llevas {0} monedas', bet) : t('Pierdes {0} monedas', bet)}
                 </p>
               )}
               <button
                 onClick={leave}
                 className="bg-white text-blue-800 font-black px-6 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition"
               >
-                Volver
+                {t('Volver')}
               </button>
             </div>
           ) : playing ? (
             <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
-              <p className="text-white font-black text-[10px] leading-loose">¡Combate!</p>
+              <p className="text-white font-black text-[10px] leading-loose">{t('¡Combate!')}</p>
             </div>
           ) : esperando || foeSwitching ? (
             <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-[10px] leading-loose">
-                {foeSwitching ? 'Tu rival está sacando otro Pokémon...' : 'Esperando a tu rival...'}
+                {foeSwitching ? t('Tu rival está sacando otro Pokémon...') : t('Esperando a tu rival...')}
               </p>
               <div className="animate-spin text-3xl mt-2">⚡</div>
             </div>
@@ -579,7 +583,7 @@ export default function OnlineBattle({
             <div className="space-y-2">
               {mustSwitch && (
                 <p className="text-yellow-300 font-black text-[10px] text-center leading-loose">
-                  {me.name} se debilitó. ¡Saca otro Pokémon!
+                  {t('{0} se debilitó. ¡Saca otro Pokémon!', me.name)}
                 </p>
               )}
               {myTeam.map((pokemon, index) => (
@@ -592,7 +596,7 @@ export default function OnlineBattle({
                   <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain flex-shrink-0" />
                   <div className="flex-1 min-w-0 text-left">
                     <p className="font-black text-gray-800 text-[10px] truncate leading-loose">
-                      {pokemon.name} <span className="text-gray-500">Nv. {pokemon.level}</span>
+                      {pokemon.name} <span className="text-gray-500">{t('Nv. {0}', pokemon.level)}</span>
                     </p>
                     <div className="h-2 w-full bg-gray-300 rounded-full overflow-hidden mt-1">
                       <div
@@ -614,10 +618,10 @@ export default function OnlineBattle({
                     onClick={() => setMenu('main')}
                     className="w-full bg-black/40 text-white font-bold py-2 rounded-2xl border-2 border-white/20"
                   >
-                    Volver
+                    {t('Volver')}
                   </button>
                   <p className="text-white/60 text-[9px] text-center leading-loose">
-                    Cambiar gasta tu turno: el rival te pega igual.
+                    {t('Cambiar gasta tu turno: el rival te pega igual.')}
                   </p>
                 </>
               )}
@@ -633,7 +637,7 @@ export default function OnlineBattle({
                   <p className="font-black text-gray-800 text-[10px] truncate">{move.name}</p>
                   <div className="flex items-center justify-between mt-1">
                     <TypeBadge type={move.type} small />
-                    <span className="text-gray-600 text-[9px] font-bold">{move.power} pot.</span>
+                    <span className="text-gray-600 text-[9px] font-bold">{t('{0} pot.', move.power)}</span>
                   </div>
                 </button>
               ))}
@@ -641,7 +645,7 @@ export default function OnlineBattle({
                 onClick={() => setMenu('main')}
                 className="col-span-2 bg-black/40 text-white font-bold py-2 rounded-2xl border-2 border-white/20"
               >
-                Volver
+                {t('Volver')}
               </button>
             </div>
           ) : (
@@ -650,14 +654,14 @@ export default function OnlineBattle({
                 onClick={() => setMenu('moves')}
                 className="bg-red-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-red-300 hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-2"
               >
-                <Swords className="w-5 h-5" /> Atacar
+                <Swords className="w-5 h-5" /> {t('Atacar')}
               </button>
               <button
                 onClick={() => setMenu('team')}
                 disabled={myAlive <= 1}
                 className="bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-blue-300 hover:scale-[1.02] active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <Repeat className="w-5 h-5" /> Cambiar
+                <Repeat className="w-5 h-5" /> {t('Cambiar')}
               </button>
             </div>
           )}
@@ -668,7 +672,7 @@ export default function OnlineBattle({
               className="w-full mt-2 bg-gray-700 text-white font-black py-3 rounded-2xl shadow-xl border-2 border-gray-500 hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4" />
-              Salir del combate
+              {t('Salir del combate')}
             </button>
           )}
         </div>

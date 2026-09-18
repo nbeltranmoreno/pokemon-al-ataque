@@ -14,6 +14,7 @@ import TeamScreen from './components/TeamScreen';
 import StoryScreen from './components/StoryScreen';
 import PracticeSelect from './components/PracticeSelect';
 import ShopScreen from './components/ShopScreen';
+import PokeShopScreen from './components/PokeShopScreen';
 import OnlineScreen from './components/OnlineScreen';
 import Tutorial from './components/Tutorial';
 import CaughtLog from './components/CaughtLog';
@@ -24,12 +25,15 @@ import PixelBackground from './components/PixelBackground';
 import PixelDialog from './components/PixelDialog';
 import { isCreator } from './data/creator';
 import { VERSION } from './version';
+import { useLang } from './i18n';
+import LangButton from './components/LangButton';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
+  const { t } = useLang();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
@@ -182,6 +186,10 @@ export default function App() {
     );
   }
 
+  if (screen === 'pokeshop') {
+    return <PokeShopScreen save={save} onBuy={buyPokemon} onBack={() => setScreen('menu')} />;
+  }
+
   if (screen === 'team') {
     return (
       <TeamScreen
@@ -189,6 +197,7 @@ export default function App() {
         onSwap={swapWithBox}
         onUseItem={useItem}
         onSell={sellPokemon}
+        onRescue={healTeam}
         onBack={() => setScreen('menu')}
       />
     );
@@ -209,17 +218,18 @@ export default function App() {
             <span className="text-yellow-300">Al Ataque</span>
           </h1>
           <p className="text-white/80 font-medium mt-4 text-[10px] leading-loose">
-            {save.wins} victorias · {save.losses} derrotas
+            {t('{0} victorias · {1} derrotas', save.wins, save.losses)}
           </p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
-            🪙 {save.coins} monedas · ⚪ {save.balls} Poké Balls
+            {t('🪙 {0} monedas · ⚪ {1} Poké Balls', save.coins, save.balls)}
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
             <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-8 h-11" />
             <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
-            {creator && <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-0.5">CREADOR</span>}
+            {creator && <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-0.5">{t('CREADOR')}</span>}
           </div>
           <p className="text-white/50 text-[8px] leading-loose truncate">{user.email}</p>
+          <LangButton className="mt-2" />
           <p
             className="text-white/40 text-[8px] mt-1 cursor-pointer select-none"
             onClick={() => {
@@ -234,7 +244,7 @@ export default function App() {
             {VERSION}
           </p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
-            Historia: {medalsWon(save.storyStage)} de {MEDALS.length} medallas
+            {t('Historia: {0} de {1} medallas', medalsWon(save.storyStage), MEDALS.length)}
           </p>
         </header>
 
@@ -246,7 +256,7 @@ export default function App() {
               className={`bg-white/15 border-4 border-white/30 p-1 ${pokemon.hp <= 0 ? 'opacity-40 grayscale' : ''}`}
             >
               <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 object-contain" />
-              <p className="text-white text-[9px] font-bold text-center">Nv. {pokemon.level}</p>
+              <p className="text-white text-[9px] font-bold text-center">{t('Nv. {0}', pokemon.level)}</p>
               {/* Experiencia hacia el siguiente nivel */}
               <div className="h-1.5 w-full bg-black/40 border border-white/30">
                 <div
@@ -264,7 +274,7 @@ export default function App() {
             className={`${menuButton} bg-amber-400 text-amber-900 border-amber-900`}
           >
             <BookOpen className="w-5 h-5" />
-            Historia
+            {t('Historia')}
           </button>
 
           <button
@@ -276,7 +286,7 @@ export default function App() {
             className={`${menuButton} bg-yellow-400 text-yellow-900 border-yellow-900`}
           >
             <Swords className="w-5 h-5" />
-            Práctica
+            {t('Práctica')}
           </button>
 
           <button
@@ -290,7 +300,7 @@ export default function App() {
             className={`${menuButton} bg-orange-500 text-white border-orange-900`}
           >
             <Swords className="w-5 h-5" />
-            Peleas
+            {t('Peleas')}
           </button>
 
           <button
@@ -298,7 +308,7 @@ export default function App() {
             className={`${menuButton} bg-sky-400 text-sky-900 border-sky-900`}
           >
             <Globe className="w-5 h-5" />
-            Online
+            {t('Online')}
           </button>
 
           {/* Botones del creador: aquí arriba, junto a los modos de juego */}
@@ -307,26 +317,26 @@ export default function App() {
               <button
                 onClick={() => setScreen('creator')}
                 className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
-                title="Solo lo ves tú"
+                title={t('Solo lo ves tú')}
               >
                 <Sparkles className="w-5 h-5" />
-                Coger Pokémon
+                {t('Coger Pokémon')}
               </button>
 
               <button
                 onClick={healTeam}
                 className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
-                title="Solo lo ves tú"
+                title={t('Solo lo ves tú')}
               >
                 <Sparkles className="w-5 h-5" />
-                Curar equipo al instante
+                {t('Curar equipo al instante')}
               </button>
             </>
           )}
 
           {!canFight && (
             <p className="text-white text-center font-bold bg-black/40 border-4 border-white/20 py-3 text-[10px] leading-loose">
-              Tu equipo está debilitado. Compra Pociones o Revivir en la Tienda y úsalos en &quot;Mi equipo&quot;.
+              {t('Tu equipo está debilitado. Compra Pociones o Revivir en la Tienda y úsalos en "Mi equipo".')}
             </p>
           )}
 
@@ -335,7 +345,15 @@ export default function App() {
             className={`${menuButton} bg-fuchsia-500 text-white border-fuchsia-900`}
           >
             <ShoppingCart className="w-5 h-5" />
-            Tienda
+            {t('Tienda')}
+          </button>
+
+          <button
+            onClick={() => setScreen('pokeshop')}
+            className={`${menuButton} bg-emerald-500 text-white border-emerald-900`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {t('Tienda de Pokémon')}
           </button>
 
           <button
@@ -343,7 +361,7 @@ export default function App() {
             className={`${menuButton} bg-white/20 backdrop-blur text-white border-white/40`}
           >
             <Users className="w-5 h-5" />
-            Mi equipo
+            {t('Mi equipo')}
           </button>
 
           <button
@@ -351,7 +369,7 @@ export default function App() {
             className={`${menuButton} bg-white/20 backdrop-blur text-white border-white/40`}
           >
             <BookOpen className="w-5 h-5" />
-            Mi colección
+            {t('Mi colección')}
           </button>
 
           <button
@@ -359,7 +377,7 @@ export default function App() {
             className={`${menuButton} bg-white/10 text-white border-white/30`}
           >
             <HelpCircle className="w-5 h-5" />
-            Cómo se juega
+            {t('Cómo se juega')}
           </button>
 
           <button
@@ -367,7 +385,7 @@ export default function App() {
             className={`${menuButton} bg-white/10 text-white border-white/30`}
           >
             <LogOut className="w-5 h-5" />
-            Cerrar sesión
+            {t('Cerrar sesión')}
           </button>
 
           <button
@@ -375,7 +393,7 @@ export default function App() {
             className={`${menuButton} bg-red-900 text-white border-red-300`}
           >
             <PixelEgg className="w-5 h-6" />
-            Empezar de cero
+            {t('Empezar de cero')}
           </button>
         </div>
       </div>
@@ -389,8 +407,8 @@ export default function App() {
               <PixelEgg className="w-10 h-12 animate-float" />
             </>
           }
-          title="¡CUIDADO!"
-          confirmText="Sí, reiniciar"
+          title={t('¡CUIDADO!')}
+          confirmText={t('Sí, reiniciar')}
           onConfirm={() => {
             resetGame();
             setShowReset(false);
@@ -398,8 +416,7 @@ export default function App() {
           }}
           onCancel={() => setShowReset(false)}
         >
-          Esto va a reiniciar el juego. Perderás tu equipo, tus Pokémon capturados y las {MEDALS.length} medallas de la
-          historia. No se puede deshacer.
+          {t('Esto va a reiniciar el juego. Perderás tu equipo, tus Pokémon capturados y las {0} medallas de la historia. No se puede deshacer.', MEDALS.length)}
         </PixelDialog>
       )}
 
@@ -407,8 +424,8 @@ export default function App() {
       {showLogout && (
         <PixelDialog
           icon="👋"
-          title="¿Cerrar sesión?"
-          confirmText="Sí, cerrar sesión"
+          title={t('¿Cerrar sesión?')}
+          confirmText={t('Sí, cerrar sesión')}
           onConfirm={async () => {
             setShowLogout(false);
             await logout();
@@ -417,8 +434,7 @@ export default function App() {
           }}
           onCancel={() => setShowLogout(false)}
         >
-          Al cerrar sesión se borra la partida de este dispositivo: equipo, medallas, monedas y objetos. El siguiente
-          que entre empezará desde cero.
+          {t('Al cerrar sesión se borra la partida de este dispositivo: equipo, medallas, monedas y objetos. El siguiente que entre empezará desde cero.')}
         </PixelDialog>
       )}
     </div>

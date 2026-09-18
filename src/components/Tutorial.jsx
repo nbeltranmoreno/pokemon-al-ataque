@@ -3,6 +3,7 @@ import PokeSprite from './PokeSprite';
 import { spriteUrl } from '../services/pokeapi';
 import PixelItem from './PixelItem';
 import PixelTrainer from './PixelTrainer';
+import { useLang } from '../i18n';
 
 const back = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`;
 
@@ -10,6 +11,10 @@ const Bar = ({ percent, color }) => (
   <div className="h-3 w-full bg-black/40 border-2 border-white/40">
     <div className={`h-full ${color}`} style={{ width: `${percent}%` }} />
   </div>
+);
+
+const Moneda = ({ children }) => (
+  <p className="text-yellow-300 font-black text-[10px] leading-loose">{children}</p>
 );
 
 // Cada paso enseña una escena animada con una frase corta
@@ -52,7 +57,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'La Historia es un cuento: pasas escenas y, de vez en cuando, hay combate.',
+    caption: 'La Historia es un cuento: pasas escenas y, de vez en cuando, hay combate. Ganando consigues medallas.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <div className="flex gap-2">
@@ -62,12 +67,23 @@ const STEPS = [
         <div className="bg-black/70 border-4 border-white/50 px-3 py-2 w-56">
           <p className="text-white text-[9px] leading-loose">Algo se mueve en la hierba...</p>
         </div>
-        <p className="text-yellow-300 text-[9px] font-black animate-pulse">▶ Continuar</p>
+        <div className="flex gap-1">
+          {['🪨', '🍃', '💧', '⚡', '🔥', '👑'].map((medal, i) => (
+            <span
+              key={medal}
+              className={`w-6 h-6 flex items-center justify-center border-2 text-xs ${
+                i < 2 ? 'bg-yellow-300/40 border-yellow-200' : 'bg-black/30 border-white/20 opacity-50'
+              }`}
+            >
+              {medal}
+            </span>
+          ))}
+        </div>
       </div>
     )
   },
   {
-    caption: 'En la Historia peleas con el Pokémon que te prestan, no con el tuyo.',
+    caption: 'En la Historia peleas con el Pokémon que te prestan, no con el tuyo. Tu equipo se queda descansando.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-4">
@@ -81,12 +97,12 @@ const STEPS = [
             <p className="text-red-300 text-[9px] font-black">LÍDER</p>
           </div>
         </div>
-        <p className="text-white/70 text-[9px]">Tu equipo se queda descansando</p>
+        <Moneda>🪙 +60</Moneda>
       </div>
     )
   },
   {
-    caption: 'En Práctica eliges tú al rival, y tus Pokémon no se debilitan.',
+    caption: 'En Práctica eliges tú al rival. Es solo entrenar: nadie se debilita, y no ganas experiencia, ni monedas, ni capturas.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <div className="grid grid-cols-4 gap-1">
@@ -96,12 +112,12 @@ const STEPS = [
             </div>
           ))}
         </div>
-        <p className="text-yellow-300 text-[9px] font-black animate-pulse">Toca uno para pelear</p>
+        <p className="text-yellow-300 text-[9px] font-black animate-pulse">▶</p>
       </div>
     )
   },
   {
-    caption: 'En Peleas el daño se queda, tu Pokémon puede debilitarse y se gana poca experiencia.',
+    caption: 'En Peleas va en serio: el daño se queda, tu Pokémon puede debilitarse, y ganas experiencia y monedas.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-4">
@@ -110,82 +126,99 @@ const STEPS = [
             <div className="w-20 mx-auto">
               <Bar percent={30} color="bg-yellow-400" />
             </div>
-            <p className="text-yellow-300 text-[9px] font-black mt-1">Se queda herido</p>
           </div>
           <p className="text-white text-lg">⚔️</p>
           <div className="text-center">
             <PokeSprite src={spriteUrl(19)} alt="" className="w-16 h-16" />
-            <p className="text-red-300 text-[9px] font-black mt-1">Salvaje</p>
           </div>
         </div>
-        <p className="text-white/70 text-[9px]">Cúralo luego en &quot;Mi equipo&quot;</p>
+        <Moneda>🪙 +15</Moneda>
       </div>
     )
   },
   {
-    caption: 'Para capturar, toca el botón ⚪ Poké Ball dentro del combate (en Práctica y en Peleas).',
+    caption: 'Para capturar, toca ⚪ Poké Ball dentro de una Pelea. En Práctica y en la Historia no se puede.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <div className="flex items-center gap-2">
           <PokeSprite src={spriteUrl(25)} alt="" className="w-14 h-14" />
           <div className="w-20">
             <Bar percent={15} color="bg-red-500" />
-            <p className="text-red-300 text-[9px] font-black mt-1">¡Casi sin vida!</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-1 w-56">
-          <div className="bg-red-500 text-white text-[9px] font-black py-2 text-center border-2 border-red-300">
-            Atacar
-          </div>
+          <div className="bg-red-500 text-white text-[9px] font-black py-2 text-center border-2 border-red-300">⚔️</div>
           <div className="bg-white text-red-600 text-[9px] font-black py-1 text-center border-4 border-yellow-300 animate-pulse flex items-center justify-center gap-1">
             <PixelItem id="pokeball" className="w-5 h-5" />
-            Poké Ball
           </div>
-          <div className="bg-blue-500 text-white text-[9px] font-black py-2 text-center border-2 border-blue-300">
-            Cambiar
-          </div>
-          <div className="bg-gray-700 text-white text-[9px] font-black py-2 text-center border-2 border-gray-400">
-            Huir
-          </div>
+          <div className="bg-blue-500 text-white text-[9px] font-black py-2 text-center border-2 border-blue-300">🔁</div>
+          <div className="bg-gray-700 text-white text-[9px] font-black py-2 text-center border-2 border-gray-400">🏃</div>
         </div>
       </div>
     )
   },
   {
-    caption: 'Cae más fácil si le queda poca vida y si tu Pokémon tiene más nivel. En la Historia no se puede capturar.',
+    caption: 'Cae más fácil si le queda poca vida y si tu Pokémon tiene más nivel. Si la Poké Ball falla, el salvaje te ataca y puede debilitarte.',
     scene: (
       <div className="w-full h-40 flex items-center justify-center gap-4">
         <PixelItem id="pokeball" className="w-10 h-10 animate-ball" />
         <div className="text-center">
           <PokeSprite src={spriteUrl(25)} alt="" className="w-20 h-20 mx-auto" />
-          <p className="text-green-300 text-[9px] font-black mt-1">Nv. 6 · poca vida</p>
-          <p className="text-white/70 text-[9px]">Tu Pokémon: Nv. 14</p>
-          <p className="text-yellow-300 text-[9px] font-black mt-1 animate-pulse">¡Muy fácil de atrapar!</p>
+          <div className="w-24 mx-auto mt-1">
+            <Bar percent={12} color="bg-red-500" />
+          </div>
+          <p className="text-yellow-300 text-[9px] font-black mt-1 animate-pulse">⚪ ✔</p>
         </div>
       </div>
     )
   },
   {
-    caption: 'Ganando en la Historia consigues monedas para la Tienda.',
+    caption: 'Las monedas se ganan así: 60 por cada entrenador de la Historia, 15 por ganar una Pelea, vendiendo Pokémon en "Mi equipo" y apostando en Online.',
     scene: (
-      <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
-        <p className="text-yellow-300 font-black text-xs">🪙 160 monedas</p>
-        <div className="flex gap-2">
-          {['pokeball', 'pocion', 'superpocion', 'revivir', 'caramelo'].map(id => (
-            <div key={id} className="bg-white/10 border-2 border-white/30 p-1">
-              <PixelItem id={id} className="w-8 h-8" />
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
+        <p className="text-yellow-300 font-black text-sm">🪙 1240</p>
+        <div className="w-60 space-y-1">
+          {[
+            ['📖', '+60'],
+            ['⚔️', '+15'],
+            ['🪙', '+229'],
+            ['🌐', '+50']
+          ].map(([donde, cuanto]) => (
+            <div key={donde} className="flex items-center justify-between bg-black/40 border-2 border-white/20 px-2 py-1">
+              <span className="text-white text-[10px] leading-loose">{donde}</span>
+              <span className="text-yellow-300 text-[9px] font-black">{cuanto}</span>
             </div>
           ))}
         </div>
-        <p className="text-white/70 text-[9px]">Lo comprado va a tu Inventario</p>
       </div>
     )
   },
   {
-    caption: 'En "Mi equipo" curas, usas objetos y ves la experiencia de cada uno.',
+    caption: 'En la Tienda compras objetos. Los Pokémon solo se curan con objetos: ya no hay curación gratis.',
+    scene: (
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
+        <div className="flex gap-2">
+          {['pokeball', 'pocion', 'superpocion', 'curatotal', 'revivir', 'caramelo'].map(id => (
+            <div key={id} className="bg-white/10 border-2 border-white/30 p-1">
+              <PixelItem id={id} className="w-7 h-7" />
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <PokeSprite src={spriteUrl(4)} alt="" className="w-10 h-10" />
+          <PixelItem id="pocion" className="w-6 h-6 animate-pulse" />
+          <div className="w-20">
+            <Bar percent={100} color="bg-green-500" />
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    caption: 'En "Mi equipo" usas los objetos, ves la experiencia, cambias con los guardados y vendes Pokémon con el botón 🪙.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
-        <div className="w-52 space-y-2">
+        <div className="w-60 space-y-2">
           {[4, 1, 7].map(id => (
             <div key={id} className="flex items-center gap-2">
               <PokeSprite src={spriteUrl(id)} alt="" className="w-10 h-10" />
@@ -195,7 +228,9 @@ const STEPS = [
                   <div className="h-full bg-cyan-400 animate-fill" />
                 </div>
               </div>
-              <PixelItem id="pocion" className="w-6 h-6" />
+              <span className="bg-yellow-400 text-yellow-900 text-[9px] font-black px-1.5 py-1 border-2 border-yellow-200">
+                🪙
+              </span>
             </div>
           ))}
         </div>
@@ -203,17 +238,74 @@ const STEPS = [
     )
   },
   {
-    caption: 'En Online creas una sala, pasas el código a un amigo y peleáis con los equipos enteros: si uno cae, sacas otro.',
+    caption: 'En la Tienda de Pokémon los buenos se abren con tu experiencia de entrenador (la suma de los niveles de todos tus Pokémon) y se pagan con monedas.',
     scene: (
-      <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
-        <div className="flex items-center gap-6">
-          <PixelTrainer gender="boy" className="w-12 h-[4.25rem]" />
-          <p className="text-white text-lg">⚔️</p>
-          <PixelTrainer gender="girl" className="w-12 h-[4.25rem]" />
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
+        <p className="text-yellow-300 font-black text-[10px] leading-loose">⭐ 120 · 🪙 1240</p>
+        <div className="grid grid-cols-4 gap-1">
+          {[
+            [25, 200, true],
+            [94, 1200, true],
+            [149, 2400, false],
+            [150, 5000, false]
+          ].map(([id, precio, abierto]) => (
+            <div key={id} className="bg-white/10 border-2 border-white/20 p-1 text-center">
+              <PokeSprite
+                src={spriteUrl(id)}
+                alt=""
+                className={`w-10 h-10 mx-auto ${abierto ? '' : 'brightness-0 opacity-50'}`}
+              />
+              <p className={`text-[8px] font-black ${abierto ? 'text-yellow-300' : 'text-white/50'}`}>
+                {abierto ? `🪙 ${precio}` : '🔒'}
+              </p>
+            </div>
+          ))}
         </div>
-        <div className="bg-black/50 border-4 border-yellow-300 px-4 py-2">
+      </div>
+    )
+  },
+  {
+    caption: 'En "Mi colección" ves todos los que tienes y la lista de los que has ido atrapando.',
+    scene: (
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
+        <div className="grid grid-cols-5 gap-1">
+          {[1, 4, 7, 25, 39, 52, 54, 63, 74, 92].map(id => (
+            <div key={id} className="bg-white/10 border-2 border-white/20 p-0.5">
+              <PokeSprite src={spriteUrl(id)} alt="" className="w-9 h-9" />
+            </div>
+          ))}
+        </div>
+        <p className="text-white/70 text-[9px] leading-loose">📒</p>
+      </div>
+    )
+  },
+  {
+    caption: 'En Online creas una sala, le pasas el código a un amigo y peleáis con los equipos enteros: si uno cae, sacas otro. Podéis apostar monedas.',
+    scene: (
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
+        <div className="flex items-center gap-6">
+          <div className="text-center">
+            <PixelTrainer gender="boy" className="w-12 h-[4.25rem]" />
+            <div className="flex gap-1 justify-center mt-1">
+              {[1, 2, 3].map(i => (
+                <span key={i} className="w-2.5 h-2.5 bg-green-400 border-2 border-white/50" />
+              ))}
+            </div>
+          </div>
+          <p className="text-white text-lg">⚔️</p>
+          <div className="text-center">
+            <PixelTrainer gender="girl" className="w-12 h-[4.25rem]" />
+            <div className="flex gap-1 justify-center mt-1">
+              {[1, 2, 3].map(i => (
+                <span key={i} className={`w-2.5 h-2.5 border-2 border-white/50 ${i === 1 ? 'bg-black/60' : 'bg-red-400'}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="bg-black/50 border-4 border-yellow-300 px-4 py-1">
           <p className="text-yellow-300 font-black text-sm tracking-widest">K7MPX</p>
         </div>
+        <Moneda>🪙 50</Moneda>
       </div>
     )
   }
@@ -224,6 +316,7 @@ const STEPS = [
  * Se muestra la primera vez que se juega y desde el menú
  */
 export default function Tutorial({ onClose }) {
+  const { t } = useLang();
   const [step, setStep] = useState(0);
   const current = STEPS[step];
   const last = step === STEPS.length - 1;
@@ -234,7 +327,7 @@ export default function Tutorial({ onClose }) {
         {/* Escena */}
         <div className="bg-black/30 border-4 border-white/20 p-2 mb-4">{current.scene}</div>
 
-        <p className="text-white text-[10px] leading-loose text-center min-h-[48px]">{current.caption}</p>
+        <p className="text-white text-[10px] leading-loose text-center min-h-[64px]">{t(current.caption)}</p>
 
         {/* Puntos de avance */}
         <div className="flex justify-center gap-1.5 my-4 flex-wrap">
@@ -249,20 +342,20 @@ export default function Tutorial({ onClose }) {
               onClick={() => setStep(step - 1)}
               className="flex-1 bg-white/20 text-white font-black py-3 border-4 border-white/40 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition"
             >
-              Atrás
+              {t('Atrás')}
             </button>
           )}
           <button
             onClick={() => (last ? onClose() : setStep(step + 1))}
             className="flex-1 bg-yellow-400 text-yellow-900 font-black py-3 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
           >
-            {last ? '¡A jugar!' : 'Siguiente'}
+            {last ? t('¡A jugar!') : t('Siguiente')}
           </button>
         </div>
 
         {!last && (
           <button onClick={onClose} className="w-full text-white/60 hover:text-white mt-3 text-[10px]">
-            Saltar tutorial
+            {t('Saltar tutorial')}
           </button>
         )}
       </div>

@@ -2,11 +2,14 @@ import { ArrowLeft } from 'lucide-react';
 import { ITEMS } from '../data/items';
 import PixelItem from './PixelItem';
 import PixelBackground from './PixelBackground';
+import { useLang } from '../i18n';
 
 /**
  * Tienda: se compra con las monedas que se ganan al combatir
  */
 export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
+  const { t } = useLang();
+
   return (
     <div className="relative min-h-screen overflow-hidden p-4">
       <PixelBackground name="pueblo" />
@@ -20,12 +23,12 @@ export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="text-base font-black text-white">🛒 Tienda</h1>
+          <h1 className="text-base font-black text-white">🛒 {t('Tienda')}</h1>
         </div>
 
         <div className="bg-yellow-400 text-yellow-900 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] p-3 text-center mb-5">
-          <p className="font-black text-xs leading-loose">🪙 {coins} monedas</p>
-          <p className="text-[9px] leading-loose">Ganas 60 monedas por cada entrenador de la Historia. La Práctica no da monedas</p>
+          <p className="font-black text-xs leading-loose">{t('🪙 {0} monedas', coins)}</p>
+          <p className="text-[9px] leading-loose">{t('Ganas 60 monedas por cada entrenador de la Historia. La Práctica no da monedas')}</p>
         </div>
 
         <div className="space-y-3">
@@ -37,9 +40,9 @@ export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
               <div key={item.id} className="bg-white/15 border-4 border-white/30 p-3 flex items-center gap-3">
                 <PixelItem id={item.id} className="w-10 h-10 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-black text-[10px] leading-loose truncate">{item.name}</p>
-                  <p className="text-white/70 text-[9px] leading-loose">{item.description}</p>
-                  <p className="text-white/50 text-[9px]">Tienes: {owned}</p>
+                  <p className="text-white font-black text-[10px] leading-loose truncate">{t(item.name)}</p>
+                  <p className="text-white/70 text-[9px] leading-loose">{t(item.description)}</p>
+                  <p className="text-white/50 text-[9px]">{t('Tienes: {0}', owned)}</p>
                 </div>
                 <button
                   onClick={() => onBuy(item.id)}
@@ -54,7 +57,7 @@ export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
         </div>
 
         <p className="text-white/70 text-[9px] leading-loose text-center mt-5">
-          Lo que compres aparece en &quot;Mi equipo&quot;, dentro del Inventario.
+          {t('Lo que compres aparece en "Mi equipo", dentro del Inventario.')}
         </p>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { healFighter } from '../game/battle';
 import OnlineBattle from './OnlineBattle';
 import PixelBackground from './PixelBackground';
 import PixelTrainer from './PixelTrainer';
+import { useLang } from '../i18n';
 
 // Prefijo para que los códigos no choquen con los de otras webs que usan PeerJS
 const PREFIX = 'pokealataque-';
@@ -17,6 +18,7 @@ const makeCode = () => Array.from({ length: 5 }, () => LETTERS[Math.floor(Math.r
  * Uno crea la sala y dice el código, el otro lo escribe
  */
 export default function OnlineScreen({ team, username, gender = 'boy', outfit = 'clasico', coins = 0, onCoins, onBack }) {
+  const { t } = useLang();
   const [mode, setMode] = useState(null); // 'host' | 'guest'
   const [code, setCode] = useState('');
   const [input, setInput] = useState('');
@@ -154,12 +156,12 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="text-base font-black text-white">🌐 Online</h1>
+          <h1 className="text-base font-black text-white">🌐 {t('Online')}</h1>
         </div>
 
         {error && (
           <div className="bg-red-500/30 border-4 border-red-300/50 text-white p-3 text-[10px] leading-loose mb-4">
-            {error}
+            {t(error)}
           </div>
         )}
 
@@ -169,12 +171,12 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
             <div className="flex items-center gap-3 mb-2">
               <PixelTrainer gender={gender} outfit={outfit} className="w-10 h-14 flex-shrink-0" />
               <div className="min-w-0">
-                <p className="text-white/70 text-[9px] leading-loose">Peleas con tu equipo</p>
+                <p className="text-white/70 text-[9px] leading-loose">{t('Peleas con tu equipo')}</p>
                 <p className="text-white font-black text-[10px] leading-loose">
-                  {miEquipo.length} Pokémon, todos curados
+                  {t('{0} Pokémon, todos curados', miEquipo.length)}
                 </p>
                 <p className="text-white/60 text-[9px] leading-loose">
-                  Si uno se debilita, sacas otro. Pierde el primero que se queda sin ninguno.
+                  {t('Si uno se debilita, sacas otro. Pierde el primero que se queda sin ninguno.')}
                 </p>
               </div>
             </div>
@@ -183,7 +185,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
                 <div key={pokemon.uid} className="bg-black/30 border-2 border-white/20 p-1 text-center w-[4.5rem]">
                   <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain mx-auto" />
                   <p className="text-white text-[8px] font-black truncate leading-loose">{pokemon.name}</p>
-                  <p className="text-white/60 text-[8px]">Nv. {pokemon.level}</p>
+                  <p className="text-white/60 text-[8px]">{t('Nv. {0}', pokemon.level)}</p>
                 </div>
               ))}
             </div>
@@ -195,10 +197,10 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
             {/* Apuesta: el que gana se lleva las monedas del otro */}
             <div className="bg-white/10 border-4 border-white/30 p-3">
               <p className="text-white/80 text-[10px] leading-loose mb-1">
-                ¿Cuántas monedas apuestas? Puedes poner 0.
+                {t('¿Cuántas monedas apuestas? Puedes poner 0.')}
               </p>
               <p className="text-white/60 text-[9px] leading-loose mb-2">
-                Tienes 🪙 {coins}. El que gana se lleva las del otro. Si vosotros apostáis distinto, vale la más baja.
+                {t('Tienes 🪙 {0}. El que gana se lleva las del otro. Si apostáis distinto, vale la más baja.', coins)}
               </p>
               <input
                 type="number"
@@ -230,16 +232,16 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
               className="w-full bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3"
             >
               <Swords className="w-5 h-5" />
-              Crear sala
+              {t('Crear sala')}
             </button>
 
             <div className="bg-white/10 border-4 border-white/30 p-3">
-              <p className="text-white/80 text-[10px] leading-loose mb-2">¿Te han dado un código?</p>
+              <p className="text-white/80 text-[10px] leading-loose mb-2">{t('¿Te han dado un código?')}</p>
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value.toUpperCase())}
-                placeholder="CÓDIGO"
+                placeholder={t('CÓDIGO')}
                 maxLength={5}
                 className="w-full bg-black/30 border-4 border-white/30 text-white placeholder-white/40 px-4 py-3 mb-2 outline-none focus:border-yellow-300 text-center tracking-widest"
               />
@@ -248,35 +250,35 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
                 className="w-full bg-sky-400 text-sky-900 font-black py-3 border-4 border-sky-900 shadow-[4px_4px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
               >
                 <Users className="w-5 h-5" />
-                Unirse
+                {t('Unirse')}
               </button>
             </div>
 
             <p className="text-white/60 text-[9px] leading-loose text-center">
-              Los dos tenéis que tener el juego abierto a la vez y conexión a internet.
+              {t('Los dos tenéis que tener el juego abierto a la vez y conexión a internet.')}
             </p>
           </div>
         )}
 
         {mode === 'host' && (
           <div className="bg-white/15 border-4 border-white/30 p-5 text-center">
-            <p className="text-white/80 text-[10px] leading-loose mb-2">Tu código de sala</p>
+            <p className="text-white/80 text-[10px] leading-loose mb-2">{t('Tu código de sala')}</p>
             <p className="text-yellow-300 font-black text-2xl tracking-widest mb-3">{code}</p>
             <button
               onClick={() => navigator.clipboard?.writeText(code)}
               className="bg-white/20 text-white font-black px-4 py-2 border-4 border-white/40 active:translate-y-1 transition flex items-center justify-center gap-2 mx-auto mb-4"
             >
               <Copy className="w-4 h-4" />
-              Copiar
+              {t('Copiar')}
             </button>
-            <p className="text-white text-[10px] leading-loose">{status}</p>
+            <p className="text-white text-[10px] leading-loose">{t(status)}</p>
             <div className="animate-spin text-3xl mt-3">⚡</div>
           </div>
         )}
 
         {mode === 'guest' && (
           <div className="bg-white/15 border-4 border-white/30 p-5 text-center">
-            <p className="text-white font-black text-[10px] leading-loose">{status}</p>
+            <p className="text-white font-black text-[10px] leading-loose">{t(status)}</p>
             <div className="animate-spin text-3xl mt-3">⚡</div>
           </div>
         )}
