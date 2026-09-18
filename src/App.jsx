@@ -296,6 +296,29 @@ export default function App() {
             Online
           </button>
 
+          {/* Botones del creador: aquí arriba, junto a los modos de juego */}
+          {creator && (
+            <>
+              <button
+                onClick={() => setScreen('creator')}
+                className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
+                title="Solo lo ves tú"
+              >
+                <Sparkles className="w-5 h-5" />
+                Coger Pokémon
+              </button>
+
+              <button
+                onClick={healTeam}
+                className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
+                title="Solo lo ves tú"
+              >
+                <Sparkles className="w-5 h-5" />
+                Curar equipo al instante
+              </button>
+            </>
+          )}
+
           {!canFight && (
             <p className="text-white text-center font-bold bg-black/40 border-4 border-white/20 py-3 text-[10px] leading-loose">
               Tu equipo está debilitado. Cúralo en &quot;Mi equipo&quot;.
@@ -309,28 +332,6 @@ export default function App() {
             <ShoppingCart className="w-5 h-5" />
             Tienda
           </button>
-
-          {creator && (
-            <button
-              onClick={() => setScreen('creator')}
-              className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
-              title="Solo lo ves tú"
-            >
-              <Sparkles className="w-5 h-5" />
-              Coger Pokémon
-            </button>
-          )}
-
-          {creator && (
-            <button
-              onClick={healTeam}
-              className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
-              title="Solo lo ves tú"
-            >
-              <Sparkles className="w-5 h-5" />
-              Curar equipo al instante
-            </button>
-          )}
 
           <button
             onClick={() => setScreen('team')}
