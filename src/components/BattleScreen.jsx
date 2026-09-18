@@ -20,6 +20,7 @@ import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
 import PixelBackground from './PixelBackground';
+import PixelScene from './PixelScene';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -35,6 +36,7 @@ export default function BattleScreen({
   opponent,
   wildId,
   storyFighter,
+  scene,
   gender = 'boy',
   onFinish
 }) {
@@ -326,7 +328,7 @@ export default function BattleScreen({
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex flex-col">
-      <PixelBackground />
+      {scene ? <PixelScene name={scene} className="absolute inset-0 w-full h-full" /> : <PixelBackground />}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 via-slate-900/35 to-slate-900/70" />
 
       <div className="relative max-w-2xl w-full mx-auto flex-1 flex flex-col">

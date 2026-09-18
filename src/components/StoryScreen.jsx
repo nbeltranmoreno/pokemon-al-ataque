@@ -1,6 +1,7 @@
 import { ArrowLeft, Swords, Play } from 'lucide-react';
 import { STORY, MEDALS, medalsWon } from '../data/story';
 import { spriteUrl } from '../services/pokeapi';
+import PixelScene from './PixelScene';
 
 const BACKGROUNDS = {
   pueblo: 'from-sky-400 via-sky-600 to-green-700',
@@ -79,16 +80,20 @@ export default function StoryScreen({ stage, onAdvance, onFight, onBack }) {
 
       {/* Escena */}
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col justify-center py-6">
-        <div className="flex items-end justify-center gap-3 min-h-[9rem] mb-4">
-          {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index) => (
-            <img
-              key={`${id}-${index}`}
-              src={spriteUrl(id)}
-              alt=""
-              className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-2xl animate-float"
-              style={{ animationDelay: `${index * 0.4}s` }}
-            />
-          ))}
+        {/* Viñeta del cuento: el dibujo del sitio con los Pokémon encima */}
+        <div className="relative h-44 sm:h-56 border-4 border-white/50 shadow-[6px_6px_0_rgba(0,0,0,0.5)] overflow-hidden mb-4">
+          <PixelScene name={step.bg} className="absolute inset-0 w-full h-full" />
+          <div className="absolute inset-0 flex items-end justify-center gap-3 pb-3">
+            {(step.sprites || [step.pokemonId]).filter(Boolean).map((id, index) => (
+              <img
+                key={`${id}-${index}`}
+                src={spriteUrl(id)}
+                alt=""
+                className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_4px_0_rgba(0,0,0,0.5)] animate-float"
+                style={{ animationDelay: `${index * 0.4}s` }}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Cuadro de texto */}

@@ -78,6 +78,7 @@ export default function App() {
         opponent={opponent}
         wildId={wildId}
         storyFighter={opponent ? { pokemonId: opponent.myPokemonId, level: opponent.myLevel } : null}
+        scene={opponent?.bg}
         gender={save.gender}
         onFinish={outcome => {
           finishBattle({
