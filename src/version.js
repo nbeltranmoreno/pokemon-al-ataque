@@ -1,2 +1,2 @@
 // Se muestra en el menú y en el combate: sirve para saber qué versión se está jugando
-export const VERSION = 'v3.0';
+export const VERSION = 'v3.1';

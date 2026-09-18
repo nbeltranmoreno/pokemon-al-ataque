@@ -24,6 +24,15 @@ import PixelScene from './PixelScene';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Plataforma donde se planta cada Pokémon, para dar sensación de escenario
+const Platform = ({ className = '' }) => (
+  <svg viewBox="0 0 24 6" className={className} shapeRendering="crispEdges" aria-hidden="true">
+    <rect x="5" y="0" width="14" height="2" fill="#4ade80" opacity="0.95" />
+    <rect x="2" y="2" width="20" height="2" fill="#22c55e" opacity="0.95" />
+    <rect x="0" y="4" width="24" height="2" fill="#15803d" opacity="0.9" />
+  </svg>
+);
+
 const clone = (fighter) => ({ ...fighter, moves: fighter.moves.map(move => ({ ...move })) });
 
 /**
@@ -328,8 +337,15 @@ export default function BattleScreen({
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex flex-col">
-      {scene ? <PixelScene name={scene} className="absolute inset-0 w-full h-full" /> : <PixelBackground />}
+      <div className="absolute inset-0 animate-camera">
+        {scene ? <PixelScene name={scene} className="absolute inset-0 w-full h-full" /> : <PixelBackground />}
+      </div>
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 via-slate-900/35 to-slate-900/70" />
+      {/* Viñeteado, como el encuadre de una cámara */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(2,6,23,0.6) 100%)' }}
+      />
 
       <div className="relative max-w-2xl w-full mx-auto flex-1 flex flex-col">
         {/* Rival */}
@@ -362,8 +378,8 @@ export default function BattleScreen({
                 -{popup.amount}
               </span>
             )}
-            {/* Plataforma roja: este es el rival */}
-            <div className="w-24 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
+            {/* Plataforma del rival */}
+            <Platform className="w-28 h-7 mx-auto -mt-1" />
             <p className="text-center text-[9px] font-black text-red-300 mt-1">RIVAL</p>
           </div>
         </div>
@@ -374,8 +390,9 @@ export default function BattleScreen({
             {/* Tu entrenador: señala al Pokémon cuando le mandas atacar */}
             <PixelTrainer
               gender={gender}
+              view="back"
               pointing={attacker === 'player'}
-              className="w-10 h-12 sm:w-12 sm:h-14 mb-6"
+              className="w-14 h-16 sm:w-16 sm:h-20 mb-5"
             />
 
             <div className="relative">
@@ -391,8 +408,8 @@ export default function BattleScreen({
                   -{popup.amount}
                 </span>
               )}
-              {/* Plataforma verde: este es el tuyo */}
-              <div className="w-24 h-2 bg-green-500 border-2 border-green-200 mx-auto" />
+              {/* Tu plataforma, más cerca de la cámara */}
+              <Platform className="w-36 h-9 mx-auto -mt-1" />
               <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
             </div>
           </div>

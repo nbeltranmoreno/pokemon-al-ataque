@@ -194,7 +194,7 @@ export default function OnlineBattle({
         <div className="flex items-end justify-between gap-4 mt-2">
           <div className="flex items-end gap-1 flex-shrink-0">
             {/* Tu entrenador: señala cuando ya has elegido ataque */}
-            <PixelTrainer gender={gender} pointing={Boolean(chosen)} className="w-10 h-12 mb-6" />
+            <PixelTrainer gender={gender} view="back" pointing={Boolean(chosen)} className="w-14 h-16 mb-5" />
             <div>
               <img
                 src={me.sprites.back}
