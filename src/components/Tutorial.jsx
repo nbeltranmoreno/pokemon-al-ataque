@@ -100,16 +100,66 @@ const STEPS = [
     )
   },
   {
-    caption: 'Con poca vida, la Poké Ball lo atrapa mucho más fácil.',
+    caption: 'En Peleas el daño se queda, tu Pokémon puede debilitarse y se gana poca experiencia.',
     scene: (
-      <div className="relative w-full h-40 flex items-center justify-between px-6">
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
+        <div className="flex items-center gap-4">
+          <div className="text-center">
+            <img src={spriteUrl(4)} alt="" className="w-16 h-16" />
+            <div className="w-20 mx-auto">
+              <Bar percent={30} color="bg-yellow-400" />
+            </div>
+            <p className="text-yellow-300 text-[9px] font-black mt-1">Se queda herido</p>
+          </div>
+          <p className="text-white text-lg">⚔️</p>
+          <div className="text-center">
+            <img src={spriteUrl(19)} alt="" className="w-16 h-16" />
+            <p className="text-red-300 text-[9px] font-black mt-1">Salvaje</p>
+          </div>
+        </div>
+        <p className="text-white/70 text-[9px]">Cúralo luego en &quot;Mi equipo&quot;</p>
+      </div>
+    )
+  },
+  {
+    caption: 'Para capturar, toca el botón ⚪ Poké Ball dentro del combate (en Práctica y en Peleas).',
+    scene: (
+      <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
+        <div className="flex items-center gap-2">
+          <img src={spriteUrl(25)} alt="" className="w-14 h-14" />
+          <div className="w-20">
+            <Bar percent={15} color="bg-red-500" />
+            <p className="text-red-300 text-[9px] font-black mt-1">¡Casi sin vida!</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-1 w-56">
+          <div className="bg-red-500 text-white text-[9px] font-black py-2 text-center border-2 border-red-300">
+            Atacar
+          </div>
+          <div className="bg-white text-red-600 text-[9px] font-black py-1 text-center border-4 border-yellow-300 animate-pulse flex items-center justify-center gap-1">
+            <PixelItem id="pokeball" className="w-5 h-5" />
+            Poké Ball
+          </div>
+          <div className="bg-blue-500 text-white text-[9px] font-black py-2 text-center border-2 border-blue-300">
+            Cambiar
+          </div>
+          <div className="bg-gray-700 text-white text-[9px] font-black py-2 text-center border-2 border-gray-400">
+            Huir
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    caption: 'Cae más fácil si le queda poca vida y si tu Pokémon tiene más nivel. En la Historia no se puede capturar.',
+    scene: (
+      <div className="w-full h-40 flex items-center justify-center gap-4">
         <PixelItem id="pokeball" className="w-10 h-10 animate-ball" />
         <div className="text-center">
           <img src={spriteUrl(25)} alt="" className="w-20 h-20 mx-auto" />
-          <div className="w-24 mx-auto mt-1">
-            <Bar percent={15} color="bg-red-500" />
-          </div>
-          <p className="text-red-300 text-[9px] font-black mt-1">¡Casi sin vida!</p>
+          <p className="text-green-300 text-[9px] font-black mt-1">Nv. 6 · poca vida</p>
+          <p className="text-white/70 text-[9px]">Tu Pokémon: Nv. 14</p>
+          <p className="text-yellow-300 text-[9px] font-black mt-1 animate-pulse">¡Muy fácil de atrapar!</p>
         </div>
       </div>
     )

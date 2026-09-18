@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { healFighter, levelUpFighter, gainXp } from '../game/battle';
 import { getItem } from '../data/items';
+import { sellPrice } from '../game/prices';
 
 const SAVE_KEY = 'pokemonAlAtaque_partida_v1';
 const MAX_TEAM = 6;
@@ -179,6 +180,23 @@ export const useGame = () => {
     });
   };
 
+  // Vender un Pokémon: paga según lo bueno que sea. Siempre queda al menos uno en el equipo
+  const sellPokemon = (uid) => {
+    update(prev => {
+      const enEquipo = prev.team.find(p => p.uid === uid);
+      const pokemon = enEquipo || prev.box.find(p => p.uid === uid);
+      if (!pokemon) return prev;
+      if (enEquipo && prev.team.length <= 1) return prev;
+
+      return {
+        ...prev,
+        team: prev.team.filter(p => p.uid !== uid),
+        box: prev.box.filter(p => p.uid !== uid),
+        coins: prev.coins + sellPrice(pokemon)
+      };
+    });
+  };
+
   // Sumar o quitar monedas (apuestas de los combates Online)
   const addCoins = (amount) => update(prev => ({ ...prev, coins: Math.max(0, prev.coins + amount) }));
 
@@ -242,6 +260,7 @@ export const useGame = () => {
     restartStory,
     addPokemon,
     addCoins,
+    sellPokemon,
     toggleCreatorMode,
     markTutorialSeen,
     wipeSave,

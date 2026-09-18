@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { ArrowLeft, HeartPulse, Repeat } from 'lucide-react';
 import { xpToNextLevel } from '../game/battle';
 import { getItem, ITEMS } from '../data/items';
+import { sellPrice } from '../game/prices';
+import PixelDialog from './PixelDialog';
 import HealthBar from './HealthBar';
 import PixelBackground from './PixelBackground';
 import TypeBadge from './TypeBadge';
@@ -11,9 +13,10 @@ import PixelItem from './PixelItem';
 /**
  * Pantalla del equipo: ver Pokémon, curarlos, usar el inventario e intercambiar con los guardados
  */
-export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) {
+export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onSell, onBack }) {
   const [swapping, setSwapping] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selling, setSelling] = useState(null); // Pokémon que se está vendiendo
 
   // Objetos comprados que quedan en el inventario
   const owned = ITEMS.filter(item => item.effect !== 'balls' && (save.inventory[item.id] || 0) > 0);
@@ -149,14 +152,27 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
                       </p>
                     </div>
                   </div>
-                  {save.box.length > 0 && !chosen && (
-                    <button
-                      onClick={() => setSwapping(swapping === pokemon.uid ? null : pokemon.uid)}
-                      className="w-10 h-10 bg-white/20 flex items-center justify-center border-4 border-white/30 hover:bg-white/30 transition flex-shrink-0"
-                      title="Intercambiar"
-                    >
-                      <Repeat className="w-4 h-4 text-white" />
-                    </button>
+                  {!chosen && (
+                    <div className="flex flex-col gap-2 flex-shrink-0">
+                      {save.box.length > 0 && (
+                        <button
+                          onClick={() => setSwapping(swapping === pokemon.uid ? null : pokemon.uid)}
+                          className="w-10 h-10 bg-white/20 flex items-center justify-center border-4 border-white/30 hover:bg-white/30 transition"
+                          title="Intercambiar"
+                        >
+                          <Repeat className="w-4 h-4 text-white" />
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => setSelling(pokemon)}
+                        disabled={save.team.length <= 1}
+                        className="w-10 h-10 bg-yellow-400/90 text-yellow-900 font-black flex items-center justify-center border-4 border-yellow-200 hover:bg-yellow-300 transition disabled:opacity-40"
+                        title={save.team.length <= 1 ? 'No puedes quedarte sin Pokémon' : 'Vender'}
+                      >
+                        🪙
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -180,21 +196,46 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {save.box.map(pokemon => (
-                <button
-                  key={pokemon.uid}
-                  onClick={() => handleBoxClick(pokemon.uid)}
-                  disabled={!swapping}
-                  className="bg-white/10 border-4 border-white/20 p-2 hover:bg-white/20 transition disabled:opacity-60"
-                >
-                  <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
-                  <p className="text-white text-[9px] font-bold text-center truncate">{pokemon.name}</p>
-                  <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
-                </button>
+                <div key={pokemon.uid} className="bg-white/10 border-4 border-white/20 p-2">
+                  <button
+                    onClick={() => handleBoxClick(pokemon.uid)}
+                    disabled={!swapping}
+                    className="w-full hover:opacity-80 transition disabled:opacity-100"
+                  >
+                    <img src={pokemon.sprites.front} alt={pokemon.name} className="w-14 h-14 mx-auto object-contain" />
+                    <p className="text-white text-[9px] font-bold text-center truncate">{pokemon.name}</p>
+                    <p className="text-white/60 text-[9px] text-center">Nv. {pokemon.level}</p>
+                  </button>
+
+                  <button
+                    onClick={() => setSelling(pokemon)}
+                    className="w-full mt-1 bg-yellow-400/90 text-yellow-900 font-black text-[9px] py-1 border-2 border-yellow-200 hover:bg-yellow-300 transition"
+                  >
+                    🪙 {sellPrice(pokemon)}
+                  </button>
+                </div>
               ))}
             </div>
           </section>
         )}
       </div>
+
+      {/* Aviso antes de vender */}
+      {selling && (
+        <PixelDialog
+          icon={<img src={selling.sprites.front} alt="" className="w-16 h-16 object-contain" />}
+          title={`¿Vender a ${selling.name}?`}
+          confirmText={`Sí, vender por ${sellPrice(selling)} 🪙`}
+          onConfirm={() => {
+            onSell(selling.uid);
+            setSelling(null);
+          }}
+          onCancel={() => setSelling(null)}
+        >
+          Te pagan {sellPrice(selling)} monedas por él, porque es de nivel {selling.level}. Cuanto mejor y más alto de
+          nivel sea un Pokémon, más te dan. Esto no se puede deshacer.
+        </PixelDialog>
+      )}
     </div>
   );
 }
