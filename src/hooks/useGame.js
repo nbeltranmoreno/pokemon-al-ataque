@@ -27,6 +27,7 @@ const emptySave = {
   outfit: 'clasico',
   lastCoinAt: 0, // desde cuándo se cuentan las monedas del reloj
   misiones: null, // lo que llevas hecho hoy
+  storyGate: null, // descanso de la Historia: { stage, dia }
   logrosCobrados: [], // logros ya pagados
   vendidos: 0,
   comprasTotal: 0,
@@ -333,8 +334,11 @@ export const useGame = () => {
     });
   };
 
+  // Empezar el descanso de la Historia: hasta mañana no se sigue
+  const startStoryRest = (stage) => update(prev => ({ ...prev, storyGate: { stage, dia: hoy() } }));
+
   // Volver a empezar el cuento desde la primera escena
-  const restartStory = () => update({ storyStage: 0 });
+  const restartStory = () => update({ storyStage: 0, storyGate: null });
 
   // Pasar a la siguiente escena del cuento
   const advanceStory = () =>
@@ -380,6 +384,7 @@ export const useGame = () => {
     buyItem,
     useItem,
     advanceStory,
+    startStoryRest,
     restartStory,
     addPokemon,
     buyPokemon,

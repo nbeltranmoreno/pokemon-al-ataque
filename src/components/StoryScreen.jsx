@@ -8,6 +8,7 @@ import PixelScene from './PixelScene';
 import PixelDialog from './PixelDialog';
 import { canFloat } from '../data/floaters';
 import { useLang } from '../i18n';
+import { descansando, descansoTerminado, loQueFalta } from '../data/requisitos';
 
 const BACKGROUNDS = {
   pueblo: 'from-sky-400 via-sky-600 to-green-700',
@@ -24,17 +25,24 @@ const BACKGROUNDS = {
  * Historia en forma de cuento: escenas con dibujo y texto que se van pasando,
  * y de vez en cuando un combate con el Pokémon que presta la historia
  */
-export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack, creator = false }) {
+export default function StoryScreen({ stage, save = {}, onAdvance, onRest, onFight, onRestart, onBack, creator = false }) {
   const { t, lang } = useLang();
   const [askRestart, setAskRestart] = useState(false);
 
   // En inglés se cuenta la misma escena con el texto traducido
   const escena = STORY[stage];
-  const enIngles = lang === 'en' ? STORY_EN[stage] : null;
+  const enIngles = lang === 'en' ? (escena?.textEn ? { speaker: escena.speakerEn ?? escena.speaker, text: escena.textEn, trainer: escena.trainerEn ?? escena.trainer } : STORY_EN[stage]) : null;
   const step = escena && enIngles
     ? { ...escena, speaker: enIngles.speaker, text: enIngles.text, trainer: enIngles.trainer || escena.trainer }
     : escena;
   const won = medalsWon(stage);
+
+  // Descansos: hay escenas en las que hay que volver al día siguiente
+  const esDescanso = step?.type === 'espera';
+  const yaDescansado = descansoTerminado(save, stage);
+  const hayQueEsperar = esDescanso && descansando(save, stage);
+  const falta = loQueFalta(save, step);
+  const puedeSeguir = falta.length === 0 && (!esDescanso || yaDescansado || creator);
 
   // Final de la historia
   if (!step) {
@@ -181,8 +189,54 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
           </div>
         </div>
 
+        {/* Lo que falta para poder seguir */}
+        {falta.length > 0 && (
+          <div className="bg-black/60 border-4 border-yellow-300/70 p-3 mt-4">
+            <p className="text-yellow-300 font-black text-[10px] leading-loose mb-1">{t('Antes de seguir te falta:')}</p>
+            {falta.map(cosa => (
+              <p key={cosa.texto} className="text-white text-[9px] leading-loose">· {t(cosa.texto, ...cosa.datos)}</p>
+            ))}
+            <p className="text-white/60 text-[9px] leading-loose mt-1">{t('Entrena en Peleas y vuelve cuando lo tengas.')}</p>
+          </div>
+        )}
+
         {/* Botón para seguir o para pelear */}
-        {step.type === 'battle' ? (
+        {esDescanso ? (
+          <div className="mt-4">
+            {hayQueEsperar ? (
+              <div className="bg-black/60 border-4 border-cyan-300/60 p-4 text-center">
+                <p className="text-4xl mb-2">🌙</p>
+                <p className="text-cyan-200 font-black text-[10px] leading-loose">{t('Toca dormir. Vuelve mañana para seguir la Historia.')}</p>
+                <p className="text-white/60 text-[9px] leading-loose mt-1">{t('Mientras tanto puedes pelear, entrenar y hacer misiones.')}</p>
+              </div>
+            ) : yaDescansado ? (
+              <button
+                onClick={onAdvance}
+                className="w-full bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                {t('¡Buenos días! Seguir')}
+              </button>
+            ) : (
+              <button
+                onClick={() => onRest(stage)}
+                className="w-full bg-cyan-500 text-white font-black py-4 border-4 border-cyan-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
+              >
+                🌙 {t('Descansar hasta mañana')}
+              </button>
+            )}
+
+            {creator && !yaDescansado && (
+              <button
+                onClick={onAdvance}
+                className="w-full mt-2 bg-fuchsia-600 text-white font-black py-3 border-4 border-fuchsia-200 shadow-[4px_4px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition text-[10px]"
+                title={t('Solo lo ves tú')}
+              >
+                {t('⭐ Saltar el descanso')}
+              </button>
+            )}
+          </div>
+        ) : step.type === 'battle' ? (
           <div className="mt-4">
             <div className="bg-white/15 border-4 border-white/30 p-3 flex items-center gap-3 mb-3">
               <PokeSprite src={spriteUrl(step.myPokemonId)} alt="" className="w-14 h-14 object-contain flex-shrink-0" />
@@ -192,7 +246,8 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
             </div>
             <button
               onClick={() => onFight(step)}
-              className="w-full bg-red-500 text-white font-black py-4 border-4 border-red-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
+              disabled={!puedeSeguir}
+              className="w-full bg-red-500 text-white font-black py-4 border-4 border-red-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition disabled:opacity-40 flex items-center justify-center gap-2"
             >
               <Swords className="w-5 h-5" />
               {t('¡Luchar!')}
@@ -212,7 +267,8 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
         ) : (
           <button
             onClick={onAdvance}
-            className="w-full mt-4 bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-2"
+            disabled={!puedeSeguir}
+            className="w-full mt-4 bg-yellow-400 text-yellow-900 font-black py-4 border-4 border-yellow-900 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition disabled:opacity-40 flex items-center justify-center gap-2"
           >
             <Play className="w-5 h-5" />
             {t('Continuar')}

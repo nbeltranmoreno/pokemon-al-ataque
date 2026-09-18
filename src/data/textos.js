@@ -72,6 +72,19 @@ export const DICCIONARIO = {
   'En Misiones hay cosas para hacer cada día y logros. Al terminarlas tocas "Cobrar" y te dan monedas.':
     'In Missions there are things to do each day plus achievements. When you finish one you tap "Claim" and get coins.',
 
+  // --- Descansos y requisitos de la Historia ---
+  'Antes de seguir te falta:': 'Before you go on, you still need:',
+  'Entrena en Peleas y vuelve cuando lo tengas.': 'Train in Battles and come back when you have it.',
+  'Un Pokémon de nivel {0} (el tuyo va por el {1})': 'A level {0} Pokémon (yours is level {1})',
+  'Atrapar {0} Pokémon (llevas {1})': 'Catch {0} Pokémon (you have {1})',
+  'Tener {0} Pokémon en el equipo (llevas {1})': 'Have {0} Pokémon on your team (you have {1})',
+  'Ahorrar {0} monedas (llevas {1})': 'Save up {0} coins (you have {1})',
+  'Toca dormir. Vuelve mañana para seguir la Historia.': 'Time to sleep. Come back tomorrow to carry on with the Story.',
+  'Mientras tanto puedes pelear, entrenar y hacer misiones.': 'Meanwhile you can battle, train and do missions.',
+  '¡Buenos días! Seguir': 'Good morning! Carry on',
+  'Descansar hasta mañana': 'Rest until tomorrow',
+  '⭐ Saltar el descanso': '⭐ Skip the rest',
+
   // --- Ofertas ---
   '🎉 ¡HOY HAY OFERTA! -{0}% en todo': '🎉 TODAY IS A SALE DAY! -{0}% on everything',
   'Solo por hoy. Mañana puede que no haya.': 'Only for today. Tomorrow there might not be one.',
@@ -345,8 +358,8 @@ export const DICCIONARIO = {
     'You pick a move and your trainer calls it: your Pokémon strikes. The faster one hits first.',
   'Cada tipo gana a otro: fuego a planta, planta a agua, agua a fuego.':
     'Each type beats another: fire beats grass, grass beats water, water beats fire.',
-  'La Historia es un cuento: pasas escenas y, de vez en cuando, hay combate. Ganando consigues medallas.':
-    'The Story is a tale: you go through scenes and now and then there is a battle. Winning earns you badges.',
+  'La Historia es un cuento muy largo: pasas escenas, hay combates y medallas. A veces toca dormir y seguir al día siguiente.':
+    'The Story is a very long tale: you go through scenes, there are battles and badges. Sometimes you have to sleep and carry on the next day.',
   'En la Historia peleas con el Pokémon que te prestan, no con el tuyo. Tu equipo se queda descansando.':
     'In the Story you fight with the Pokémon you are lent, not your own. Your team stays resting.',
   'En Práctica eliges tú al rival. Es solo entrenar: nadie se debilita, y no ganas experiencia, ni monedas, ni capturas.':

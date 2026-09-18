@@ -34,7 +34,7 @@ import LangButton from './components/LangButton';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, payIdleCoins, registrarEntrada, cobrarMision, notarOnline, notarIngles, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, payIdleCoins, registrarEntrada, cobrarMision, notarOnline, notarIngles, startStoryRest, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, addPokemon, buyPokemon, addCoins, sellPokemon, toggleCreatorMode, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
   const { t, lang } = useLang();
   const [screen, setScreen] = useState('menu');
@@ -159,7 +159,9 @@ export default function App() {
     return (
       <StoryScreen
         stage={Math.min(save.storyStage, STORY.length)}
+        save={save}
         onAdvance={advanceStory}
+        onRest={startStoryRest}
         onRestart={restartStory}
         creator={creator}
         onFight={step => {

@@ -57,7 +57,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'La Historia es un cuento: pasas escenas y, de vez en cuando, hay combate. Ganando consigues medallas.',
+    caption: 'La Historia es un cuento muy largo: pasas escenas, hay combates y medallas. A veces toca dormir y seguir al día siguiente.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-2">
         <div className="flex gap-2">
