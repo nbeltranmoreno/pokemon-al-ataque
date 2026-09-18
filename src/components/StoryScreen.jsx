@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { ArrowLeft, Swords, Play } from 'lucide-react';
 import { STORY, MEDALS, medalsWon } from '../data/story';
 import { spriteUrl } from '../services/pokeapi';
 import PixelScene from './PixelScene';
+import PixelDialog from './PixelDialog';
+import { canFloat } from '../data/floaters';
 
 const BACKGROUNDS = {
   pueblo: 'from-sky-400 via-sky-600 to-green-700',
@@ -19,6 +22,7 @@ const BACKGROUNDS = {
  * y de vez en cuando un combate con el Pokémon que presta la historia
  */
 export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBack }) {
+  const [askRestart, setAskRestart] = useState(false);
   const step = STORY[stage];
   const won = medalsWon(stage);
 
@@ -86,15 +90,30 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
         </div>
 
         <button
-          onClick={() => {
-            if (window.confirm('¿Empezar la historia otra vez desde el principio?')) onRestart();
-          }}
+          onClick={() => setAskRestart(true)}
           className="ml-auto bg-black/30 text-white font-black px-3 py-2 border-4 border-white/40 active:translate-y-1 transition text-[9px] flex-shrink-0"
           title="Empezar la historia otra vez"
         >
           🔄
         </button>
       </div>
+
+      {askRestart && (
+        <PixelDialog
+          icon="📖"
+          tone="info"
+          title="¿Empezar de nuevo?"
+          confirmText="Sí, desde el principio"
+          onConfirm={() => {
+            setAskRestart(false);
+            onRestart();
+          }}
+          onCancel={() => setAskRestart(false)}
+        >
+          La historia volverá a la primera escena y perderás las medallas conseguidas. Tu equipo, tus monedas y tus
+          objetos se quedan como están.
+        </PixelDialog>
+      )}
 
       {/* Escena */}
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col justify-center py-6">
@@ -110,7 +129,7 @@ export default function StoryScreen({ stage, onAdvance, onFight, onRestart, onBa
                 <img
                   src={spriteUrl(id)}
                   alt=""
-                  className={`object-contain animate-walk ${
+                  className={`object-contain ${canFloat(id) ? 'animate-float' : ''} ${
                     todos.length === 1 ? 'w-36 h-36 sm:w-48 sm:h-48' : 'w-24 h-24 sm:w-32 sm:h-32'
                   }`}
                   style={{ animationDelay: `${index * 0.2}s` }}

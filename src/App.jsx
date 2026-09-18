@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Swords, Users, RotateCcw, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut } from 'lucide-react';
+import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import UsernameSetup from './components/UsernameSetup';
@@ -18,6 +18,7 @@ import Tutorial from './components/Tutorial';
 import PixelEgg from './components/PixelEgg';
 import PixelTrainer from './components/PixelTrainer';
 import PixelBackground from './components/PixelBackground';
+import PixelDialog from './components/PixelDialog';
 import { VERSION } from './version';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
@@ -30,6 +31,7 @@ export default function App() {
   const [wildId, setWildId] = useState(null); // Pokémon salvaje elegido en Práctica; null = al azar
   const [showTutorial, setShowTutorial] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
   const [started, setStarted] = useState(false);
 
   // Portada: un botón para entrar
@@ -271,12 +273,7 @@ export default function App() {
           </button>
 
           <button
-            onClick={async () => {
-              if (!window.confirm('Al cerrar sesión se borra la partida: equipo, medallas, monedas y objetos. ¿Seguro?')) return;
-              await logout();
-              wipeSave();
-              setStarted(false);
-            }}
+            onClick={() => setShowLogout(true)}
             className={`${menuButton} bg-white/10 text-white border-white/30`}
           >
             <LogOut className="w-5 h-5" />
@@ -295,42 +292,44 @@ export default function App() {
 
       {/* Aviso antes de borrar la partida */}
       {showReset && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="max-w-sm w-full bg-red-700 border-4 border-yellow-300 shadow-[8px_8px_0_rgba(0,0,0,0.6)] p-5 text-center">
-            <div className="flex items-center justify-center gap-3 mb-3">
+        <PixelDialog
+          icon={
+            <>
               <span className="text-4xl animate-pulse">⚠️</span>
               <PixelEgg className="w-10 h-12 animate-float" />
-            </div>
-            <h2 className="text-yellow-300 font-black text-sm leading-loose mb-3">¡CUIDADO!</h2>
-            <p className="text-white text-[10px] leading-loose mb-2">
-              Esto va a reiniciar el juego.
-            </p>
-            <p className="text-white/80 text-[10px] leading-loose mb-5">
-              Perderás tu equipo, tus Pokémon capturados y las {STORY.length} medallas de la historia. No se puede
-              deshacer.
-            </p>
+            </>
+          }
+          title="¡CUIDADO!"
+          confirmText="Sí, reiniciar"
+          onConfirm={() => {
+            resetGame();
+            setShowReset(false);
+            setScreen('menu');
+          }}
+          onCancel={() => setShowReset(false)}
+        >
+          Esto va a reiniciar el juego. Perderás tu equipo, tus Pokémon capturados y las {MEDALS.length} medallas de la
+          historia. No se puede deshacer.
+        </PixelDialog>
+      )}
 
-            <div className="space-y-2">
-              <button
-                onClick={() => {
-                  resetGame();
-                  setShowReset(false);
-                  setScreen('menu');
-                }}
-                className="w-full bg-yellow-300 text-red-900 font-black py-3 border-4 border-yellow-100 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Sí, reiniciar
-              </button>
-              <button
-                onClick={() => setShowReset(false)}
-                className="w-full bg-white/20 text-white font-black py-3 border-4 border-white/40 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition"
-              >
-                No, volver
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Aviso antes de cerrar sesión */}
+      {showLogout && (
+        <PixelDialog
+          icon="👋"
+          title="¿Cerrar sesión?"
+          confirmText="Sí, cerrar sesión"
+          onConfirm={async () => {
+            setShowLogout(false);
+            await logout();
+            wipeSave();
+            setStarted(false);
+          }}
+          onCancel={() => setShowLogout(false)}
+        >
+          Al cerrar sesión se borra la partida de este dispositivo: equipo, medallas, monedas y objetos. El siguiente
+          que entre empezará desde cero.
+        </PixelDialog>
       )}
     </div>
   );

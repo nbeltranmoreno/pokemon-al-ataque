@@ -5,6 +5,7 @@ import { effectivenessText } from '../data/types';
 import HealthBar from './HealthBar';
 import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
+import { canFloat } from '../data/floaters';
 
 /**
  * Combate en línea contra otra persona
@@ -183,7 +184,7 @@ export default function OnlineBattle({
               <img
                 src={foe.sprites.front}
                 alt={foe.name}
-                className={`w-24 h-24 sm:w-32 sm:h-32 object-contain animate-float ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
+                className={`w-24 h-24 sm:w-32 sm:h-32 object-contain ${canFloat(foe.speciesId, foe.types) ? 'animate-float' : ''} ${foe.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
               />
               <div className="w-20 h-2 bg-red-500 border-2 border-red-200 mx-auto" />
             </div>

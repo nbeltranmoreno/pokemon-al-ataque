@@ -21,6 +21,7 @@ import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
 import PixelBackground from './PixelBackground';
 import PixelScene from './PixelScene';
+import { canFloat } from '../data/floaters';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -371,7 +372,13 @@ export default function BattleScreen({
               src={enemy.sprites.front}
               alt={enemy.name}
               className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
-                shake === 'enemy' ? 'animate-hit' : attacker === 'enemy' ? 'animate-lungeBack' : 'animate-float'
+                shake === 'enemy'
+                  ? 'animate-hit'
+                  : attacker === 'enemy'
+                    ? 'animate-lungeBack'
+                    : canFloat(enemy.speciesId, enemy.types)
+                      ? 'animate-float'
+                      : ''
               } ${enemy.hp <= 0 ? 'opacity-30 grayscale' : ''}`}
             />
             {popup?.side === 'enemy' && (
