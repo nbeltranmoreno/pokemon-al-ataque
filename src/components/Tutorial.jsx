@@ -203,7 +203,7 @@ const STEPS = [
     )
   },
   {
-    caption: 'En Online creas una sala, pasas el código a un amigo y peleáis en directo.',
+    caption: 'En Online creas una sala, pasas el código a un amigo y peleáis con los equipos enteros: si uno cae, sacas otro.',
     scene: (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-6">

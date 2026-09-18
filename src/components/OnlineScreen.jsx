@@ -23,7 +23,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [conn, setConn] = useState(null);
-  const [foe, setFoe] = useState(null);
+  const [foeTeam, setFoeTeam] = useState(null);
   const [foeTrainer, setFoeTrainer] = useState('');
   const [foeGender, setFoeGender] = useState('boy');
   const [foeOutfit, setFoeOutfit] = useState('clasico');
@@ -31,17 +31,16 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
   const [foeBet, setFoeBet] = useState(0); // las que pone el rival
   const peerRef = useRef(null);
 
-  // Tu luchador: el primero con vida, curado para que el combate sea justo
-  const me = useMemo(() => {
-    const base = team.find(pokemon => pokemon.hp > 0) || team[0];
-    return base ? healFighter(base) : null;
-  }, [team]);
+  // Tu equipo entero, curado para que el combate sea justo
+  const miEquipo = useMemo(() => team.map(healFighter), [team]);
+  const me = miEquipo[0] || null;
 
   useEffect(() => () => peerRef.current?.destroy(), []);
 
   // Intercambiar Pokémon en cuanto haya conexión
   const setupConnection = (connection) => {
-    const sayHello = () => connection.send({ type: 'hello', fighter: me, trainer: username, gender, outfit, bet });
+    const sayHello = () =>
+      connection.send({ type: 'hello', team: miEquipo, fighter: me, trainer: username, gender, outfit, bet });
 
     if (connection.open) {
       sayHello();
@@ -51,7 +50,9 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
 
     connection.on('data', (data) => {
       if (data?.type === 'hello') {
-        setFoe(data.fighter);
+        // Si el rival tiene el juego viejo, solo manda un Pokémon
+        const suEquipo = Array.isArray(data.team) && data.team.length > 0 ? data.team : data.fighter ? [data.fighter] : [];
+        setFoeTeam(suEquipo);
         setFoeTrainer(data.trainer || 'Rival');
         setFoeGender(data.gender === 'girl' ? 'girl' : 'boy');
         setFoeOutfit(data.outfit || 'clasico');
@@ -113,7 +114,7 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
     peerRef.current?.destroy();
     peerRef.current = null;
     setConn(null);
-    setFoe(null);
+    setFoeTeam(null);
     setMode(null);
     setCode('');
     setInput('');
@@ -121,13 +122,13 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
   };
 
   // Ya conectados: a pelear
-  if (conn && foe && me) {
+  if (conn && foeTeam && foeTeam.length > 0 && me) {
     return (
       <OnlineBattle
         conn={conn}
         isHost={mode === 'host'}
-        me={me}
-        foe={foe}
+        team={miEquipo}
+        foeTeam={foeTeam}
         gender={gender}
         outfit={outfit}
         foeTrainer={foeTrainer}
@@ -164,15 +165,27 @@ export default function OnlineScreen({ team, username, gender = 'boy', outfit = 
 
         {/* Con qué Pokémon peleas */}
         {me && (
-          <div className="bg-white/10 border-4 border-white/30 p-3 flex items-center gap-3 mb-5">
-            <PixelTrainer gender={gender} outfit={outfit} className="w-10 h-14 flex-shrink-0" />
-            <PokeSprite src={me.sprites.front} alt={me.name} className="w-16 h-16 object-contain flex-shrink-0" />
-            <div className="min-w-0">
-              <p className="text-white/70 text-[9px] leading-loose">Peleas con</p>
-              <p className="text-white font-black text-[10px] truncate leading-loose">
-                {me.name} · Nv. {me.level}
-              </p>
-              <p className="text-white/60 text-[9px] leading-loose">Va curado del todo</p>
+          <div className="bg-white/10 border-4 border-white/30 p-3 mb-5">
+            <div className="flex items-center gap-3 mb-2">
+              <PixelTrainer gender={gender} outfit={outfit} className="w-10 h-14 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-white/70 text-[9px] leading-loose">Peleas con tu equipo</p>
+                <p className="text-white font-black text-[10px] leading-loose">
+                  {miEquipo.length} Pokémon, todos curados
+                </p>
+                <p className="text-white/60 text-[9px] leading-loose">
+                  Si uno se debilita, sacas otro. Pierde el primero que se queda sin ninguno.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {miEquipo.map(pokemon => (
+                <div key={pokemon.uid} className="bg-black/30 border-2 border-white/20 p-1 text-center w-[4.5rem]">
+                  <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain mx-auto" />
+                  <p className="text-white text-[8px] font-black truncate leading-loose">{pokemon.name}</p>
+                  <p className="text-white/60 text-[8px]">Nv. {pokemon.level}</p>
+                </div>
+              ))}
             </div>
           </div>
         )}
