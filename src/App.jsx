@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut } from 'lucide-react';
+import { Swords, Users, BookOpen, Globe, HelpCircle, ShoppingCart, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import UsernameSetup from './components/UsernameSetup';
@@ -19,6 +19,7 @@ import PixelEgg from './components/PixelEgg';
 import PixelTrainer from './components/PixelTrainer';
 import PixelBackground from './components/PixelBackground';
 import PixelDialog from './components/PixelDialog';
+import { isCreator } from './data/creator';
 import { VERSION } from './version';
 
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
@@ -167,6 +168,7 @@ export default function App() {
   }
 
   const canFight = save.team.some(pokemon => pokemon.hp > 0);
+  const creator = isCreator(user);
 
   return (
     <div className="relative min-h-screen overflow-hidden p-4 flex items-center justify-center">
@@ -189,6 +191,7 @@ export default function App() {
           <div className="flex items-center justify-center gap-2 mt-2">
             <PixelTrainer gender={save.gender} outfit={save.outfit} className="w-8 h-11" />
             <p className="text-yellow-300 font-black text-[10px] leading-loose">{save.username}</p>
+            {creator && <span className="bg-fuchsia-500 text-white text-[8px] font-black px-2 py-0.5">CREADOR</span>}
           </div>
           <p className="text-white/40 text-[8px] mt-1">{VERSION}</p>
           <p className="text-white/80 font-medium text-[10px] leading-loose">
@@ -255,6 +258,17 @@ export default function App() {
             <ShoppingCart className="w-5 h-5" />
             Tienda
           </button>
+
+          {creator && (
+            <button
+              onClick={healTeam}
+              className={`${menuButton} bg-fuchsia-600 text-white border-fuchsia-200`}
+              title="Solo lo ves tú"
+            >
+              <Sparkles className="w-5 h-5" />
+              Curar equipo al instante
+            </button>
+          )}
 
           <button
             onClick={() => setScreen('team')}
