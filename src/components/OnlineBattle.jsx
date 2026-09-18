@@ -430,9 +430,9 @@ export default function OnlineBattle({
 
         {/* Rival */}
         <div className="flex items-start justify-between gap-4">
-          <div className="bg-black/40 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
+          <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="inline-block bg-red-500 text-white text-[9px] font-black px-2 py-0.5 truncate max-w-full">
+              <span className="inline-block bg-red-500 text-white text-[10px] font-black px-2 py-0.5 truncate max-w-full">
                 🎮 {foeTrainer || 'RIVAL'}
               </span>
               <TeamDots team={foeTeam} active={foeActive} color="bg-red-400" />
@@ -454,7 +454,7 @@ export default function OnlineBattle({
               <PokeSprite
                 src={foe.sprites.front}
                 alt={foe.name}
-                className={`w-24 h-24 sm:w-36 sm:h-36 object-contain drop-shadow-2xl ${
+                className={`w-24 h-24 sm:w-40 sm:h-40 object-contain drop-shadow-2xl ${
                   shake === 'enemy'
                     ? 'animate-hit'
                     : attacker === 'enemy'
@@ -505,9 +505,9 @@ export default function OnlineBattle({
               <p className="text-center text-[9px] font-black text-green-300 mt-1">TÚ</p>
             </div>
           </div>
-          <div className="bg-black/40 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
+          <div className="bg-black/30 backdrop-blur p-2 sm:p-3 border-2 border-white/20 flex-1 min-w-0 sm:max-w-[55%]">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="inline-block bg-green-500 text-white text-[9px] font-black px-2 py-0.5">TU POKÉMON</span>
+              <span className="inline-block bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">TU POKÉMON</span>
               <TeamDots team={myTeam} active={myActive} color="bg-green-400" />
             </div>
             <p className="text-white font-black text-[10px] truncate leading-loose">{me.name}</p>
@@ -522,7 +522,7 @@ export default function OnlineBattle({
         <p className="text-white/40 text-[8px] text-right mt-1">{VERSION}</p>
 
         {/* Mensajes */}
-        <div className="bg-black/50 backdrop-blur p-3 border-2 border-white/20 mt-1 h-28 overflow-y-auto">
+        <div className="bg-black/40 backdrop-blur rounded-2xl p-3 border-2 border-white/20 mt-1 h-28 overflow-y-auto">
           {log.map((line, i) => (
             <p
               key={i}
@@ -538,17 +538,17 @@ export default function OnlineBattle({
         {/* Acciones */}
         <div className="mt-3">
           {disconnected ? (
-            <div className="bg-white/15 border-4 border-white/30 p-4 text-center">
+            <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-xs leading-loose mb-3">Tu rival se fue 👋</p>
               <button
                 onClick={onExit}
-                className="bg-yellow-400 text-yellow-900 font-black px-6 py-3 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
+                className="bg-white text-blue-800 font-black px-6 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition"
               >
                 Volver
               </button>
             </div>
           ) : result ? (
-            <div className="bg-white/15 border-4 border-white/30 p-4 text-center">
+            <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-xs leading-loose mb-3">
                 {result === 'win' ? '¡Ganaste el combate online! 🎉' : 'Perdiste el combate online 😵'}
               </p>
@@ -559,17 +559,17 @@ export default function OnlineBattle({
               )}
               <button
                 onClick={leave}
-                className="bg-yellow-400 text-yellow-900 font-black px-6 py-3 border-4 border-yellow-900 shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 transition"
+                className="bg-white text-blue-800 font-black px-6 py-3 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition"
               >
                 Volver
               </button>
             </div>
           ) : playing ? (
-            <div className="bg-black/40 border-4 border-white/20 p-4 text-center">
+            <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-[10px] leading-loose">¡Combate!</p>
             </div>
           ) : esperando || foeSwitching ? (
-            <div className="bg-black/40 border-4 border-white/20 p-4 text-center">
+            <div className="bg-black/40 backdrop-blur rounded-2xl p-4 border-2 border-white/20 text-center">
               <p className="text-white font-black text-[10px] leading-loose">
                 {foeSwitching ? 'Tu rival está sacando otro Pokémon...' : 'Esperando a tu rival...'}
               </p>
@@ -587,14 +587,14 @@ export default function OnlineBattle({
                   key={pokemon.uid || index}
                   onClick={() => pickPokemon(index)}
                   disabled={pokemon.hp <= 0 || index === myActive}
-                  className="w-full bg-white/90 p-2 flex items-center gap-3 border-4 border-white/60 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition disabled:opacity-40"
+                  className="w-full bg-white/90 rounded-2xl p-2 flex items-center gap-3 shadow-lg hover:scale-[1.01] transition disabled:opacity-40"
                 >
                   <PokeSprite src={pokemon.sprites.front} alt={pokemon.name} className="w-12 h-12 object-contain flex-shrink-0" />
                   <div className="flex-1 min-w-0 text-left">
                     <p className="font-black text-gray-800 text-[10px] truncate leading-loose">
                       {pokemon.name} <span className="text-gray-500">Nv. {pokemon.level}</span>
                     </p>
-                    <div className="h-2 w-full bg-gray-300 mt-1">
+                    <div className="h-2 w-full bg-gray-300 rounded-full overflow-hidden mt-1">
                       <div
                         className={`h-full ${
                           pokemon.hp / pokemon.maxHp > 0.5 ? 'bg-green-500' : pokemon.hp / pokemon.maxHp > 0.2 ? 'bg-yellow-400' : 'bg-red-500'
@@ -612,7 +612,7 @@ export default function OnlineBattle({
                 <>
                   <button
                     onClick={() => setMenu('main')}
-                    className="w-full bg-black/40 text-white font-black py-2 border-4 border-white/20"
+                    className="w-full bg-black/40 text-white font-bold py-2 rounded-2xl border-2 border-white/20"
                   >
                     Volver
                   </button>
@@ -628,7 +628,7 @@ export default function OnlineBattle({
                 <button
                   key={move.id}
                   onClick={() => sendAction({ kind: 'move', moveId: move.id })}
-                  className="bg-white/90 p-3 text-left border-4 border-white/60 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition"
+                  className="bg-white/90 rounded-2xl p-3 text-left shadow-xl hover:scale-[1.02] active:scale-95 transition"
                 >
                   <p className="font-black text-gray-800 text-[10px] truncate">{move.name}</p>
                   <div className="flex items-center justify-between mt-1">
@@ -639,7 +639,7 @@ export default function OnlineBattle({
               ))}
               <button
                 onClick={() => setMenu('main')}
-                className="col-span-2 bg-black/40 text-white font-black py-2 border-4 border-white/20"
+                className="col-span-2 bg-black/40 text-white font-bold py-2 rounded-2xl border-2 border-white/20"
               >
                 Volver
               </button>
@@ -648,14 +648,14 @@ export default function OnlineBattle({
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setMenu('moves')}
-                className="bg-red-500 text-white font-black py-4 border-4 border-red-300 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition flex items-center justify-center gap-2"
+                className="bg-red-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-red-300 hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-2"
               >
                 <Swords className="w-5 h-5" /> Atacar
               </button>
               <button
                 onClick={() => setMenu('team')}
                 disabled={myAlive <= 1}
-                className="bg-blue-500 text-white font-black py-4 border-4 border-blue-300 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition disabled:opacity-40 flex items-center justify-center gap-2"
+                className="bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-blue-300 hover:scale-[1.02] active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <Repeat className="w-5 h-5" /> Cambiar
               </button>
@@ -665,7 +665,7 @@ export default function OnlineBattle({
           {!result && !disconnected && (
             <button
               onClick={leave}
-              className="w-full mt-2 bg-gray-700 text-white font-black py-3 border-4 border-gray-400 shadow-[4px_4px_0_rgba(0,0,0,0.4)] active:translate-y-1 transition flex items-center justify-center gap-2"
+              className="w-full mt-2 bg-gray-700 text-white font-black py-3 rounded-2xl shadow-xl border-2 border-gray-500 hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4" />
               Salir del combate
