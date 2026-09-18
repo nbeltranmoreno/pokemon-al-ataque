@@ -168,6 +168,16 @@ export const useGame = () => {
   // Pasar a la siguiente escena del cuento
   const advanceStory = () => update(prev => ({ ...prev, storyStage: prev.storyStage + 1 }));
 
+  // Borrar la partida entera (al cerrar sesión se empieza de cero)
+  const wipeSave = () => {
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch {
+      // Si el navegador no deja tocar el almacenamiento, al menos se limpia la sesión actual
+    }
+    setSave(emptySave);
+  };
+
   const markTutorialSeen = () => update({ tutorialSeen: true });
 
   const resetGame = () =>
@@ -185,6 +195,7 @@ export const useGame = () => {
     advanceStory,
     restartStory,
     markTutorialSeen,
+    wipeSave,
     resetGame
   };
 };

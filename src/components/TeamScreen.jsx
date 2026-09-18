@@ -3,6 +3,7 @@ import { ArrowLeft, HeartPulse, Repeat } from 'lucide-react';
 import { xpToNextLevel } from '../game/battle';
 import { getItem, ITEMS } from '../data/items';
 import HealthBar from './HealthBar';
+import PixelBackground from './PixelBackground';
 import TypeBadge from './TypeBadge';
 import PixelTrainer from './PixelTrainer';
 import PixelItem from './PixelItem';
@@ -41,8 +42,11 @@ export default function TeamScreen({ save, onHeal, onSwap, onUseItem, onBack }) 
   const chosen = getItem(selectedItem);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-teal-800 to-cyan-900 p-4">
-      <div className="max-w-2xl mx-auto pb-10">
+    <div className="relative min-h-screen overflow-hidden p-4">
+      <PixelBackground name="bosque" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/45 via-slate-900/65 to-slate-900/85" />
+
+      <div className="relative max-w-2xl mx-auto pb-10">
         <div className="flex items-center gap-3 mb-5">
           <button
             onClick={onBack}

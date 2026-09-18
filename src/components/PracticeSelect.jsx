@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PixelBackground from './PixelBackground';
 import { ArrowLeft, Shuffle } from 'lucide-react';
 import { loadPokedex } from '../services/pokeapi';
 
@@ -30,8 +31,11 @@ export default function PracticeSelect({ onChoose, onRandom, onBack }) {
   const filtered = list.filter(pokemon => pokemon.name.toLowerCase().includes(query.trim().toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-700 via-teal-800 to-blue-900 p-4">
-      <div className="max-w-3xl mx-auto pb-10">
+    <div className="relative min-h-screen overflow-hidden p-4">
+      <PixelBackground name="ruta" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/45 via-slate-900/65 to-slate-900/85" />
+
+      <div className="relative max-w-3xl mx-auto pb-10">
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={onBack}

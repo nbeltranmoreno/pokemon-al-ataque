@@ -3,6 +3,7 @@ import { ArrowLeft, Copy, Users, Swords } from 'lucide-react';
 import Peer from 'peerjs';
 import { healFighter } from '../game/battle';
 import OnlineBattle from './OnlineBattle';
+import PixelBackground from './PixelBackground';
 import PixelTrainer from './PixelTrainer';
 
 // Prefijo para que los códigos no choquen con los de otras webs que usan PeerJS
@@ -130,8 +131,11 @@ export default function OnlineScreen({ team, username, gender = 'boy', onBack })
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-700 via-blue-800 to-indigo-900 p-4">
-      <div className="max-w-md mx-auto">
+    <div className="relative min-h-screen overflow-hidden p-4">
+      <PixelBackground name="mar" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/45 via-slate-900/65 to-slate-900/85" />
+
+      <div className="relative max-w-md mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={mode ? backToLobby : onBack}

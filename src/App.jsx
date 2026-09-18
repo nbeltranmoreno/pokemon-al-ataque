@@ -23,7 +23,7 @@ import { VERSION } from './version';
 const menuButton = 'w-full font-black py-4 border-4 shadow-[6px_6px_0_rgba(0,0,0,0.45)] active:translate-y-1 transition flex items-center justify-center gap-3 disabled:opacity-50';
 
 export default function App() {
-  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, markTutorialSeen, resetGame } = useGame();
+  const { save, startWithTeam, setTrainer, finishBattle, healTeam, swapWithBox, buyItem, useItem, advanceStory, restartStory, markTutorialSeen, wipeSave, resetGame } = useGame();
   const { user, logout } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [opponent, setOpponent] = useState(null); // entrenador de la historia; null = combate salvaje
@@ -270,7 +270,9 @@ export default function App() {
 
           <button
             onClick={async () => {
+              if (!window.confirm('Al cerrar sesión se borra la partida: equipo, medallas, monedas y objetos. ¿Seguro?')) return;
               await logout();
+              wipeSave();
               setStarted(false);
             }}
             className={`${menuButton} bg-white/10 text-white border-white/30`}

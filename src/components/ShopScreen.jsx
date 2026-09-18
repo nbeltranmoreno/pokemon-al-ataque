@@ -1,14 +1,18 @@
 import { ArrowLeft } from 'lucide-react';
 import { ITEMS } from '../data/items';
 import PixelItem from './PixelItem';
+import PixelBackground from './PixelBackground';
 
 /**
  * Tienda: se compra con las monedas que se ganan al combatir
  */
 export default function ShopScreen({ coins, balls, inventory, onBuy, onBack }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-fuchsia-800 via-purple-900 to-indigo-900 p-4">
-      <div className="max-w-md mx-auto pb-10">
+    <div className="relative min-h-screen overflow-hidden p-4">
+      <PixelBackground name="pueblo" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/45 via-slate-900/65 to-slate-900/85" />
+
+      <div className="relative max-w-md mx-auto pb-10">
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={onBack}
